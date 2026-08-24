@@ -38,11 +38,12 @@ menu.appendChild(qBtn);
 var bubbleDY=0,fitT=0,smooth=0,antUntil=0,antDur=340,antX=0,antY=0,lastSpot=-1,fast=0,landAt=-9e3,landV=0;
 var sx=innerWidth*.9,sy=innerHeight*.3,tx=sx,ty=sy,vx=0,vy=0,t0=0,bubbleT=0,menuOpen=false;
 var tyBase=innerHeight*.3;
-function targets(){var s=SPOTS[secs[live]?secs[live].dataset.section:'hero']||SPOTS.hero;tx=innerWidth*s[0];tyBase=innerHeight*s[1];ty=tyBase+follow()}
+function slimeMob(){return innerWidth<=700}
+function targets(){if(slimeMob()){tx=innerWidth*.5;tyBase=innerHeight-88;ty=tyBase+follow();return}var s=SPOTS[secs[live]?secs[live].dataset.section:'hero']||SPOTS.hero;tx=innerWidth*s[0];tyBase=innerHeight*s[1];ty=tyBase+follow()}
 var forceT=null;
 window.slimeForce=function(x,y){forceT=(x==null)?null:[x,y]};
 window.slimePlace=function(x,y){sx=x;sy=y;vx=vy=0;lastSpot=-1};
-function follow(){if(!bubble.classList.contains('is-on'))return 0;return Math.max(70-tyBase,Math.min(innerHeight-70-tyBase,bubbleDY))}
+function follow(){if(slimeMob())return 0;if(!bubble.classList.contains('is-on'))return 0;return Math.max(70-tyBase,Math.min(innerHeight-70-tyBase,bubbleDY))}
 function tick(ts){
 var dt=Math.min(34,ts-t0)/16.7;t0=ts;
 targets();
@@ -68,10 +69,18 @@ bob=Math.sin(ts/620)*4.2*(1-smooth*.5),
 sqx=1+smooth*0.13-Math.sin(ts/620)*0.03+crouch*0.16+wob*0.2,
 sqy=1-smooth*0.1+Math.sin(ts/620)*0.03-crouch*0.15-wob*0.19,
 rot=Math.max(-11,Math.min(11,vx*0.45))-antX*crouch*7+wob*5;
-slime.style.transform='translate3d('+(sx-38)+'px,'+(sy-38+bob)+'px,0)';
+slime.style.transform='translate3d('+(sx-30.5)+'px,'+(sy-30.5+bob)+'px,0)';
 slime.firstElementChild.style.transform='rotate('+rot.toFixed(2)+'deg) scale('+sqx.toFixed(3)+','+sqy.toFixed(3)+')';
 slime.querySelector('.slime__face').style.transform='translate(-50%,-50%) translate('+(vx*0.3).toFixed(2)+'px,'+(vy*0.3+bob*0.22).toFixed(2)+'px)';
 var right=sx<innerWidth*0.5;
+if(slimeMob()){var bw=bubble.offsetWidth;
+bubble.style.left=Math.max(12,Math.min(innerWidth-12-bw,sx-bw/2))+'px';
+bubble.style.top=(sy-52-bubble.offsetHeight+bob)+'px';
+bubble.style.borderRadius='18px';
+menu.style.left=Math.max(14,Math.min(innerWidth-238,sx-112))+'px';
+menu.style.top=(sy-54-menu.offsetHeight)+'px';
+if(bubbleT&&ts>bubbleT&&!menuOpen){if(slimeClicked){bubble.classList.remove('is-on')}else{sayHint()}}
+return requestAnimationFrame(tick)}
 bubble.style.left=(right?sx+52:sx-52-bubble.offsetWidth)+'px';
 bubble.style.top=(sy-24-bubble.offsetHeight/2+bob)+'px';
 bubble.style.borderRadius=right?'18px 18px 18px 6px':'18px 18px 6px 18px';
@@ -100,7 +109,8 @@ if(seen[top])continue;seen[top]=1;
 var o=hits({left:left,right:left+bw,top:top,bottom:top+bh});
 if(o<bestO-4){bestO=o;best=top-top0;if(o===0)break}}
 bubbleDY=best}
-function say(txt,ms){if(!txt||menuOpen)return;bubble.textContent=txt;bubble.classList.add('is-on');bubbleT=performance.now()+(ms||5200);bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,600)}
+var saidOnce={};
+function say(txt,ms){if(!txt||menuOpen)return;if(saidOnce[txt])return;saidOnce[txt]=1;bubble.textContent=txt;bubble.classList.add('is-on');bubbleT=performance.now()+(ms||5200);bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,600)}
 window.slimeSay=say;
 function openMenu(){menuOpen=true;menu.classList.add('is-on');bubble.classList.remove('is-on')}
 function closeMenu(){menuOpen=false;menu.classList.remove('is-on')}

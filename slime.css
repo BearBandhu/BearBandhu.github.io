@@ -1,6 +1,6 @@
 /* companion slime for subpages — wears the look saved on the home page */
 :root{--sl-hi:240,240,245;--sl-mid:186,186,200;--sl-deep:92,92,110;--sl-edge:28,26,36;--sl-face:237,230,218;--sl-eye:60,48,40}
-.slime{position:fixed;z-index:40;left:0;top:0;width:76px;height:76px;cursor:pointer;touch-action:none;will-change:transform}
+.slime{position:fixed;z-index:40;left:0;top:0;width:61px;height:61px;cursor:pointer;touch-action:none;will-change:transform}
 .slime__body{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(var(--sl-hi),.6) 2%,rgba(var(--sl-mid),.5) 26%,rgba(var(--sl-deep),.52) 64%,rgba(var(--sl-edge),.72));transition:background .5s var(--ease);backdrop-filter:blur(3px) saturate(1.5);box-shadow:0 16px 30px -14px rgba(30,91,46,.5),inset 0 -9px 18px rgba(16,60,28,.28),inset 0 0 0 1px rgba(255,255,255,.35);transform-origin:50% 88%;will-change:transform}
 .slime__body::after{content:"";position:absolute;inset:0;z-index:3;border-radius:50%;background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.34),rgba(255,255,255,0) 40%),radial-gradient(circle at 72% 80%,rgba(18,68,34,.26),transparent 58%);pointer-events:none}
 .slime__gloss{position:absolute;z-index:4;left:20%;top:15%;width:26%;height:19%;border-radius:50%;background:rgba(255,255,255,.8);filter:blur(2px)}

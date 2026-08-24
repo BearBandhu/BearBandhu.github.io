@@ -116,7 +116,7 @@ h3{font-size:clamp(20px,2vw,26px);letter-spacing:-.02em}
 
 /* slime */
 :root{--sl-hi:226,250,232;--sl-mid:126,214,146;--sl-deep:48,142,64;--sl-edge:22,78,36;--sl-face:70,176,92;--sl-eye:14,52,24}
-.slime{position:absolute;z-index:40;left:0;top:0;width:84px;height:84px;cursor:pointer;will-change:transform;touch-action:none}
+.slime{position:absolute;z-index:40;left:0;top:0;width:67px;height:67px;cursor:pointer;will-change:transform;touch-action:none}
 .slime__body{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(var(--sl-hi),.6) 2%,rgba(var(--sl-mid),.5) 26%,rgba(var(--sl-deep),.52) 64%,rgba(var(--sl-edge),.72));transition:background .5s var(--ease);backdrop-filter:blur(3px) saturate(1.5);box-shadow:0 16px 30px -14px rgba(30,91,46,.5),inset 0 -9px 18px rgba(16,60,28,.28),inset 0 0 0 1px rgba(255,255,255,.35);transform-origin:50% 88%;will-change:transform}
 .slime__body::after{content:"";position:absolute;inset:0;z-index:3;border-radius:50%;background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.34),rgba(255,255,255,0) 40%),radial-gradient(circle at 72% 80%,rgba(18,68,34,.26),transparent 58%);pointer-events:none}
 .slime__gloss{position:absolute;z-index:4;left:20%;top:15%;width:26%;height:19%;border-radius:50%;background:rgba(255,255,255,.8);filter:blur(2px)}
