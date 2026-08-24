@@ -88,7 +88,8 @@ section{padding:clamp(36px,5vw,64px) 0}
 
 /* footer */
 footer{padding:clamp(40px,6vw,80px) 0 clamp(48px,7vw,90px)}
-.foot{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding-top:28px;border-top:1px solid var(--line)}
+.foot{display:flex;align-items:flex-end;gap:24px;flex-wrap:wrap;padding:26px 0 72px;border-top:1px solid var(--line)}
+@media(max-width:700px){.foot{padding:22px 0 104px;gap:18px}}
 .foot h2{margin-top:8px}
 
 @media(max-width:860px){

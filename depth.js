@@ -5,6 +5,8 @@ prog=document.getElementById('prog'),hint=document.getElementById('hint'),
 slime=document.getElementById('slime'),bubble=document.getElementById('bubble'),menu=document.getElementById('menu'),
 lb=document.getElementById('lb'),lbf=document.getElementById('lbf'),lbx=document.getElementById('lbx');
 var H=window.innerHeight,cur=0,live=-1,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
+var quick=matchMedia('(pointer:coarse)').matches||innerWidth<820;
+var LERP=quick?0.22:0.13,SNAP=quick?0.17:0.09,SWIPE=quick?0.3:0.42;
 
 
 
@@ -217,7 +219,7 @@ addEventListener('touchstart',function(e){touchY=e.touches[0].clientY},{passive:
 addEventListener('touchmove',function(e){
 if(touchY===null||lb.classList.contains('is-on'))return;
 var y=e.touches[0].clientY;
-if(!e.target.closest('.track')){e.preventDefault();nudge((touchY-y)/(H*0.42))}
+if(!e.target.closest('.track')){e.preventDefault();nudge((touchY-y)/(H*SWIPE))}
 touchY=y;
 },{passive:false});
 addEventListener('touchend',function(){touchY=null;target=Math.max(0,Math.min(N-1,Math.round(target)))});
@@ -236,8 +238,8 @@ addEventListener('resize',function(){H=innerHeight;Object.keys(rails).forEach(fu
 (function loop(ts){
 /* magnetise toward the nearest screen when the wheel goes quiet */
 var near=Math.round(target);
-if(Math.abs(target-near)>0.001)target+=(near-target)*0.09;
-cur+=(target-cur)*(reduce?1:0.13);
+if(Math.abs(target-near)>0.001)target+=(near-target)*SNAP;
+cur+=(target-cur)*(reduce?1:LERP);
 if(Math.abs(target-cur)<0.0004)cur=target;
 paint();requestAnimationFrame(loop)})();
 paint();

@@ -9,7 +9,7 @@
 <link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <link rel="stylesheet" href="subpage.css">
 <link rel="stylesheet" href="slime.css">
-<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.tr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.tr__poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#0e0d12}.tr__poster img{width:100%;height:100%;object-fit:cover;display:block}.tr__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 34px rgba(0,0,0,.34);transition:transform .18s ease}.tr__poster:hover .tr__play{transform:translate(-50%,-50%) scale(1.08)}.tr__play svg{width:26px;height:26px;fill:#16141b;margin-left:3px}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.gal>div{position:relative;aspect-ratio:16/9}.note{opacity:.62;font-size:.92rem}</style>
+<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.tr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.tr__poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#0e0d12}.tr__poster img{width:100%;height:100%;object-fit:cover;display:block}.tr__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 34px rgba(0,0,0,.34);transition:transform .18s ease}.tr__poster:hover .tr__play{transform:translate(-50%,-50%) scale(1.08)}.tr__play svg{width:26px;height:26px;fill:#16141b;margin-left:3px}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.gal>div{position:relative;aspect-ratio:16/9}.gal>div>img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;border-radius:14px;display:block}.note{opacity:.62;font-size:.92rem}</style>
 </head>
 <body data-page="proj-supertransform">
 <div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
@@ -40,16 +40,6 @@
 </div>
 </section>
 
-<section data-section="gallery" data-say="Screenshots go here. Drag one in if you have it." id="gallery" data-screen-label="Screenshots">
-<div class="wrap">
-<div class="sec__head"><span class="sec__num">02</span><h2>Screenshots</h2><span class="spacer"></span><span class="sec__note">Drop images into the slots</span></div>
-<div class="gal">
-<div><image-slot id="proj-supertransform-1" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
-<div><image-slot id="proj-supertransform-2" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
-<div><image-slot id="proj-supertransform-3" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
-</div>
-</div>
-</section>
 
 <section data-section="loop" data-say="Read the rooftop, transform, cross. One verb, every puzzle." id="loop" data-screen-label="Core loop">
 <div class="wrap">
@@ -108,7 +98,7 @@
 <div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
 <span class="spacer"></span>
 <div class="flex" style="gap:10px;flex-wrap:wrap">
-<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn btn--solid js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a>
 <a class="btn" href="index.html">← All projects</a>
 </div>
 </div>
@@ -116,7 +106,6 @@
 
 <script>document.querySelectorAll(".tr__poster img").forEach(function(im){function fb(){if(im.dataset.fallback&&im.src!==im.dataset.fallback)im.src=im.dataset.fallback}im.addEventListener("error",fb);var chk=function(){if(im.naturalWidth&&im.naturalWidth<=160)fb()};im.complete?chk():im.addEventListener("load",chk)});
 document.querySelectorAll(".tr__poster").forEach(function(b){b.addEventListener("click",function(){var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+b.dataset.yt+"?autoplay=1&rel=0";f.title=b.getAttribute("aria-label");f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;b.replaceWith(f)})});</script>
-<script src="image-slot.js"></script>
 <script src="slime-palettes.js"></script>
 <script src="slime-companion.js"></script>
 <script src="contact-cta.js"></script>
