@@ -1,0 +1,1305 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Isometric Turn-Based QTE Prototype (Mobile)</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+  <style>
+    body {
+      margin: 0;
+      font-family: system-ui, sans-serif;
+      background: #111;
+      color: #f5f5f5;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: flex-start;
+      min-height: 100vh;
+      padding: 8px;
+      box-sizing: border-box;
+    }
+
+    h1 {
+      margin: 4px 0 8px;
+      font-size: 18px;
+      text-align: center;
+    }
+
+    #container {
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      width: 100%;
+      max-width: 520px;
+      align-items: center;
+    }
+
+    #gameCanvas {
+      background: #1b1b1b;
+      border: 2px solid #444;
+      box-shadow: 0 0 12px rgba(0,0,0,0.6);
+      touch-action: manipulation;
+      width: 100%;
+      height: auto;
+      max-width: 480px;
+      aspect-ratio: 4 / 3;
+    }
+
+    #ui {
+      width: 100%;
+      max-width: 520px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+      font-size: 13px;
+    }
+
+    #info {
+      padding: 8px;
+      border-radius: 4px;
+      background: #222;
+      border: 1px solid #333;
+    }
+
+    #topRow {
+      display: flex;
+      justify-content: space-between;
+      gap: 6px;
+      flex-wrap: wrap;
+    }
+
+    #topRow span {
+      background: #181818;
+      padding: 4px 6px;
+      border-radius: 4px;
+      border: 1px solid #333;
+      font-size: 12px;
+    }
+
+    #message {
+      min-height: 32px;
+      margin-top: 6px;
+      font-size: 12px;
+      color: #ddd;
+    }
+
+    #countdown {
+      font-size: 40px;
+      font-weight: bold;
+      text-align: center;
+      margin-top: 4px;
+      letter-spacing: 4px;
+    }
+
+    #controls {
+      margin-top: 4px;
+      font-size: 11px;
+      opacity: 0.9;
+    }
+
+    #controls ul {
+      padding-left: 16px;
+      margin: 4px 0 0;
+    }
+
+    #controls li {
+      margin-bottom: 2px;
+    }
+
+    #restartBtn {
+      display: none;
+      margin-top: 6px;
+      padding: 8px;
+      font-size: 14px;
+      border-radius: 4px;
+      border: none;
+      cursor: pointer;
+      background: #3a6df0;
+      color: #fff;
+      font-weight: 600;
+      box-shadow: 0 2px 4px rgba(0,0,0,0.4);
+      width: 100%;
+    }
+
+    #restartBtn:active {
+      transform: scale(0.97);
+    }
+  </style>
+</head>
+<body>
+  <h1>Isometric Turn-Based QTE</h1>
+  <div id="container">
+    <canvas id="gameCanvas" width="640" height="480"></canvas>
+
+    <div id="ui">
+      <div id="info">
+        <div id="topRow">
+          <span>HP: <span id="playerHp">3</span></span>
+          <span>Guard: <span id="defenseCharges">4</span></span>
+          <span>Wave: <span id="waveSize">1</span></span>
+          <span>Enemies: <span id="enemyCount">0</span></span>
+          <span>Phase: <span id="phaseLabel">Player Turn</span></span>
+        </div>
+        <div id="message"></div>
+        <div id="countdown"></div>
+
+        <button id="restartBtn">Restart</button>
+      </div>
+
+      <div id="controls">
+        <div><strong>How to play (tap)</strong></div>
+        <ul>
+          <li>Tap an <b>adjacent enemy</b> once to select it.</li>
+          <li>Tap the <b>same enemy again</b> to start the attack countdown (<b>5 → 1</b>).</li>
+          <li>During the attack countdown:
+            <ul>
+              <li>Tap on <b>2–3</b>: Normal hit (single target).</li>
+              <li>Tap on <b>1</b>: Critical hit (target + two side tiles).</li>
+              <li>Any other timing or no tap: miss.</li>
+            </ul>
+          </li>
+          <li>Defense:
+            <ul>
+              <li>You start with <b>4 Guard</b> (defense charges).</li>
+              <li>Tap on <b>4</b>: Block (spends 1 Guard).</li>
+              <li>Tap on <b>3</b>: Critical defense (block without spending Guard).</li>
+              <li>At <b>0 Guard</b>, only a critical defense (3) prevents damage.</li>
+              <li>Every <b>4 player actions</b> (move or attack), you regain <b>1 Guard</b> (up to 4).</li>
+            </ul>
+          </li>
+          <li>Enemy types:
+            <ul>
+              <li><b>Red/Orange</b>: normal enemy (moves orthogonally).</li>
+              <li><b>Blue/Purple</b>: diagonal enemy (moves only diagonally, can attack from diagonals).</li>
+            </ul>
+          </li>
+          <li>When an enemy attacks (~1.2s): numbers above them go
+            <br><b>1–2 = Prep</b>, <b>3–4 = Charge (tap to defend)</b>, <b>5–6 = Strike</b>.
+          </li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <script>
+    // --- Constants ---
+    const GRID_SIZE = 8;
+    const TILE_W = 64;
+    const TILE_H = 32;
+
+    // Player attack QTE (5 -> 1)
+    const ATTACK_QTE_SPEED = 300; // ms per step
+
+    // Enemy defense QTE:
+    const DEFENSE_DURATION = 1200; // 1.2 seconds total
+
+    const HIT_STOP_MS = 120;
+
+    const MAX_DEFENSE_CHARGES = 4;
+
+    // --- State & DOM ---
+    const canvas = document.getElementById("gameCanvas");
+    const ctx = canvas.getContext("2d");
+
+    const playerHpEl = document.getElementById("playerHp");
+    const defenseChargesEl = document.getElementById("defenseCharges");
+    const waveSizeEl = document.getElementById("waveSize");
+    const enemyCountEl = document.getElementById("enemyCount");
+    const phaseLabelEl = document.getElementById("phaseLabel");
+    const messageEl = document.getElementById("message");
+    const countdownEl = document.getElementById("countdown");
+    const restartBtn = document.getElementById("restartBtn");
+
+    let player = { x: 3, y: 3, hp: 3 };
+    let enemies = [];
+    let waveSize = 1;
+
+    let defenseCharges = 4;
+    let movesSinceRegen = 0; // every 4 actions -> +1 guard
+
+    // gameState:
+    // "playerTurn", "enemyTurn", "attackQTE",
+    // "enemyAnim", "playerAnim", "gameOver"
+    let gameState = "playerTurn";
+
+    // QTE-related
+    let qteInterval = null;
+    let qteValue = 0;       // attack: 5..1, defense: 1..6
+    let qteHasTapped = false;
+    let qteType = null;     // "attack" or "defense"
+    let currentTarget = null;
+    let pendingAttackers = [];
+
+    // defenseOutcome: "none" | "crit" | "normal" | "fail"
+    let defenseOutcome = "none";
+
+    // Selection
+    let selectedEnemy = null;
+
+    // Feedback overlay
+    let feedbackType = null; // "attackHit", "defBlock", "defHit"
+
+    // Attack preview tiles
+    let attackPreviewTiles = [];
+
+    // Animation offsets
+    let cameraOffset = { x: 0, y: 0 };
+    let playerAttackOffset = { x: 0, y: 0 };
+    let enemyAttackAnim = { id: null, dx: 0, dy: 0 };
+
+    // Flag to allow early stop of enemy attack anim
+    let enemyAttackForceStop = false;
+
+    function setMessage(text) {
+      messageEl.textContent = text;
+    }
+
+    function updateUI() {
+      playerHpEl.textContent = player.hp;
+      defenseChargesEl.textContent = defenseCharges;
+      waveSizeEl.textContent = waveSize;
+      enemyCountEl.textContent = enemies.filter(e => e.alive).length;
+
+      let phaseText = "";
+      switch (gameState) {
+        case "playerTurn":  phaseText = "Player Turn";  break;
+        case "enemyTurn":   phaseText = "Enemy Turn";   break;
+        case "attackQTE":   phaseText = "Player Attack QTE";   break;
+        case "enemyAnim":   phaseText = "Enemy Attack"; break;
+        case "playerAnim":  phaseText = "Player Attack";break;
+        case "gameOver":    phaseText = "Game Over";    break;
+        default:            phaseText = gameState;
+      }
+      phaseLabelEl.textContent = phaseText;
+
+      drawScene();
+    }
+
+    // track actions for guard regen
+    function registerPlayerAction() {
+      movesSinceRegen++;
+      if (movesSinceRegen >= 4) {
+        movesSinceRegen = 0;
+        if (defenseCharges < MAX_DEFENSE_CHARGES) {
+          defenseCharges++;
+        }
+      }
+      updateUI();
+    }
+
+    function isoToScreen(x, y) {
+      const sx = (x - y) * (TILE_W / 2) + canvas.width / 2 + cameraOffset.x;
+      const sy = (x + y) * (TILE_H / 2) + 60 + cameraOffset.y;
+      return { x: sx, y: sy };
+    }
+
+    function drawTile(centerX, centerY) {
+      const hw = TILE_W / 2;
+      const hh = TILE_H / 2;
+      ctx.beginPath();
+      ctx.moveTo(centerX, centerY - hh);
+      ctx.lineTo(centerX + hw, centerY);
+      ctx.lineTo(centerX, centerY + hh);
+      ctx.lineTo(centerX - hw, centerY);
+      ctx.closePath();
+      ctx.fillStyle = "#202020";
+      ctx.fill();
+      ctx.strokeStyle = "#333";
+      ctx.stroke();
+    }
+
+    function drawPlayer() {
+      const base = isoToScreen(player.x, player.y);
+      const p = {
+        x: base.x + playerAttackOffset.x,
+        y: base.y + playerAttackOffset.y
+      };
+
+      // Player body
+      ctx.beginPath();
+      ctx.arc(p.x, p.y - 10, 10, 0, Math.PI * 2);
+      ctx.fillStyle = "#4ee06a";
+      ctx.fill();
+      ctx.strokeStyle = "#0b7a2c";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      // Shadow
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y - 4, 14, 6, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.4)";
+      ctx.fill();
+
+      // Attack QTE number above the player (similar style to defense)
+      if (qteType === "attack" && qteValue > 0) {
+        const isAttackWindow = getAttackModeForValue(qteValue) !== null;
+
+        let fontSize = 28;
+        if (isAttackWindow) {
+          const pulse = Math.sin(Date.now() * 0.008) * 3; // -3..+3
+          fontSize += pulse;
+        }
+
+        ctx.font = `${fontSize}px system-ui`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.shadowBlur = isAttackWindow ? 18 : 0;
+        ctx.shadowColor = isAttackWindow ? "#33aaff" : "transparent";
+
+        ctx.fillStyle = isAttackWindow ? "#33aaff" : "#ffffff";
+        ctx.strokeStyle = "rgba(0,0,0,0.9)";
+        ctx.lineWidth = 4;
+
+        const tx = p.x;
+        const ty = p.y - 38;
+
+        ctx.strokeText(String(qteValue), tx, ty);
+        ctx.fillText(String(qteValue), tx, ty);
+
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "transparent";
+      }
+    }
+
+    function drawEnemy(enemy) {
+      const base = isoToScreen(enemy.x, enemy.y);
+      let ex = base.x;
+      let ey = base.y;
+
+      if (enemyAttackAnim.id === enemy.id) {
+        ex += enemyAttackAnim.dx;
+        ey += enemyAttackAnim.dy;
+      }
+
+      const p = { x: ex, y: ey };
+      const size = 10;
+
+      // Color depends on kind + hp
+      let fill, stroke;
+      if (enemy.kind === "diagonal") {
+        // blue/purple variant
+        fill   = enemy.hp === 2 ? "#5c7dff" : "#7b9bff";
+        stroke = "#1c2a7a";
+      } else {
+        // normal enemy: red/orange
+        fill   = enemy.hp === 2 ? "#e04949" : "#e09a49";
+        stroke = "#7a1111";
+      }
+
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - size);
+      ctx.lineTo(p.x + size, p.y);
+      ctx.lineTo(p.x, p.y + size);
+      ctx.lineTo(p.x - size, p.y);
+      ctx.closePath();
+      ctx.fillStyle = fill;
+      ctx.fill();
+      ctx.strokeStyle = stroke;
+      ctx.lineWidth = 2;
+      ctx.stroke();
+
+      ctx.beginPath();
+      ctx.ellipse(p.x, p.y - 4, 12, 5, 0, 0, Math.PI * 2);
+      ctx.fillStyle = "rgba(0,0,0,0.4)";
+      ctx.fill();
+
+      const barW = 22;
+      const barH = 4;
+      const hpPercent = enemy.hp / 2;
+      const bx = p.x - barW / 2;
+      const by = p.y - 24;
+
+      ctx.fillStyle = "#000";
+      ctx.fillRect(bx, by, barW, barH);
+      ctx.fillStyle = "#4cff63";
+      ctx.fillRect(bx, by, barW * hpPercent, barH);
+
+      // Defense countdown above attacking enemy (1..6) with glow on block window
+      if (qteType === "defense" && enemyAttackAnim.id === enemy.id && qteValue > 0) {
+        const isBlockWindow = (qteValue === 3 || qteValue === 4);
+
+        let fontSize = 28;
+        if (isBlockWindow) {
+          const pulse = Math.sin(Date.now() * 0.008) * 3; // -3..+3
+          fontSize += pulse;
+        }
+
+        ctx.font = `${fontSize}px system-ui`;
+        ctx.textAlign = "center";
+        ctx.textBaseline = "middle";
+
+        ctx.shadowBlur = isBlockWindow ? 18 : 0;
+        ctx.shadowColor = isBlockWindow ? "#33aaff" : "transparent";
+
+        ctx.fillStyle = isBlockWindow ? "#33aaff" : "#ffffff";
+        ctx.strokeStyle = "rgba(0,0,0,0.9)";
+        ctx.lineWidth = 4;
+
+        const tx = p.x;
+        const ty = p.y - 32;
+
+        ctx.strokeText(String(qteValue), tx, ty);
+        ctx.fillText(String(qteValue), tx, ty);
+
+        ctx.shadowBlur = 0;
+        ctx.shadowColor = "transparent";
+      }
+    }
+
+    function drawHighlight(x, y) {
+      const p = isoToScreen(x, y);
+      const hw = TILE_W / 2;
+      const hh = TILE_H / 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - hh);
+      ctx.lineTo(p.x + hw, p.y);
+      ctx.lineTo(p.x, p.y + hh);
+      ctx.lineTo(p.x - hw, p.y);
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(255,255,255,0.6)";
+      ctx.lineWidth = 2;
+      ctx.stroke();
+    }
+
+    function drawSelection(x, y) {
+      const p = isoToScreen(x, y);
+      const hw = TILE_W / 2 + 4;
+      const hh = TILE_H / 2 + 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - hh);
+      ctx.lineTo(p.x + hw, p.y);
+      ctx.lineTo(p.x, p.y + hh);
+      ctx.lineTo(p.x - hw, p.y);
+      ctx.closePath();
+      ctx.strokeStyle = "rgba(0,200,255,0.9)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function drawAttackPreviewTile(x, y) {
+      const p = isoToScreen(x, y);
+      const hw = TILE_W / 2;
+      const hh = TILE_H / 2;
+      ctx.beginPath();
+      ctx.moveTo(p.x, p.y - hh);
+      ctx.lineTo(p.x + hw, p.y);
+      ctx.lineTo(p.x, p.y + hh);
+      ctx.lineTo(p.x - hw, p.y);
+      ctx.closePath();
+      ctx.fillStyle = "rgba(255,255,0,0.6)";
+      ctx.fill();
+      ctx.strokeStyle = "rgba(255,255,0,1)";
+      ctx.lineWidth = 3;
+      ctx.stroke();
+    }
+
+    function getEnemyAt(x, y) {
+      return enemies.find(e => e.alive && e.x === x && e.y === y) || null;
+    }
+
+    function isAdjacent(a, b) {
+      return Math.abs(a.x - b.x) + Math.abs(a.y - b.y) === 1;
+    }
+
+    // Chebyshev adjacency (includes diagonals)
+    function isAdjacentDiag(a, b) {
+      return Math.max(Math.abs(a.x - b.x), Math.abs(a.y - b.y)) === 1;
+    }
+
+    function canEnemyAttackPlayer(enemy) {
+      if (enemy.kind === "diagonal") {
+        return isAdjacentDiag(enemy, player);
+      } else {
+        return isAdjacent(enemy, player);
+      }
+    }
+
+    function pickCellFromClick(px, py) {
+      let best = null;
+      let bestDist = Infinity;
+      const hw = TILE_W / 2;
+      const hh = TILE_H / 2;
+
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+          const p = isoToScreen(x, y);
+          const dx = Math.abs(px - p.x);
+          const dy = Math.abs(py - p.y);
+          const v = dx / hw + dy / hh;
+          if (v <= 1.0) {
+            const dist = dx + dy;
+            if (dist < bestDist) {
+              bestDist = dist;
+              best = { x, y };
+            }
+          }
+        }
+      }
+      return best;
+    }
+
+    function drawScene() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      if (selectedEnemy && !selectedEnemy.alive) {
+        selectedEnemy = null;
+      }
+
+      for (let y = 0; y < GRID_SIZE; y++) {
+        for (let x = 0; x < GRID_SIZE; x++) {
+          const p = isoToScreen(x, y);
+          drawTile(p.x, p.y);
+        }
+      }
+
+      if (attackPreviewTiles && attackPreviewTiles.length > 0) {
+        attackPreviewTiles.forEach(t => drawAttackPreviewTile(t.x, t.y));
+      }
+
+      const dirs = [
+        { dx: 1, dy: 0 },
+        { dx: -1, dy: 0 },
+        { dx: 0, dy: 1 },
+        { dx: 0, dy: -1 }
+      ];
+      if (gameState === "playerTurn") {
+        for (const d of dirs) {
+          const nx = player.x + d.dx;
+          const ny = player.y + d.dy;
+          if (nx >= 0 && nx < GRID_SIZE && ny >= 0 && ny < GRID_SIZE) {
+            drawHighlight(nx, ny);
+          }
+        }
+      }
+
+      enemies.forEach(e => {
+        if (e.alive) drawEnemy(e);
+      });
+
+      if (selectedEnemy && selectedEnemy.alive) {
+        drawSelection(selectedEnemy.x, selectedEnemy.y);
+      }
+
+      drawPlayer();
+
+      if (feedbackType) {
+        ctx.save();
+        if (feedbackType === "attackHit") {
+          ctx.fillStyle = "rgba(255,80,80,0.25)";
+        } else if (feedbackType === "defBlock") {
+          ctx.fillStyle = "rgba(80,160,255,0.3)";
+        } else if (feedbackType === "defHit") {
+          ctx.fillStyle = "rgba(255,80,80,0.3)";
+        }
+        ctx.fillRect(0, 0, canvas.width, canvas.height);
+        ctx.restore();
+      }
+    }
+
+    // --- Spawning & Waves ---
+    let enemyIdCounter = 1;
+
+    function spawnWave(n) {
+      enemies = [];
+      enemyIdCounter = 1;
+      selectedEnemy = null;
+      attackPreviewTiles = [];
+      const used = new Set();
+      used.add(player.x + "," + player.y);
+
+      for (let i = 0; i < n; i++) {
+        let x, y, key;
+        let attempts = 0;
+        do {
+          x = Math.floor(Math.random() * GRID_SIZE);
+          y = Math.floor(Math.random() * GRID_SIZE);
+          key = x + "," + y;
+          attempts++;
+          if (attempts > 200) break;
+        } while (used.has(key));
+        used.add(key);
+
+        const kind = Math.random() < 0.5 ? "normal" : "diagonal";
+        enemies.push({ id: enemyIdCounter++, x, y, hp: 2, alive: true, kind });
+      }
+      updateUI();
+      drawScene();
+    }
+
+    function allEnemiesDead() {
+      return enemies.every(e => !e.alive);
+    }
+
+    // --- Enemy movement ---
+    function moveEnemiesTowardPlayer() {
+      const occupied = new Set();
+      occupied.add(player.x + "," + player.y);
+      enemies.forEach(e => {
+        if (e.alive) occupied.add(e.x + "," + e.y);
+      });
+
+      enemies.forEach(e => {
+        if (!e.alive) return;
+        if (canEnemyAttackPlayer(e)) return;
+
+        occupied.delete(e.x + "," + e.y);
+
+        let dirs;
+        if (e.kind === "diagonal") {
+          dirs = [
+            { dx: 1, dy: 1 },
+            { dx: -1, dy: 1 },
+            { dx: 1, dy: -1 },
+            { dx: -1, dy: -1 }
+          ];
+        } else {
+          dirs = [
+            { dx: 1, dy: 0 },
+            { dx: -1, dy: 0 },
+            { dx: 0, dy: 1 },
+            { dx: 0, dy: -1 }
+          ];
+        }
+
+        let bestPos = { x: e.x, y: e.y };
+        let bestDist = Math.abs(e.x - player.x) + Math.abs(e.y - player.y);
+
+        for (const d of dirs) {
+          const nx = e.x + d.dx;
+          const ny = e.y + d.dy;
+          if (nx < 0 || nx >= GRID_SIZE || ny < 0 || ny >= GRID_SIZE) continue;
+          const key = nx + "," + ny;
+          if (occupied.has(key)) continue;
+          const dist = Math.abs(nx - player.x) + Math.abs(ny - player.y);
+          if (dist < bestDist) {
+            bestDist = dist;
+            bestPos = { x: nx, y: ny };
+          }
+        }
+
+        occupied.add(bestPos.x + "," + bestPos.y);
+        e.x = bestPos.x;
+        e.y = bestPos.y;
+      });
+    }
+
+    // --- Attack pattern helpers ---
+    function computeAttackTiles(mode, target, playerPos) {
+      const tiles = [];
+      if (!mode || !target) return tiles;
+
+      if (mode === "single") {
+        tiles.push({ x: target.x, y: target.y });
+      } else if (mode === "crit") {
+        const tx = target.x;
+        const ty = target.y;
+        let dx = tx - playerPos.x;
+        let dy = ty - playerPos.y;
+
+        dx = Math.max(-1, Math.min(1, dx));
+        dy = Math.max(-1, Math.min(1, dy));
+
+        tiles.push({ x: tx, y: ty });
+
+        const side1 = { x: tx - dy, y: ty + dx };
+        const side2 = { x: tx + dy, y: ty - dx };
+
+        [side1, side2].forEach(c => {
+          if (c.x >= 0 && c.x < GRID_SIZE && c.y >= 0 && c.y < GRID_SIZE) {
+            tiles.push(c);
+          }
+        });
+      }
+
+      const keySet = new Set();
+      const uniqueTiles = [];
+      for (const t of tiles) {
+        const k = t.x + "," + t.y;
+        if (!keySet.has(k)) {
+          keySet.add(k);
+          uniqueTiles.push(t);
+        }
+      }
+      return uniqueTiles;
+    }
+
+    // v: 5..1 for attack QTE
+    //  - 2–3 => "single"
+    //  - 1   => "crit"
+    //  - others => null (miss)
+    function getAttackModeForValue(v) {
+      if (v === 1) return "crit";
+      if (v === 2 || v === 3) return "single";
+      return null;
+    }
+
+    function updateAttackPreviewForCurrentQTE() {
+      if (qteType !== "attack" || !currentTarget || !currentTarget.alive) {
+        attackPreviewTiles = [];
+        return;
+      }
+      const mode = getAttackModeForValue(qteValue);
+      if (!mode) {
+        attackPreviewTiles = [];
+      } else {
+        attackPreviewTiles = computeAttackTiles(mode, currentTarget, player);
+      }
+      drawScene();
+    }
+
+    // --- QTE System ---
+    function clearQTE() {
+      if (qteInterval !== null) {
+        clearInterval(qteInterval);
+        qteInterval = null;
+      }
+      countdownEl.textContent = "";
+      qteHasTapped = false;
+      qteValue = 0;
+    }
+
+    function handleQTETap() {
+      if (!qteType) return;
+      if (qteHasTapped) return;
+      qteHasTapped = true;
+
+      if (qteType === "attack") {
+        const tappedValue = qteValue;
+        finishAttackQTE(tappedValue);
+      } else if (qteType === "defense") {
+        if (qteValue === 3) {
+          defenseOutcome = "crit";
+        } else if (qteValue === 4) {
+          defenseOutcome = "normal";
+        } else {
+          defenseOutcome = "fail";
+        }
+        enemyAttackForceStop = true;
+      }
+    }
+
+    function startAttackQTE(enemy) {
+      if (gameState !== "playerTurn") return;
+      if (!enemy || !enemy.alive) return;
+      clearQTE();
+
+      gameState   = "attackQTE";
+      qteType     = "attack";
+      currentTarget = enemy;
+      qteValue    = 5;  // 👈 attack countdown 5 → 1 now
+      qteHasTapped = false;
+
+      countdownEl.textContent = "";
+      setMessage("ATTACK QTE! Tap on 2–3 for a normal hit, 1 for a critical.");
+
+      updateAttackPreviewForCurrentQTE();
+
+      qteInterval = setInterval(() => {
+        if (qteHasTapped) return;
+        qteValue--;
+        if (qteValue >= 1) {
+          updateAttackPreviewForCurrentQTE();
+        }
+        if (qteValue < 1) {
+          qteHasTapped = true;
+          finishAttackQTE(0); // timeout / miss
+        }
+      }, ATTACK_QTE_SPEED);
+
+      updateUI();
+    }
+
+    function hitEnemy(enemy) {
+      if (!enemy || !enemy.alive) return { hit: false, killed: false };
+      enemy.hp -= 1;
+      let killed = false;
+      if (enemy.hp <= 0) {
+        enemy.alive = false;
+        killed = true;
+      }
+      return { hit: true, killed };
+    }
+
+    // --- Player Attack Animation with Hit Stop ---
+    function playPlayerAttackAnimation(hit, onDone) {
+      const duration = 350;
+      const impactT = 0.6;
+      let start = performance.now();
+      let hitStopActive = false;
+      let hitStopStart = 0;
+
+      function frame(now) {
+        let elapsed = now - start;
+        let t = elapsed / duration;
+
+        if (hit) {
+          if (!hitStopActive && t >= impactT) {
+            hitStopActive = true;
+            hitStopStart = now;
+          }
+          if (hitStopActive) {
+            const freezeElapsed = now - hitStopStart;
+            if (freezeElapsed < HIT_STOP_MS) {
+              t = impactT;
+            } else {
+              hitStopActive = false;
+            }
+          }
+        }
+
+        if (t >= 1) {
+          playerAttackOffset.x = 0;
+          playerAttackOffset.y = 0;
+          cameraOffset.x = 0;
+          cameraOffset.y = 0;
+          feedbackType = null;
+          drawScene();
+          if (onDone) onDone();
+          return;
+        }
+
+        let offsetY = 0;
+        if (t < 0.3) {
+          offsetY = -10 * (t / 0.3);
+        } else if (t < 0.6) {
+          const tt = (t - 0.3) / 0.3;
+          offsetY = -10 + 20 * tt;
+        } else {
+          const tt = (t - 0.6) / 0.4;
+          offsetY = 10 * (1 - tt);
+        }
+        playerAttackOffset.y = offsetY;
+
+        if (hit && t > impactT) {
+          const intensity = 5 * (1 - t);
+          cameraOffset.x = (Math.random() * 2 - 1) * intensity;
+          cameraOffset.y = (Math.random() * 2 - 1) * intensity;
+          feedbackType = "attackHit";
+        } else {
+          cameraOffset.x = 0;
+          cameraOffset.y = 0;
+          if (!hit) feedbackType = null;
+        }
+
+        drawScene();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // --- Enemy Attack Animation with 1.2-second QTE (1..6) ---
+    function playEnemyAttackAnimation(attacker, onDone) {
+      if (!attacker || !attacker.alive) {
+        if (onDone) onDone();
+        return;
+      }
+
+      const duration = DEFENSE_DURATION;
+      const impactT = 2 / 3;
+      let start = performance.now();
+      let hitStopActive = false;
+      let hitStopStart = 0;
+
+      enemyAttackAnim.id = attacker.id;
+
+      function frame(now) {
+        if (enemyAttackForceStop) {
+          enemyAttackForceStop = false;
+          enemyAttackAnim.id = null;
+          enemyAttackAnim.dx = 0;
+          enemyAttackAnim.dy = 0;
+          cameraOffset.x = 0;
+          cameraOffset.y = 0;
+          feedbackType = null;
+          drawScene();
+          if (onDone) onDone();
+          return;
+        }
+
+        let elapsed = now - start;
+        let t = elapsed / duration;
+        if (t > 1) t = 1;
+
+        if (qteType === "defense") {
+          let v = Math.floor(t * 6) + 1;
+          if (v < 1) v = 1;
+          if (v > 6) v = 6;
+          qteValue = v;
+        }
+
+        let phase;
+        if (t < 1/3) {
+          phase = 1;
+        } else if (t < 2/3) {
+          phase = 2;
+        } else {
+          phase = 3;
+        }
+
+        if (!hitStopActive && t >= impactT) {
+          hitStopActive = true;
+          hitStopStart = now;
+        }
+        if (hitStopActive) {
+          const freezeElapsed = now - hitStopStart;
+          if (freezeElapsed < HIT_STOP_MS) {
+            t = impactT;
+          } else {
+            hitStopActive = false;
+          }
+        }
+
+        if (t >= 1) {
+          enemyAttackAnim.id = null;
+          enemyAttackAnim.dx = 0;
+          enemyAttackAnim.dy = 0;
+          cameraOffset.x = 0;
+          cameraOffset.y = 0;
+          feedbackType = null;
+          drawScene();
+          if (onDone) onDone();
+          return;
+        }
+
+        let offsetY = 0;
+        if (phase === 1) {
+          const localT = t / (1/3);
+          offsetY = 6 * localT;
+        } else if (phase === 2) {
+          const localT = (t - 1/3) / (1/3);
+          offsetY = 6 - 20 * localT;
+        } else {
+          const localT = (t - 2/3) / (1/3);
+          offsetY = -14 * (1 - localT);
+        }
+        enemyAttackAnim.dy = offsetY;
+
+        if (t > impactT) {
+          const intensity = 5 * (1 - t);
+          cameraOffset.x = (Math.random() * 2 - 1) * intensity;
+          cameraOffset.y = (Math.random() * 2 - 1) * intensity;
+        } else {
+          cameraOffset.x = 0;
+          cameraOffset.y = 0;
+        }
+
+        drawScene();
+        requestAnimationFrame(frame);
+      }
+      requestAnimationFrame(frame);
+    }
+
+    // --- Attack / Defense Resolution ---
+
+    function finishAttackQTE(tappedValue) {
+      if (gameState !== "attackQTE") return;
+
+      clearQTE();
+
+      const mode = getAttackModeForValue(tappedValue);
+      const isMiss = !mode;
+
+      gameState = "playerAnim";
+      updateUI();
+
+      let hitAny = false;
+      let killedAny = false;
+      let tiles = [];
+
+      if (!isMiss && currentTarget && currentTarget.alive) {
+        tiles = computeAttackTiles(mode, currentTarget, player);
+        attackPreviewTiles = tiles;
+        drawScene();
+
+        tiles.forEach(t => {
+          const enemy = getEnemyAt(t.x, t.y);
+          if (enemy) {
+            const { hit, killed } = hitEnemy(enemy);
+            if (hit) hitAny = true;
+            if (killed) killedAny = true;
+          }
+        });
+
+        if (!hitAny) {
+          setMessage("No enemies in the affected area.");
+        } else {
+          if (mode === "single") {
+            setMessage(killedAny ? "Normal hit! Enemy defeated." : "Normal hit!");
+          } else if (mode === "crit") {
+            setMessage(killedAny ? "Critical hit! Multiple enemies defeated." : "Critical hit!");
+          }
+        }
+      } else {
+        attackPreviewTiles = [];
+        drawScene();
+        if (tappedValue === 0) {
+          setMessage("You hesitated and missed the opportunity.");
+        } else {
+          setMessage("Attack whiffed!");
+        }
+      }
+
+      const didHitEnemies = !isMiss && hitAny;
+
+      const afterAnim = () => {
+        registerPlayerAction();
+
+        attackPreviewTiles = [];
+        cameraOffset.x = cameraOffset.y = 0;
+        playerAttackOffset.x = playerAttackOffset.y = 0;
+        feedbackType = null;
+
+        qteType = null;
+        qteHasTapped = false;
+        currentTarget = null;
+        selectedEnemy = null;
+
+        countdownEl.textContent = "";
+        updateUI();
+        drawScene();
+
+        if (allEnemiesDead()) {
+          waveSize += 1;
+          setMessage("Wave cleared! New wave: " + waveSize);
+          spawnWave(waveSize);
+          gameState = "playerTurn";
+          updateUI();
+        } else {
+          startEnemyTurn();
+        }
+      };
+
+      playPlayerAttackAnimation(didHitEnemies, afterAnim);
+    }
+
+    function finishDefenseResolution() {
+      let blocked = false;
+      let crit = false;
+
+      if (defenseOutcome === "crit") {
+        blocked = true;
+        crit = true;
+      } else if (defenseOutcome === "normal") {
+        if (defenseCharges > 0) {
+          defenseCharges--;
+          blocked = true;
+        } else {
+          blocked = false;
+        }
+      } else {
+        blocked = false;
+      }
+
+      if (blocked) {
+        if (crit) {
+          setMessage("Perfect defense! No damage and no Guard spent.");
+        } else {
+          setMessage("Blocked the attack (Guard -1).");
+        }
+      } else {
+        player.hp = Math.max(0, player.hp - 1);
+        setMessage("You were hit!");
+      }
+
+      feedbackType = blocked ? "defBlock" : "defHit";
+
+      qteType = null;
+      qteHasTapped = false;
+      qteValue = 0;
+      defenseOutcome = "none";
+
+      updateUI();
+      drawScene();
+
+      setTimeout(() => {
+        feedbackType = null;
+        cameraOffset.x = cameraOffset.y = 0;
+        enemyAttackAnim.id = null;
+        enemyAttackAnim.dx = enemyAttackAnim.dy = 0;
+        drawScene();
+
+        if (player.hp <= 0) {
+          gameOver();
+        } else {
+          processNextEnemyAttack();
+        }
+      }, 150);
+    }
+
+    // --- Turn Handling ---
+    function endPlayerAction() {
+      drawScene();
+      startEnemyTurn();
+    }
+
+    function startEnemyTurn() {
+      if (player.hp <= 0) {
+        gameOver();
+        return;
+      }
+      gameState = "enemyTurn";
+      selectedEnemy = null;
+      attackPreviewTiles = [];
+      updateUI();
+
+      moveEnemiesTowardPlayer();
+      drawScene();
+
+      pendingAttackers = enemies.filter(e => e.alive && canEnemyAttackPlayer(e));
+
+      if (pendingAttackers.length === 0) {
+        setMessage("No enemy is close enough. Your turn again.");
+        gameState = "playerTurn";
+        updateUI();
+        return;
+      }
+      setMessage("Enemy turn! Tap on 3–4 to defend (3 = critical, 4 = normal).");
+      processNextEnemyAttack();
+    }
+
+    function processNextEnemyAttack() {
+      if (player.hp <= 0) {
+        gameOver();
+        return;
+      }
+      if (pendingAttackers.length === 0) {
+        gameState = "playerTurn";
+        setMessage("Your turn. Tap an adjacent enemy to select.");
+        updateUI();
+        return;
+      }
+      const attacker = pendingAttackers.shift();
+      startEnemyAttack(attacker);
+    }
+
+    function startEnemyAttack(attacker) {
+      clearQTE();
+      qteType = "defense";
+      defenseOutcome = "fail";
+      currentTarget = attacker;
+      enemyAttackForceStop = false;
+      gameState = "enemyAnim";
+      updateUI();
+
+      playEnemyAttackAnimation(attacker, finishDefenseResolution);
+    }
+
+    function gameOver() {
+      gameState = "gameOver";
+      selectedEnemy = null;
+      attackPreviewTiles = [];
+      setMessage("Game Over. Tap Restart to try again.");
+      restartBtn.style.display = "block";
+      updateUI();
+    }
+
+    function resetGame() {
+      player = { x: 3, y: 3, hp: 3 };
+      waveSize = 1;
+      defenseCharges = 4;
+      movesSinceRegen = 0;
+      gameState = "playerTurn";
+      restartBtn.style.display = "none";
+      selectedEnemy = null;
+      attackPreviewTiles = [];
+      cameraOffset.x = cameraOffset.y = 0;
+      playerAttackOffset.x = playerAttackOffset.y = 0;
+      enemyAttackAnim.id = null;
+      enemyAttackAnim.dx = enemyAttackAnim.dy = 0;
+      enemyAttackForceStop = false;
+      feedbackType = null;
+      clearQTE();
+      spawnWave(waveSize);
+      setMessage("Your turn. Tap an adjacent enemy to select.");
+      updateUI();
+    }
+
+    // --- Input Handling ---
+
+    function handleBoardTap(evt) {
+      if (qteType === "attack" || qteType === "defense") {
+        handleQTETap();
+        return;
+      }
+
+      if (gameState !== "playerTurn") return;
+
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+      const mx = (evt.clientX - rect.left) * scaleX;
+      const my = (evt.clientY - rect.top) * scaleY;
+
+      const cell = pickCellFromClick(mx, my);
+      if (!cell) return;
+
+      const { x, y } = cell;
+
+      if (x === player.x && y === player.y) return;
+
+      const enemy = getEnemyAt(x, y);
+      const dist = Math.abs(x - player.x) + Math.abs(y - player.y);
+
+      if (enemy) {
+        if (dist !== 1) {
+          setMessage("Enemy is too far. Move adjacent first.");
+          return;
+        }
+
+        if (selectedEnemy && selectedEnemy.id === enemy.id) {
+          startAttackQTE(enemy);
+          return;
+        }
+
+        selectedEnemy = enemy;
+        attackPreviewTiles = [];
+        setMessage("Enemy selected. Tap it again to start the attack countdown.");
+        updateUI();
+        return;
+      }
+
+      if (dist !== 1) {
+        setMessage("You can only move to adjacent tiles.");
+        return;
+      }
+
+      if (getEnemyAt(x, y)) {
+        setMessage("That tile is occupied.");
+        return;
+      }
+
+      selectedEnemy = null;
+      attackPreviewTiles = [];
+      player.x = x;
+      player.y = y;
+
+      registerPlayerAction();
+
+      setMessage("You moved.");
+      endPlayerAction();
+    }
+
+    canvas.addEventListener("pointerdown", handleBoardTap);
+
+    restartBtn.addEventListener("click", resetGame);
+
+    document.body.addEventListener("pointerdown", (evt) => {
+      if (evt.target === canvas) return;
+      if (qteType === "attack" || qteType === "defense") {
+        handleQTETap();
+      }
+    });
+
+    // --- Init ---
+    function init() {
+      setMessage("Your turn. Tap an adjacent enemy to select.");
+      spawnWave(waveSize);
+      updateUI();
+      drawScene();
+    }
+
+    init();
+  </script>
+</body>
+</html>

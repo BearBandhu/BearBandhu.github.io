@@ -1,0 +1,112 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: Gnome Garden Defense — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-gnome">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · one-handed</div>
+<h1>Gnome<br>Garden<br>Defense</h1>
+<p class="hero__lede">Tower defence where the towers are crops. A gnome plants, waters and harvests while bugs march on the house — and every plant is both a weapon and part of the economy that pays for the next one.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-gnome-garden.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Pick a tool, then tap a tile</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-gnome-garden.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-gnome-garden.html" title="Gnome Garden Defense prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Plant</div><div class="loop__d">Sow crops on the tiles — each one is a weapon and a wage.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Defend</div><div class="loop__d">Bugs march on the house and the grown crops in their path fight them.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Harvest</div><div class="loop__d">Take the crop for income, losing the defence that stood there, and replant.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>By fusing the economic and defensive systems into a single entity and filtering all board interactions through an avatar's cooldown economy, a tower defense game can transcend passive observation and become a continuous, high-stakes exercise in risk assessment.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>How can a tower defense game feel unique, and does a gardening-based, dual-purpose resource system make sense?</li><li>Does it feel rewarding to upgrade towers over time and subsequently harvest them for scaling currency?</li><li>Does exposing the balance mechanics through a custom plant editor add value to the core gameplay experience?</li></ul>
+<h3>Merging economy and defense</h3>
+<p>Traditional tower defense completely separates capital from defense. Intertwining them fundamentally rewrites standard retention loops, forcing engaging and agonizing choices.</p>
+<p><strong>The Harvesting Risk:</strong> Making the exact same plant serve as both the barrier and the currency means every build order is a gamble. Pulling an active defender out of the line to afford the next one transforms harvesting from a passive gain into an active vulnerability.</p>
+<p><strong>Time-Based Investment:</strong> Watering plants to raise their level adds a satisfying layer of friction. Harvesting a high-level plant yields a higher seed count, creating a constant tension between holding out for a larger economic payout and surviving the immediate enemy wave.</p>
+<h3>The avatar action economy</h3>
+<p>Introducing a single character to manage the board effectively dictates how the game scales by bottlenecking the player's physical output.</p>
+<p><strong>Strict UX Hierarchy:</strong> Because the Gnome is a single body tied to a cooldown, "what do I do this second" becomes the true engine of the game. The player must constantly evaluate an active flowchart of priorities—water, harvest, plant, or clear tile-eating weeds—ensuring they remain mechanically engaged rather than just watching a finalized defense do the work.</p>
+<h3>System flowcharts and customization</h3>
+<p>Allowing players to create their own plants tackles the problem of game balance from an unconventional, highly interactive angle.</p>
+<p><strong>The Blueprint Editor:</strong> Exposing parameters like cost, yield, and cooldown allows players to stress-test the math themselves. Building an overpowered unit and watching it shatter the wave curve makes the underlying system architecture legible, turning abstract balance conversations into concrete, sandbox experiments.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Harvest yield scales with plant level, which currently makes berry farms strictly better than defending early. Weeds spread on a global timer rather than in response to pressure, so they read as noise instead of consequence. And infected variants double enemy health while also spreading weeds — two punishments on one enemy, which is probably one too many.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · economy · wave balancing</dd>
+<dt>Target</dt><dd>Touch, one-handed</dd>
+<dt>Built with</dt><dd>HTML5 canvas, vanilla JS</dd>
+<dt>State</dt><dd>Playable test build with blueprint editor</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/gnome-garden-defense</span></div>
+<div class="proto"><div class="proto__name">Economy loop</div><ul class="proto__sys"><li>Seeds pay for plants; harvesting plants returns seeds</li><li>Yield scales with the level the plant reached</li></ul></div>
+<div class="proto"><div class="proto__name">Plants as towers</div><ul class="proto__sys"><li>Projectile, burst, lobbed and slow action types</li><li>Water to level up — damage, range and cooldown improve</li></ul></div>
+<div class="proto"><div class="proto__name">Threats</div><ul class="proto__sys"><li>Fast, tank, snail and flying bug types, scaled per wave</li><li>Infected variants spread weeds that take tiles out of play</li><li>House has 10 HP — every leak counts</li></ul></div>
+<div class="proto"><div class="proto__name">Blueprint editor</div><ul class="proto__sys"><li>Author a plant: cost, yield, damage, range, cooldown, action</li><li>Custom plants join the toolbar for the next run</li></ul></div>
+</div>
+</div>
+</section>
+
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the balance notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

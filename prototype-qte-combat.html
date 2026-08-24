@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: QTE Combat — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-qte">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · mobile-first</div>
+<h1>QTE<br>Combat</h1>
+<p class="hero__lede">Reaction inside a turn structure. Attacks and defences resolve on an isometric grid, but every exchange opens a timed input window — the fight keeps asking for your attention between decisions.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-qte-grid-combat.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Tap the canvas to act</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-qte-grid-combat.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-qte-grid-combat.html" title="QTE grid combat prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Position</div><div class="loop__d">Reach and facing on the isometric grid decide what this turn allows.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">React</div><div class="loop__d">Commit to an action, then hit the timed window that resolves it.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Escalate</div><div class="loop__d">Damage and position carry into the next exchange, which asks faster.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>Injecting a real-time reaction beat into a turn-based grid framework increases player presence and enjoyment by bridging the gap between tactical planning and execution, provided the interaction mechanics remain legible enough to avoid degrading the strategic experience into a pure rhythm game.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>Does adding reactive combat to a turn-based game make it more enjoyable?</li><li>What are the systemic benefits and drawbacks of this hybrid approach?</li><li>How simple or complex must the interaction loop be to remain viable as a combat system?</li></ul>
+<h3>Breaking the “watch and wait” loop</h3>
+<p>Integrating active execution into turn-based combat fundamentally alters the player's cognitive load and pacing, presenting distinct trade-offs.</p>
+<p><strong>The Benefits:</strong> It eliminates the passive "choose, watch, wait" downtime that traditionally fragments session engagement. By demanding continuous presence, the combat loop feels significantly more visceral. A successful block or critical strike earned through a reaction beat provides an immediate, kinetic payoff to a well-calculated tactical plan.</p>
+<p><strong>The Drawbacks:</strong> The primary risk is cognitive overload and strategic invalidation. If a player spends three minutes solving a complex spatial puzzle on the grid, only to fail because they missed a 0.2-second input window, the game stops testing their tactics and only tests their reflexes. This friction can alienate players looking for a pure systemic flowchart to master.</p>
+<h3>Balancing complexity and legibility</h3>
+<p>To keep the system viable within an RPG framework, the complexity must remain incredibly focused. The UX hierarchy must prioritize the immediate readability of the incoming attack over everything else on the screen. Stripping the build down to three variables is how I solve this:</p>
+<p><strong>The Wind-up Telegraph:</strong> This is the foundation of the system's fairness. The visual and auditory cues must be unambiguous. If the telegraph blends into the background environment or standard idle animations, the player will feel cheated by the UI rather than challenged by the mechanic.</p>
+<p><strong>Window Length:</strong> This dictates the required mechanical skill. A wider window leans closer to a traditional RPG with interactive flair, while a razor-thin window pushes the game into action-RPG territory.</p>
+<p><strong>The Cost of a Miss:</strong> This is the ultimate dial for determining what genre the game actually is. If missing the reaction causes an attack to deal zero damage, it is a rhythm game. If missing simply means you deal base damage, but hitting the reaction grants a critical bonus, the tactical grid remains the primary driver of success.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">How short can the window get before the input stops reading as a decision? Should a failed QTE lose the turn or only reduce it? And does the timed defence hold up when two enemies act in sequence — or does it just punish reading order?</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Combat design · systems · prototyping</dd>
+<dt>Target</dt><dd>One-handed mobile, portrait</dd>
+<dt>Built with</dt><dd>HTML5 canvas, vanilla JS</dd>
+<dt>State</dt><dd>Playable test build</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/qte-combat</span></div>
+<div class="proto"><div class="proto__name">Grid &amp; movement</div><ul class="proto__sys"><li>Isometric tile grid with reachable-tile highlighting</li><li>Movement and attack range read from the same tile map</li></ul></div>
+<div class="proto"><div class="proto__name">Turn order</div><ul class="proto__sys"><li>Alternating player and enemy phases</li><li>Enemy wind-up telegraphed a beat before it lands</li></ul></div>
+<div class="proto"><div class="proto__name">QTE layer</div><ul class="proto__sys"><li>Timed window on attack — hit for the full result</li><li>Timed window on defence — react or take it whole</li></ul></div>
+<div class="proto"><div class="proto__name">Input</div><ul class="proto__sys"><li>Tap targets sized for thumb reach</li><li>No input the player has to hold and aim at once</li></ul></div>
+</div>
+</div>
+</section>
+
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

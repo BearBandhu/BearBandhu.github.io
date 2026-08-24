@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bugs 'N Guns — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.tr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.tr__poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#0e0d12}.tr__poster img{width:100%;height:100%;object-fit:cover;display:block}.tr__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 34px rgba(0,0,0,.34);transition:transform .18s ease}.tr__poster:hover .tr__play{transform:translate(-50%,-50%) scale(1.08)}.tr__play svg{width:26px;height:26px;fill:#16141b;margin-left:3px}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.gal>div{position:relative;aspect-ratio:16/9}.note{opacity:.62;font-size:.92rem}.about--solo{grid-template-columns:1fr}.pm{display:grid;gap:34px}.pm__g h3{font-size:1.05rem;letter-spacing:.01em;margin:0 0 14px;padding-bottom:10px;border-bottom:1px solid rgba(22,20,27,.12)}.pm__g .rolegrid{margin-top:0}</style>
+</head>
+<body data-page="proj-bugs">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" target="_blank" rel="noopener" href="https://store.steampowered.com/app/2648130/Bugs_N_Guns/">View on Steam ↗</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" data-say="Shipped on Steam. He set the vision and ran it from alpha to beta." id="hero" data-screen-label="Bugs 'N Guns hero">
+<div class="wrap hero__in">
+<div class="mono">Shipped · Blink Shot · Steam · co-operative third person shooter</div>
+<h1>Bugs ’N<br>Guns</h1>
+<p class="hero__lede">Bugs N' Guns is a cooperative third person shooter. Player will need to combine their weapons firepower to eliminate enemies and obstacles as players try to protect a train called MARC - OS from hostile flora and fauna.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#role">My role ↓</a><a class="btn" href="https://store.steampowered.com/app/2648130/Bugs_N_Guns/" target="_blank" rel="noopener">View on Steam ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="trailer" data-say="Trailer first. Hit the thumbnail — the train is called MARC-OS." id="trailer" data-screen-label="Trailer">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Trailer</h2><span class="spacer"></span><span class="sec__note">Two players, one train</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Trailer · Released</span><span class="spacer"></span><a class="btn" href="https://www.youtube.com/watch?v=eMxsDWH9Zrc" target="_blank" rel="noopener">Watch on YouTube ↗</a></div>
+<div class="tr"><button class="tr__poster" type="button" data-yt="eMxsDWH9Zrc" aria-label="Play the Bugs 'N Guns trailer"><img loading="lazy" alt="Bugs 'N Guns trailer still" src="https://img.youtube.com/vi/eMxsDWH9Zrc/maxresdefault.jpg" data-fallback="https://img.youtube.com/vi/eMxsDWH9Zrc/hqdefault.jpg"><span class="tr__play"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></span></button></div>
+</div>
+</div>
+</section>
+
+<section data-section="gallery" data-say="Screenshots go here. Drag one in if you have it." id="gallery" data-screen-label="Screenshots">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Screenshots</h2><span class="spacer"></span><span class="sec__note">Drop images into the slots</span></div>
+<div class="gal">
+<div><image-slot id="proj-bugs-1" shape="rounded" radius="14" placeholder="Drop a Bugs 'N Guns screenshot"></image-slot></div>
+<div><image-slot id="proj-bugs-2" shape="rounded" radius="14" placeholder="Drop a Bugs 'N Guns screenshot"></image-slot></div>
+<div><image-slot id="proj-bugs-3" shape="rounded" radius="14" placeholder="Drop a Bugs 'N Guns screenshot"></image-slot></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" data-say="Escort, combine fire, clear. Two players or nothing." id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Escort</div><div class="loop__d">MARC-OS keeps moving. The train is the thing you are defending, so position is always measured against it.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Combine fire</div><div class="loop__d">Weapons are read together rather than alone — two players pooling firepower is the intended answer to a threat.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Clear</div><div class="loop__d">Enemies and obstacles both stand between the train and the next stretch of track. Both have to come down.</div></div></div>
+</div>
+</section>
+
+<section data-section="role" data-say="Vision, four weapons, enemy AI, and production for sixteen people." id="role" data-screen-label="My role">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>What I owned</h2></div>
+<div class="about">
+<div>
+<p><strong>Vision &amp; Production:</strong> Established the game's foundational vision and directed end-to-end production from Alpha to Beta, managing a cross-functional team of 16 artists, programmers, and designers.</p>
+<p><strong>Systems &amp; Mechanics:</strong> Conceptualized, prototyped, and implemented core gameplay systems, including the four distinct elemental weapons and dynamic enemy AI behaviors.</p>
+<p><strong>Holistic Design:</strong> Owned the comprehensive design pipeline, driving gameplay loops, level architecture, and narrative design to ensure a cohesive player experience.</p>
+<div class="chips"><span class="chip chip--hot">Original vision</span><span class="chip chip--hot">Weapon design</span><span class="chip chip--hot">Enemy AI behaviour</span><span class="chip chip--hot">Gameplay design</span><span class="chip chip--hot">Level design</span><span class="chip chip--hot">Narrative design</span><span class="chip">Production, alpha → beta</span></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Vision · weapons · enemy AI · production</dd>
+<dt>Platform</dt><dd>PC — Steam</dd>
+<dt>State</dt><dd>Released</dd>
+<dt>Studio</dt><dd>Blink Shot</dd>
+<dt>Team</dt><dd>16 — artists, programmers, designers</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="problems" data-say="Four elements that had to stay readable once combined." id="problems" data-screen-label="Design problems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">05</span><h2>Design problems</h2></div>
+<div class="rolegrid"><dl class="contact-card"><dt>Co-op that needs two people</dt><dd>The shooting is built so a single player cannot brute-force an encounter — combined firepower is the mechanic, not a bonus.</dd></dl><dl class="contact-card"><dt>A defence target that moves</dt><dd>Protecting a train instead of a point means the safe side of a fight changes as it travels.</dd></dl><dl class="contact-card"><dt>Hostile flora and fauna</dt><dd>Enemies come from the environment itself, which ties threat placement to level layout rather than to spawn tables.</dd></dl><dl class="contact-card"><dt>Four elements that stay distinct</dt><dd>Each weapon needed its own shooting behaviour and pattern, and had to stay readable once combined with any of the other three.</dd></dl><dl class="contact-card"><dt>Enemies that force the combination</dt><dd>Flying enemies can only be dropped by combined shots, which is the clearest way to make co-operation a requirement rather than an optimisation.</dd></dl><dl class="contact-card"><dt>Aim assist we had to build ourselves</dt><dd>Off-the-shelf assist did not fit four projectile patterns and climbing enemies, so the system was bespoke.</dd></dl></div>
+</div>
+</section>
+
+<section data-section="systems" data-say="Bespoke aim assist. He built that because nothing off the shelf fit." id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">06</span><h2>Systems in the shipped game</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/projects/bugs-n-guns</span></div>
+<div class="proto"><div class="proto__name">Elemental weapons</div><ul class="proto__sys"><li>Four elements, each with its own shooting behaviour and projectile pattern</li><li>Multiple elemental combinations between players</li><li>Bespoke aim assist system, built in-house</li></ul></div><div class="proto"><div class="proto__name">Enemies</div><ul class="proto__sys"><li>Flying enemies that had to be brought down with combined shots</li><li>Ground enemies that could walk and climb</li><li>Turrets firing homing projectiles</li><li>Enemy AI behaviours and concepts defined per family</li></ul></div><div class="proto"><div class="proto__name">Level content</div><ul class="proto__sys"><li>Multiple biomes</li><li>Puzzles and platforming sections between engagements</li><li>MARC-OS as the escorted objective across the route</li></ul></div><div class="proto"><div class="proto__name">Presentation & structure</div><ul class="proto__sys"><li>Voice narrated narrative</li><li>Third person co-operative shooting</li><li>Hostile flora and fauna as the enemy family</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="pipeline" data-say="Sixteen people, alpha through beta." id="pipeline" data-screen-label="Team and pipeline">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">07</span><h2>Team &amp; pipeline</h2><span class="spacer"></span><span class="sec__note">16 people · in-office · Trello + Notion</span></div>
+<div class="about about--solo">
+<div><p>For Bugs n Guns, our in-office pipeline was built around structured communication, rigorous milestone tracking, and maintaining a single source of truth. To protect the team's focus and prevent scope creep, I established a clear departmental hierarchy.</p><p>Each team kicked off the day with a localized morning sync to align on actionable tasks via Trello, while all overarching systems and specifications were strictly documented in our central Notion Game Design Document (GDD). To ensure macro-alignment without derailing individual contributors, I met directly with the area leads weekly.</p><p>We managed our overall production timeline through monthly sprint reviews against our Gantt charts, complemented by end-of-week progress check-ins. To maintain a unified vision across the studio, I also instituted bi-daily full-team playtests, guaranteeing that everyone consistently experienced the latest builds and understood exactly how their daily tasks integrated into the final product.</p></div>
+</div>
+</div>
+</section>
+
+<section data-section="postmortem" data-say="The honest part. Tooling locked the variables behind code." id="postmortem" data-screen-label="Postmortem">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">08</span><h2>Postmortem</h2><span class="spacer"></span><span class="sec__note">What playtesting and the retro told us</span></div>
+<div class="pm"><div class="pm__g"><h3>What worked</h3><div class="rolegrid"><dl class="contact-card"><dt>Core combat &amp; movement</dt><dd>The fluid movement mechanics and the elemental combination system were highly praised during playtesting, establishing themselves as the strongest and most engaging pillars of the game.</dd></dl></div></div><div class="pm__g"><h3>Product &amp; gameplay insights</h3><div class="rolegrid"><dl class="contact-card"><dt>Player agency vs. escort fatigue</dt><dd>Relying exclusively on an escort-driven core loop negatively impacted player agency, with feedback indicating that players felt “dragged” rather than empowered. Future iterations need broader objective variety.</dd></dl><dl class="contact-card"><dt>Puzzle clarity &amp; telegraphing</dt><dd>Playtesting revealed a need to expand elemental variety and improve readability in puzzle-combat. Specifically, the flying enemies requiring exact elemental combinations lacked clear telegraphing, creating unintended friction and confusion for players.</dd></dl></div></div><div class="pm__g"><h3>Cross-disciplinary pipeline</h3><div class="rolegrid"><dl class="contact-card"><dt>Tooling &amp; variable control</dt><dd>A critical bottleneck emerged post-implementation. Systems were built in a way that locked variables behind the code, creating a dependency on programming for minor design tweaks and balance passes.</dd></dl><dl class="contact-card"><dt>Upfront system documentation</dt><dd>To resolve the tooling issue in the future, the programming team requires more highly detailed, specific system requirements from design during the initial handover. This will allow engineering to proactively build open, flexible tools for the design team.</dd></dl></div></div><div class="pm__g"><h3>Team alignment &amp; task management</h3><div class="rolegrid"><dl class="contact-card"><dt>Accountability</dt><dd>Internal reviews highlighted friction regarding task management. Moving forward, the production pipeline requires tighter oversight and stricter adherence to task tracking to ensure all team members remain aligned and accountable for their daily deliverables.</dd></dl></div></div></div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" data-say="Ask him about the weapons. He will talk for a while." id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>document.querySelectorAll(".tr__poster img").forEach(function(im){function fb(){if(im.dataset.fallback&&im.src!==im.dataset.fallback)im.src=im.dataset.fallback}im.addEventListener("error",fb);var chk=function(){if(im.naturalWidth&&im.naturalWidth<=160)fb()};im.complete?chk():im.addEventListener("load",chk)});
+document.querySelectorAll(".tr__poster").forEach(function(b){b.addEventListener("click",function(){var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+b.dataset.yt+"?autoplay=1&rel=0";f.title=b.getAttribute("aria-label");f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;b.replaceWith(f)})});</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

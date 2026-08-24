@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: Cozy Meadow — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-meadow">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · cozy progression</div>
+<h1>Cozy<br>Meadow</h1>
+<p class="hero__lede">A garden that grows into a habitat. Plant, water and harvest a meadow while unlocks, hybrids and wildlife arrive on their own schedule — progression you tend rather than grind.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-cozy-meadow.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Pick a tool, then tap the meadow</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-cozy-meadow.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-cozy-meadow.html" title="Cozy meadow prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Tend</div><div class="loop__d">Till, sow and water — each species grows on its own rate.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Harvest</div><div class="loop__d">Collect plants; harvest counts open the next species and hybrid pairs.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Attract</div><div class="loop__d">The meadow you tended draws wildlife and weather, which changes what is worth planting.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>By removing traditional threat-based failure states and replacing them with curiosity-driven retention loops and an interlocking harvest economy, a game can sustain long-term engagement purely through intrinsic motivation and emergent ecosystem payoffs.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>How to create a cozy progressive experience, and what systems feel well in this context?</li><li>How much player agency is needed when there is no threat?</li><li>What specific actions are important to hold attention and drive the progression curve?</li></ul>
+<h3>Curiosity as the retention loop</h3>
+<p>To hold attention without a fail state, the UX hierarchy must clearly signpost the unknown, driving human-centered focus toward discovery rather than survival.</p>
+<p><strong>The Unfinished Goal:</strong> Relying on locked seeds, undiscovered hybrids, and empty ponds fuels intrinsic motivation. The player returns not because they are punished for leaving, but because the system flowcharts promise a satisfying resolution to a missing piece of the puzzle.</p>
+<p><strong>Harvest as a Single Currency:</strong> Distilling progress into a single currency keeps the cognitive load light. It makes the core action loop—plant, wait, harvest, hybridize—feel effortlessly fluid, ensuring the progression curve never feels like a spreadsheet.</p>
+<h3>Agency through ecosystem payoffs</h3>
+<p>Without combat or physical pressure, player agency is entirely defined by environmental control and the resulting sensory feedback.</p>
+<p><strong>Wildlife as Visual Feedback:</strong> Having the ecosystem respond dynamically to specific plant combinations and weather acts as a living reward system. The meadow visibly evolving into a thriving habitat proves to the player that their specific choices matter, even without a win state.</p>
+<p><strong>Atmospheric Cohesion:</strong> Because the mechanical actions are gentle, the audiovisual feedback must carry the emotional weight. Pairing a distinct, minimalist visual style—perhaps utilizing clear, deliberate lines and surreal, vibrant landscapes—with a purely instrumental, atmospheric soundscape ensures the space feels deeply immersive and relaxing.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Growth speeds are deliberately slow — the test is whether that reads as calm or as dead time. Hybrids are currently discovered by adjacency; a recipe book would be clearer but removes the surprise. And the unlock gates are flat harvest counts, which is easy to tune but tells the player nothing about what they're building toward.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · progression · economy</dd>
+<dt>Target</dt><dd>Touch, mobile-first</dd>
+<dt>Built with</dt><dd>HTML5 canvas, vanilla JS</dd>
+<dt>State</dt><dd>Playable test build — "Flora &amp; Fauna" pass</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/cozy-meadow</span></div>
+<div class="proto"><div class="proto__name">Growth &amp; care</div><ul class="proto__sys"><li>Till, sow, water, harvest with tool-based input</li><li>Per-plant growth rates, from grass to oak</li></ul></div>
+<div class="proto"><div class="proto__name">Progression</div><ul class="proto__sys"><li>Harvest-count gates unlock new species</li><li>Unlocked seeds are granted, not bought — no wall</li></ul></div>
+<div class="proto"><div class="proto__name">Hybrids</div><ul class="proto__sys"><li>Crossbreeds from parent pairs — rose + daisy, sunflower + bluebell, dandelion + tulip</li><li>Encyclopedia hides undiscovered hybrids as mysteries</li></ul></div>
+<div class="proto"><div class="proto__name">Habitat &amp; weather</div><ul class="proto__sys"><li>Bees, butterflies, birds and frogs with their own behaviour</li><li>Weather changes flight, altitude and where fauna shelter</li><li>Ponds and rocks as placeable terrain</li></ul></div>
+</div>
+</div>
+</section>
+
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the tuning notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lylyland — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fill,minmax(250px,1fr));gap:22px}.bnr__img{position:relative;aspect-ratio:16/9}.bnr h4{font-size:1rem;margin:12px 0 6px}.bnr p{margin:0;font-size:.9rem;line-height:1.5;opacity:.72}.bnr__sys{margin-top:10px!important;font-size:.84rem!important;opacity:.6!important}.bnr__sys b{font-weight:600;opacity:.9}.ggs{display:grid;gap:40px}.gg h3{font-size:1.05rem;margin:0 0 16px;padding-bottom:10px;border-bottom:1px solid rgba(22,20,27,.12)}.lede{max-width:64ch;margin:0 0 30px;font-size:1.02rem;line-height:1.6}.show{display:grid;grid-template-columns:300px 1fr;gap:28px;align-items:start}.show__phone{position:sticky;top:90px}.show__gif{display:block;width:100%;height:auto}.show__cap{margin:12px 0 0;opacity:.6;font-size:.8rem;line-height:1.4}@media(max-width:860px){.show{grid-template-columns:1fr}.show__phone{position:static;max-width:300px;margin:0 auto}}.note{opacity:.62;font-size:.92rem}.about--solo{grid-template-columns:1fr}</style>
+</head>
+<body data-page="proj-lylyland">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" target="_blank" rel="noopener" href="https://lylyland.com/">Visit lylyland.com ↗</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" data-say="Games that get you out of the house. Eight of them." id="hero" data-screen-label="Lylyland hero">
+<div class="wrap hero__in">
+<div class="mono">Shipped · Lyly Interactive · gamified mobile app</div>
+<h1>Lyly<br>land</h1>
+<p class="hero__lede">A gamified app that uses games to guide people to real world locations and keep them engaged. Alongside one programmer and one artist I built over eight casual games, all built on skill and repetition, plus a narrative quest layer that sends users to real places to take pictures or read the space for clues to a riddle.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#role">My role ↓</a><a class="btn" href="https://lylyland.com/" target="_blank" rel="noopener">Visit lylyland.com ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="gallery" data-say="Ten games, and every one feeds the same chest economy." id="gallery" data-screen-label="The games">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>The games</h2><span class="spacer"></span><span class="sec__note">Casual, skill-based, built for repeat play</span></div>
+<p class="lede">Every game in this collection shares a unified meta-progression system: players complete in-game objectives to gather chests, which then unlock discounts for specific real-world partner stores.</p>
+<div class="show">
+<div class="show__phone"><img class="show__gif" src="assets/lylyland/crossy-pollo.gif" alt="Crossy Pollo running on a phone" width="787" height="1827"><p class="show__cap mono">Crossy Pollo — brand-sponsored casual game, in app</p></div>
+<div class="ggs"><div class="gg"><h3>Runners &amp; obstacles</h3><div class="gal"><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g01" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-01.png" placeholder="Cat Bum"></image-slot></div><h4>Cat Bum</h4><p>An evasion game where players move a cat left and right to eat sushi and treats while dodging bombs, driven by a countdown timer that can be extended with power-ups.</p><p class="bnr__sys"><b>Core Systems:</b> Horizontal input limitation, randomized entity spawning (hazards vs. rewards), and a dynamic timer loop that acts as the primary fail state.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g03" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-03.png" placeholder="Tiempo de Surf"></image-slot></div><h4>Tiempo de Surf</h4><p>An endless runner starring a surfing turtle dodging palm trees, boats, and planes (featuring integrated ads), with a high-risk mechanic that drops golden coconuts for grazing obstacles.</p><p class="bnr__sys"><b>Core Systems:</b> Procedural obstacle generation, proximity detection/hitboxes (grazing vs. crashing), and dynamic ad-placement mapping.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g08" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-08.png" placeholder="Galaxy Taxi"></image-slot></div><h4>Galaxy Taxi</h4><p>A top-down driving game where players navigate traffic, manage a decaying fuel meter by collecting gas, and earn bonus points for narrowly missing other cars.</p><p class="bnr__sys"><b>Core Systems:</b> Continuous vertical scrolling, resource degradation and replenishment (fuel economy), and near-miss collision tracking.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g09" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-09.png" placeholder="Crossy Pollo"></image-slot></div><h4>Crossy Pollo</h4><p>A Frogger-style game where a chicken crosses different biomes, utilizes power-ups, completes delivery sub-objectives, and faces an instant-death penalty from a condor for idling.</p><p class="bnr__sys"><b>Core Systems:</b> Lane-based movement grid, state-based buff timers (speed/invincibility), secondary quest tracking (deliveries), and idle/repetitive input detection logic.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g02" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-02.png" placeholder="Señor Bee"></image-slot></div><h4>Señor Bee</h4><p>A tap-to-fly avoidance game heavily inspired by Flappy Bird mechanics.</p><p class="bnr__sys"><b>Core Systems:</b> Impulse-based gravity physics (tap to add vertical force) and continuous side-scrolling gap generation.</p></article></div></div><div class="gg"><h3>Action &amp; arcade</h3><div class="gal"><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g07" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-07.png" placeholder="Aplastados"></image-slot></div><h4>Aplastados</h4><p>A horde-survival squash game where players tap to crush over 8 types of space bugs, each with unique health pools, speeds, and behaviors upon death.</p><p class="bnr__sys"><b>Core Systems:</b> Multi-touch input processing, wave/horde pacing director, and enemy state machines handling distinct health, movement, and death-event triggers.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g10" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-10.png" placeholder="Cosecha Arcana"></image-slot></div><h4>Cosecha Arcana</h4><p>A top-down shoot-’em-up where a wizard defends his farm from descending bacteria, grabbing power-ups to scale his damage while the garden visually wilts as it takes hits.</p><p class="bnr__sys"><b>Core Systems:</b> Projectile collision detection, incremental power-up stacking, and a diegetic UI system mapping the player’s numerical health to the garden’s visual state.</p></article></div></div><div class="gg"><h3>Puzzle &amp; memory</h3><div class="gal"><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g04" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-04.png" placeholder="Emparejados"></image-slot></div><h4>Emparejados</h4><p>A progressive memory matching game where players must recall card locations and pair them with on-screen prompts, speeding up with each turn.</p><p class="bnr__sys"><b>Core Systems:</b> Grid-state memory tracking, dynamic difficulty adjustment (scaling time and complexity), and prompt-validation logic.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g05" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-05.png" placeholder="La Trivia"></image-slot></div><h4>La Trivia</h4><p>A basic trivia game utilized to feature customized questions and content directly from various business partners.</p><p class="bnr__sys"><b>Core Systems:</b> Question/answer database querying, partner-specific content tagging, and basic score validation.</p></article><article class="bnr"><div class="bnr__img"><image-slot id="proj-lylyland-g06" shape="rounded" radius="14" fit="cover" src="assets/lylyland/game-06.png" placeholder="2048"></image-slot></div><h4>2048</h4><p>A visual reinterpretation of the classic 2048 puzzle game, featuring a thematic garden and sandbox aesthetic instead of standard numbers.</p><p class="bnr__sys"><b>Core Systems:</b> Grid array manipulation (sliding and merging logic) directly mapped to custom visual asset progression.</p></article></div></div></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" data-say="Play, go there, prove it. That is the loop." id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Play</div><div class="loop__d">Browse the casual games and chase a better score. Every one rewards skill and repetition.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Go there</div><div class="loop__d">Quests point at a real location and give you a reason to walk to it.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Solve on site</div><div class="loop__d">Take a picture, read the space, find the clue that answers the riddle — then bring it back into the app.</div></div></div>
+</div>
+</section>
+
+<section data-section="role" data-say="Eight games, and I designed, produced, tested and balanced all of them." id="role" data-screen-label="My role">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What I owned</h2></div>
+<div class="about">
+<div>
+<p>Leading a lean team consisting of one programmer and one artist, the development of these eight casual titles required comprehensive oversight from concept to deployment. The design philosophy across the entire portfolio prioritized skill, repetition, and engaging retention loops.</p>
+<p><strong>Game Design &amp; Balancing:</strong> Engineered the core mechanics, tuning difficulty curves, pacing directors, and resource economies to ensure fair but challenging loops.</p>
+<p><strong>Production &amp; Scope Definition:</strong> Managed the agile development pipeline, establishing clear technical boundaries and feature scopes to ensure consistent, on-time delivery for each title.</p>
+<p><strong>Art Direction &amp; Testing:</strong> Defined the visual aesthetics—ranging from thematic UI to distinct character biomes—and led rigorous testing to refine hitboxes, multi-touch responsiveness, and input logic.</p>
+<p><strong>Modular Systems &amp; Throughput:</strong> Developed modular based design systems to reduce game design development, shipping a fully finished game every two to three weeks.</p>
+<p><strong>Quest &amp; Narrative Systems:</strong> Designed the overarching meta-progression layer to drive real-world engagement. This included mapping out interactive quests that directed players to physical locations to analyze spaces, take photos, and solve riddles to unlock chests and secure partner discounts.</p>
+<div class="chips"><span class="chip chip--hot">Modular design systems</span><span class="chip chip--hot">Game design</span><span class="chip chip--hot">Balancing</span><span class="chip chip--hot">Production</span><span class="chip chip--hot">Scope definition</span><span class="chip chip--hot">Art direction</span><span class="chip chip--hot">Quest &amp; narrative systems</span><span class="chip">Testing</span></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Game design · production · balancing · art direction</dd>
+<dt>Platform</dt><dd>Mobile app</dd>
+<dt>State</dt><dd>Released</dd>
+<dt>Studio</dt><dd>Lyly Interactive</dd>
+<dt>Team</dt><dd>3 on the games — designer, programmer, artist</dd>
+<dt>Cadence</dt><dd>A shipped game every 2–3 weeks</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="applied" data-say="The same four levers, tuned differently in every game." id="applied" data-screen-label="Applied system design">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Applied system design</h2></div>
+<div class="rolegrid"><dl class="contact-card"><dt>Risk/Reward &amp; Economy Loops</dt><dd>Balanced resource degradation (fuel lines in Galaxy Taxi), dynamic countdown timers (Cat Bum), and proximity-based grazing mechanics for bonus scoring (Tiempo de Surf).</dd></dl><dl class="contact-card"><dt>Combat &amp; Pacing Controllers</dt><dd>Defined multi-touch wave directors for horde survival (Aplastados) and structured incremental power-up stacking against varied enemy state machines and projectile systems (Cosecha Arcana).</dd></dl><dl class="contact-card"><dt>Logic &amp; Dynamic Difficulty</dt><dd>Built adaptive difficulty scaling for grid-state memory systems (Emparejados, 2048) and structured database querying for partner-branded content (La Trivia).</dd></dl><dl class="contact-card"><dt>Input &amp; Penalty Systems</dt><dd>Designed lane-based grid movement paired with state-based buff timers, while integrating anti-idle and anti-repetition penalty triggers to force continuous player action (Crossy Pollo).</dd></dl></div>
+</div>
+</section>
+
+<section data-section="problems" data-say="A quest that asks you to travel has to be worth the trip." id="problems" data-screen-label="Design problems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">05</span><h2>Design problems</h2></div>
+<div class="rolegrid"><dl class="contact-card"><dt>Skill loops that survive repetition</dt><dd>Every game is built on skill and repetition, so the difficulty has to stay interesting on the twentieth attempt, not just the first.</dd></dl><dl class="contact-card"><dt>Getting someone to actually go somewhere</dt><dd>A quest that asks a user to travel has to be worth the trip — the on-site action is the payoff, not an errand.</dd></dl><dl class="contact-card"><dt>Eight games, three people</dt><dd>With one programmer and one artist, scope was the design constraint. Each game had to be defined tightly enough to ship.</dd></dl><dl class="contact-card"><dt>One art style across everything</dt><dd>Eight casual games and a quest layer still have to read as one app, which made the art direction a systems problem.</dd></dl></div>
+</div>
+</section>
+
+<section data-section="systems" data-say="Eight games and a quest layer, all in one app." id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">06</span><h2>Systems in the shipped app</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/projects/lylyland</span></div>
+<div class="proto"><div class="proto__name">Casual games</div><ul class="proto__sys"><li>Over 8 casual games built with one programmer and one artist</li><li>Every game built around skill and repetition</li><li>Scope, balance and art style defined per game</li></ul></div><div class="proto"><div class="proto__name">Real-world quests</div><ul class="proto__sys"><li>Narrative quest systems that send users to real locations</li><li>Actions on site — take a picture, read the space for clues</li><li>Riddles solved by observing the place itself</li></ul></div><div class="proto"><div class="proto__name">Engagement</div><ul class="proto__sys"><li>Unified meta-progression: objectives yield chests, chests unlock discounts at real partner stores</li><li>Brand-facing competitions, sponsorships and in-game ad placements</li><li>Mini-game browsing as the entry point to the app</li><li>Repeat play as the engagement driver</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="pipeline" data-say="Three people, connected all day. A game every two or three weeks." id="pipeline" data-screen-label="Team and pipeline">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">07</span><h2>Team &amp; pipeline</h2><span class="spacer"></span><span class="sec__note">Three people, daily contact</span></div>
+<div class="about about--solo">
+<div><p>A small team of three, so the pipeline was built around daily meet-ups and working closely to reduce information lag. When possible we worked connected — an open channel rather than scheduled handovers.</p><p>We kick off with a morning sync to prioritize tasks, and the open-channel setup lets us drop in and resolve blockers instantly without scheduling overhead. We close out with a brief end-of-day touchpoint to catch any deviations, which lets me prep solutions for the next morning.</p><p>To anchor that, I keep strict meeting hygiene: every discussion ends with a verbal summary of what we agreed, and the actionable notes go straight into the group chat for full visibility. On a two-to-three week shipping cadence, a misunderstanding costs a whole title.</p></div>
+</div>
+</div>
+</section>
+
+<section data-section="postmortem" data-say="They were siloed. Every game a separate island." id="postmortem" data-screen-label="Postmortem">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">08</span><h2>Postmortem</h2><span class="spacer"></span><span class="sec__note">Strategic reflections</span></div>
+<p class="lede">While the development cycle was a major success, evaluating the live performance of the games revealed clear areas for future systemic improvement.</p>
+<div class="rolegrid"><dl class="contact-card"><dt>Retention vs. Churn</dt><dd>The titles were highly effective at capturing short-term engagement, but lacked the mechanical variety needed to sustain long-term retention loops. Future iterations would require deeper progression layers to keep veteran users engaged.</dd></dl><dl class="contact-card"><dt>LiveOps &amp; Upkeep</dt><dd>Content-driven applications like La Trivia required significant, ongoing operational maintenance to keep questions fresh and ensure smooth in-app performance, impacting the small team's bandwidth.</dd></dl><dl class="contact-card"><dt>Ecosystem Interconnectivity</dt><dd>The games functioned too independently as siloed experiences. There was a critical need for stronger interconnectivity—both between the individual games themselves and the broader primary app ecosystem they lived within.</dd></dl></div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" data-say="Ask him how you make someone walk across town for a riddle." id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

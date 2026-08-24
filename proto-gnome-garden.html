@@ -1,0 +1,1565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Gnome Garden Defense</title>
+    <style>
+        :root {
+            --bg-color: #4f772d;
+            --ui-bg: rgba(30, 40, 20, 0.95);
+            --text-main: #f0f4e6;
+            --accent: #ffd166;
+            --danger: #ef476f;
+            --tool-water: #118ab2;
+            --tool-harvest: #ee9b00;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; user-select: none; -webkit-user-select: none; }
+
+        body {
+            background-color: #1a1a1a; color: var(--text-main);
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            overflow: hidden; display: flex; justify-content: center; align-items: center;
+            height: 100vh; width: 100vw;
+        }
+
+        #game-container {
+            position: relative; width: 100%; height: 100%; max-width: 800px;
+            background-color: var(--bg-color); overflow: hidden;
+            box-shadow: 0 0 30px rgba(0,0,0,0.8); display: flex;
+            justify-content: center; align-items: center;
+        }
+
+        canvas { display: block; }
+
+        /* Top HUD */
+        #hud-top {
+            position: absolute; top: 0; left: 0; width: 100%; padding: 15px 20px;
+            display: flex; justify-content: space-between;
+            background: linear-gradient(to bottom, rgba(0,0,0,0.8) 0%, rgba(0,0,0,0) 100%);
+            pointer-events: none; font-size: 1.2rem; font-weight: bold;
+            text-shadow: 1px 2px 3px rgba(0,0,0,0.8); z-index: 10;
+        }
+
+        .hud-stat { display: flex; align-items: center; gap: 8px; }
+        .icon { font-size: 1.5rem; }
+
+        /* Bottom Toolbar */
+        #toolbar {
+            position: absolute; bottom: 0; left: 0; width: 100%;
+            padding: 8px 4px 15px 4px; background: var(--ui-bg);
+            border-top: 3px solid rgba(255,255,255,0.1);
+            display: flex; flex-wrap: wrap; justify-content: center; gap: 4px;
+            z-index: 10; border-top-left-radius: 20px; border-top-right-radius: 20px;
+        }
+
+        .tool-btn {
+            background: rgba(255,255,255,0.1); border: 2px solid transparent;
+            border-radius: 10px; padding: 6px 2px; color: white;
+            font-size: 0.75rem; font-weight: bold;
+            display: flex; flex-direction: column; align-items: center;
+            gap: 2px; flex: 1 1 22%; min-width: 60px; max-width: 90px;
+            cursor: pointer; transition: transform 0.1s, background 0.2s;
+        }
+
+        .tool-btn.active {
+            background: rgba(255,255,255,0.3); transform: scale(1.05);
+            border-color: var(--accent);
+            box-shadow: 0 5px 15px rgba(0,0,0,0.3); z-index: 2;
+        }
+
+        .tool-btn.disabled { opacity: 0.4; cursor: not-allowed; filter: grayscale(1); }
+
+        .tool-icon { font-size: 1.3rem; }
+        .tool-desc { font-size: 0.55rem; opacity: 0.8; text-align: center; line-height: 1.1; }
+
+        #tool-info-bar {
+            position: absolute; bottom: 85px; left: 50%; transform: translateX(-50%);
+            background: rgba(0, 0, 0, 0.8); padding: 6px 15px; border-radius: 20px;
+            font-size: 0.85rem; color: var(--accent); white-space: nowrap;
+            pointer-events: none; z-index: 15; border: 1px solid rgba(255,255,255,0.2);
+            transition: opacity 0.2s; text-shadow: 1px 1px 2px #000;
+        }
+
+        /* Overlays & Menus */
+        .overlay {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); display: flex; flex-direction: column;
+            justify-content: flex-start; align-items: center; z-index: 20;
+            text-align: center; padding: 40px 20px; overflow-y: auto;
+        }
+
+        .overlay h1 { font-size: 2.5rem; color: var(--accent); margin-bottom: 20px; text-shadow: 2px 4px 0px #000; flex-shrink: 0; }
+        .overlay h2 { font-size: 1.8rem; color: #fff; margin-bottom: 15px; flex-shrink: 0; }
+        .overlay p { font-size: 0.95rem; margin-bottom: 20px; line-height: 1.4; max-width: 450px; flex-shrink: 0; }
+
+        .btn {
+            background: var(--tool-water); color: #fff; border: none;
+            padding: 12px 30px; font-size: 1.2rem; font-weight: bold;
+            border-radius: 30px; cursor: pointer; box-shadow: 0 4px 0 #0b5e7a;
+            transition: transform 0.1s; margin: 8px; flex-shrink: 0;
+        }
+        .btn:active { transform: translateY(4px); box-shadow: 0 0 0 #0b5e7a; }
+        .btn-alt { background: #4a4e69; box-shadow: 0 4px 0 #22223b; color: white; }
+        .btn-alt:active { box-shadow: 0 0 0 #22223b; }
+        .btn-danger { background: var(--danger); box-shadow: 0 4px 0 #9d0208; color: white; }
+        .btn-danger:active { box-shadow: 0 0 0 #9d0208; }
+
+        .highlight { color: var(--accent); font-weight: bold; }
+        .hidden { display: none !important; }
+
+        /* Workshop & Loadout Grids */
+        .card-grid {
+            display: flex; flex-wrap: wrap; gap: 10px; justify-content: center;
+            max-width: 600px; margin-bottom: 20px; width: 100%;
+        }
+
+        .plant-card {
+            background: rgba(255,255,255,0.1); border: 2px solid rgba(255,255,255,0.2);
+            border-radius: 10px; padding: 10px; width: 140px; cursor: pointer;
+            transition: all 0.2s; display: flex; flex-direction: column; align-items: center;
+            position: relative;
+        }
+        .plant-card:hover { background: rgba(255,255,255,0.2); }
+        .plant-card.selected { border-color: var(--accent); background: rgba(255, 209, 102, 0.2); box-shadow: 0 0 15px rgba(255, 209, 102, 0.4); transform: scale(1.05); }
+        .plant-card .icon { font-size: 2rem; margin-bottom: 5px; }
+        .plant-card .name { font-weight: bold; font-size: 0.9rem; margin-bottom: 5px; text-align: center; }
+        .plant-card .stats { font-size: 0.7rem; opacity: 0.8; line-height: 1.3; text-align: center; }
+
+        /* Form */
+        .form-group {
+            display: flex; flex-direction: column; text-align: left; margin-bottom: 15px; width: 100%; max-width: 300px;
+        }
+        .form-group label { font-weight: bold; margin-bottom: 5px; font-size: 0.9rem; color: var(--accent); }
+        .form-group input, .form-group select {
+            padding: 10px; border-radius: 5px; border: none; background: rgba(255,255,255,0.9);
+            font-size: 1rem; font-family: inherit;
+        }
+        .form-row { display: flex; gap: 10px; width: 100%; max-width: 300px; }
+        .form-row .form-group { flex: 1; }
+
+    </style>
+</head>
+<body>
+
+<div id="game-container">
+    <canvas id="gameCanvas"></canvas>
+    
+    <div id="hud-top" class="hidden">
+        <div class="hud-stat"><span class="icon">🌰</span> <span id="ui-seeds">2</span></div>
+        <div class="hud-stat"><span class="icon">🐛</span> Wave: <span id="ui-wave">1</span></div>
+        <div class="hud-stat" style="color: var(--danger)"><span class="icon">🏠</span> <span id="ui-hp">10</span></div>
+    </div>
+
+    <div id="toolbar" class="hidden">
+        <!-- Populated dynamically -->
+    </div>
+
+    <!-- Tooltip Element -->
+    <div id="tool-info-bar" class="hidden">Select a tool</div>
+
+    <!-- MAIN MENU -->
+    <div id="menu-main" class="overlay">
+        <h1>Gnome Defense</h1>
+        <p>Defend your garden from the swarming insect horde. Build an economy, design your loadout, and survive.</p>
+        <button class="btn" onclick="nav('menu-loadout'); renderLoadout();">Enter Shed (Play)</button>
+        <button class="btn btn-alt" onclick="nav('menu-workshop'); renderWorkshop();">Plant Workshop</button>
+    </div>
+
+    <!-- WORKSHOP MENU -->
+    <div id="menu-workshop" class="overlay hidden">
+        <h2>Plant Workshop</h2>
+        <p>Design custom plants to use in your garden.</p>
+        <div id="workshop-list" class="card-grid"></div>
+        <div>
+            <button class="btn" onclick="openCreateMenu()">Create New Plant</button>
+            <button class="btn btn-alt" onclick="nav('menu-main')">Main Menu</button>
+        </div>
+    </div>
+
+    <!-- CREATE PLANT MENU -->
+    <div id="menu-create" class="overlay hidden">
+        <h2>Blueprint Editor</h2>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Name</label>
+                <input type="text" id="cp-name" maxlength="12" placeholder="My Plant">
+            </div>
+            <div class="form-group">
+                <label>Emoji Icon</label>
+                <input type="text" id="cp-icon" maxlength="2" placeholder="🌵">
+            </div>
+        </div>
+        
+        <div class="form-row">
+            <div class="form-group">
+                <label>Cost (Seeds)</label>
+                <input type="number" id="cp-cost" min="1" max="10" value="2">
+            </div>
+            <div class="form-group">
+                <label>Max Harvest Yield</label>
+                <input type="number" id="cp-harvest" min="1" max="20" value="3">
+            </div>
+        </div>
+
+        <div class="form-group">
+            <label>Visual Style</label>
+            <select id="cp-visual">
+                <option value="flower">Flower (Standard)</option>
+                <option value="grass">Grass (Low profile)</option>
+                <option value="stinger">Stinger (Tall/Exotic)</option>
+                <option value="dandelion">Dandelion (Puff)</option>
+                <option value="berry">Bush (Foliage)</option>
+                <option value="arty">Artillery (Heavy)</option>
+            </select>
+        </div>
+
+        <div class="form-group">
+            <label>Plant Behavior</label>
+            <select id="cp-action" onchange="updateFormFields()">
+                <option value="projectile">Shooter (Direct Fire)</option>
+                <option value="lobbed">Artillery (Lobbed Explosive)</option>
+                <option value="burst">Burst (Point-Blank AoE)</option>
+                <option value="slow">Aura (Slows Enemies)</option>
+                <option value="none">Passive (Economy/Wall)</option>
+            </select>
+        </div>
+
+        <div id="combat-stats" style="width: 100%; max-width: 300px;">
+            <div class="form-group">
+                <label>Max Damage (Lvl 2)</label>
+                <input type="number" id="cp-dmg" min="1" max="200" value="10">
+            </div>
+            <div class="form-group">
+                <label>Max Range (Lvl 2)</label>
+                <input type="number" id="cp-range" min="50" max="800" value="200">
+            </div>
+            <div class="form-group">
+                <label>Fire Rate (Seconds)</label>
+                <input type="number" id="cp-cd" min="0.5" max="10.0" step="0.1" value="1.5">
+            </div>
+        </div>
+
+        <div id="projectile-stats" class="form-group">
+            <label>Projectile Ammo</label>
+            <select id="cp-theme">
+                <option value="normal">Normal Seed</option>
+                <option value="bee">Bee (High speed)</option>
+                <option value="pierce_bee">Piercing Bee (Hits multiple)</option>
+            </select>
+        </div>
+
+        <div id="slow-stats" class="form-group hidden">
+            <label>Max Slow % (Lvl 2)</label>
+            <input type="number" id="cp-slow" min="10" max="95" value="80">
+        </div>
+
+        <div style="margin-top: 20px;">
+            <button class="btn" onclick="savePlant()">Save Blueprint</button>
+            <button class="btn btn-alt" onclick="nav('menu-workshop')">Cancel</button>
+        </div>
+    </div>
+
+    <!-- LOADOUT MENU -->
+    <div id="menu-loadout" class="overlay hidden">
+        <h2>Select Loadout</h2>
+        <p>Pick up to <span class="highlight" id="loadout-counter">0/6</span> plants to bring into the garden.</p>
+        <div id="loadout-list" class="card-grid"></div>
+        <div>
+            <button class="btn" onclick="confirmLoadout()">Start Mission</button>
+            <button class="btn btn-alt" onclick="nav('menu-main')">Back</button>
+        </div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over-screen" class="overlay hidden">
+        <h1 style="color: var(--danger)">Game Over</h1>
+        <p>The bugs took over the house!</p>
+        <p>Waves survived: <span id="final-wave" class="highlight">0</span></p>
+        <button class="btn" onclick="nav('menu-main')">Main Menu</button>
+    </div>
+</div>
+
+<script>
+/**
+ * Gnome Garden Defense - Core Engine & Modular Data
+ */
+
+// --- DATA: Blueprints ---
+const DEFAULT_BLUEPRINTS = [
+    { id: 'bp_flower', name: 'Flower', icon: '🌻', cost: 1, harvestMax: 2, baseVisual: 'flower', actionType: 'projectile', actionTheme: 'normal', dmgMax: 8, rangeMax: 250, cdMin: 0.85, isDefault: true },
+    { id: 'bp_grass', name: 'Grass', icon: '🌿', cost: 1, harvestMax: 1, baseVisual: 'grass', actionType: 'slow', slowMax: 80, isDefault: true },
+    { id: 'bp_dandelion', name: 'Dandel.', icon: '🌼', cost: 2, harvestMax: 2, baseVisual: 'dandelion', actionType: 'burst', dmgMax: 10, rangeMax: 140, cdMin: 1.5, isDefault: true },
+    { id: 'bp_stinger', name: 'Stinger', icon: '🌷', cost: 3, harvestMax: 2, baseVisual: 'stinger', actionType: 'projectile', actionTheme: 'bee', dmgMax: 25, rangeMax: 450, cdMin: 3.0, isDefault: true },
+    { id: 'bp_berry', name: 'Berry', icon: '🫐', cost: 4, harvestMax: 8, baseVisual: 'berry', actionType: 'none', isDefault: true },
+    { id: 'bp_arty', name: 'Arty', icon: '💣', cost: 4, harvestMax: 2, baseVisual: 'arty', actionType: 'lobbed', dmgMax: 40, rangeMax: 500, cdMin: 3.0, isDefault: true }
+];
+
+let customBlueprints = JSON.parse(localStorage.getItem('gnome_custom_plants') || '[]');
+let allBlueprints = [...DEFAULT_BLUEPRINTS, ...customBlueprints];
+let selectedLoadout = []; 
+
+// --- Game Engine Variables ---
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+const V_WIDTH = 600; const V_HEIGHT = 900;
+const TILE_SIZE = 75; const COLS = Math.floor(V_WIDTH / TILE_SIZE); const ROWS = Math.floor(V_HEIGHT / TILE_SIZE); 
+const HOUSE_X = V_WIDTH / 2; const HOUSE_Y = TILE_SIZE * 1.5; 
+
+let scale = 1;
+let currentTool = ''; 
+let gameState = 'menu'; 
+
+let seeds = 2; let hp = 10; let wave = 1;
+let waterCooldown = 0; const WATER_CD_MAX = 40; 
+let globalTime = 0; let globalWeedTimer = 35; 
+
+let gnome = null; let plants = []; let bugs = []; let projectiles = []; let particles = []; let floatingTexts = []; let groundDecorations = []; 
+let waveTimer = 0; let waveQueue = []; let spawnTimer = 0; let waveActive = false;
+
+// --- UI & Menu Logic ---
+
+function nav(screenId) {
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'));
+    document.getElementById('hud-top').classList.add('hidden');
+    document.getElementById('toolbar').classList.add('hidden');
+    document.getElementById('tool-info-bar').classList.add('hidden');
+    
+    if (screenId !== 'game') {
+        document.getElementById(screenId).classList.remove('hidden');
+        gameState = 'menu';
+    }
+}
+
+function renderWorkshop() {
+    customBlueprints = JSON.parse(localStorage.getItem('gnome_custom_plants') || '[]');
+    allBlueprints = [...DEFAULT_BLUEPRINTS, ...customBlueprints];
+    const list = document.getElementById('workshop-list');
+    list.innerHTML = '';
+    
+    if (customBlueprints.length === 0) {
+        list.innerHTML = '<p style="width:100%; opacity:0.6;">No custom plants yet.</p>';
+        return;
+    }
+
+    customBlueprints.forEach(bp => {
+        let stats = bp.actionType === 'none' ? `Econ. (Max ${bp.harvestMax}🌰)` : 
+                    bp.actionType === 'slow' ? `Slows ${bp.slowMax}%` : 
+                    `Dmg ${bp.dmgMax} | Rg ${bp.rangeMax}`;
+
+        list.innerHTML += `
+            <div class="plant-card">
+                <div class="icon">${bp.icon}</div>
+                <div class="name">${bp.name}</div>
+                <div class="stats">${stats}<br>Cost: ${bp.cost}🌰</div>
+                <button class="btn btn-danger" style="padding: 4px 10px; font-size:0.8rem; margin-top:8px;" onclick="deletePlant('${bp.id}')">Delete</button>
+            </div>
+        `;
+    });
+}
+
+function deletePlant(id) {
+    customBlueprints = customBlueprints.filter(bp => bp.id !== id);
+    localStorage.setItem('gnome_custom_plants', JSON.stringify(customBlueprints));
+    renderWorkshop();
+}
+
+function openCreateMenu() {
+    nav('menu-create');
+    updateFormFields();
+}
+
+function updateFormFields() {
+    let action = document.getElementById('cp-action').value;
+    document.getElementById('combat-stats').classList.toggle('hidden', action === 'none' || action === 'slow');
+    document.getElementById('projectile-stats').classList.toggle('hidden', action !== 'projectile');
+    document.getElementById('slow-stats').classList.toggle('hidden', action !== 'slow');
+}
+
+function savePlant() {
+    let id = 'cp_' + Date.now();
+    let name = document.getElementById('cp-name').value.substring(0,12) || 'Mutant';
+    let icon = document.getElementById('cp-icon').value.substring(0,2) || '🌱';
+    let cost = parseInt(document.getElementById('cp-cost').value) || 2;
+    let harvestMax = parseInt(document.getElementById('cp-harvest').value) || 2;
+    let baseVisual = document.getElementById('cp-visual').value;
+    let actionType = document.getElementById('cp-action').value;
+    
+    let bp = { id, name, icon, cost, harvestMax, baseVisual, actionType, isDefault: false };
+    
+    if (actionType !== 'none' && actionType !== 'slow') {
+        bp.dmgMax = parseInt(document.getElementById('cp-dmg').value) || 10;
+        bp.rangeMax = parseInt(document.getElementById('cp-range').value) || 200;
+        bp.cdMin = parseFloat(document.getElementById('cp-cd').value) || 1.5;
+    }
+    if (actionType === 'projectile') bp.actionTheme = document.getElementById('cp-theme').value;
+    if (actionType === 'slow') bp.slowMax = parseInt(document.getElementById('cp-slow').value) || 50;
+
+    customBlueprints.push(bp);
+    localStorage.setItem('gnome_custom_plants', JSON.stringify(customBlueprints));
+    
+    nav('menu-workshop');
+    renderWorkshop();
+}
+
+function renderLoadout() {
+    allBlueprints = [...DEFAULT_BLUEPRINTS, ...customBlueprints];
+    const list = document.getElementById('loadout-list');
+    list.innerHTML = '';
+    
+    if (selectedLoadout.length === 0) {
+        selectedLoadout = DEFAULT_BLUEPRINTS.map(b => b.id);
+    }
+
+    allBlueprints.forEach(bp => {
+        let isSel = selectedLoadout.includes(bp.id);
+        let stats = bp.actionType === 'none' ? `Econ.` : bp.actionType === 'slow' ? `Slows` : `Dmg ${bp.dmgMax}`;
+        
+        list.innerHTML += `
+            <div class="plant-card ${isSel ? 'selected' : ''}" onclick="toggleLoadout('${bp.id}', this)">
+                <div class="icon">${bp.icon}</div>
+                <div class="name">${bp.name}</div>
+                <div class="stats">${stats}<br>Cost: ${bp.cost}🌰</div>
+            </div>
+        `;
+    });
+    updateLoadoutCounter();
+}
+
+function toggleLoadout(id, el) {
+    if (selectedLoadout.includes(id)) {
+        selectedLoadout = selectedLoadout.filter(x => x !== id);
+        el.classList.remove('selected');
+    } else {
+        if (selectedLoadout.length >= 6) return; 
+        selectedLoadout.push(id);
+        el.classList.add('selected');
+    }
+    updateLoadoutCounter();
+}
+
+function updateLoadoutCounter() {
+    document.getElementById('loadout-counter').innerText = `${selectedLoadout.length}/6`;
+}
+
+function confirmLoadout() {
+    if (selectedLoadout.length === 0) {
+        alert("Select at least 1 plant!");
+        return;
+    }
+    generateToolbar();
+    startGame();
+}
+
+function generateToolbar() {
+    const tb = document.getElementById('toolbar');
+    tb.innerHTML = '';
+    
+    selectedLoadout.forEach((id, idx) => {
+        let bp = allBlueprints.find(b => b.id === id);
+        let act = idx === 0 ? 'active' : '';
+        if(idx === 0) currentTool = bp.id;
+        
+        tb.innerHTML += `
+            <button class="tool-btn ${act}" id="btn-${bp.id}" onclick="setTool('${bp.id}')">
+                <span class="tool-icon">${bp.icon}</span><span>${bp.name}</span><span class="tool-desc">${bp.cost} 🌰</span>
+            </button>
+        `;
+    });
+    
+    tb.innerHTML += `
+        <button class="tool-btn" id="btn-water" onclick="setTool('water')">
+            <span class="tool-icon">🚿</span><span>Water</span><span class="tool-desc" id="water-desc">Boost</span>
+        </button>
+        <button class="tool-btn" id="btn-harvest" onclick="setTool('harvest')">
+            <span class="tool-icon">✂️</span><span>Harvest</span><span class="tool-desc">Get Seeds</span>
+        </button>
+    `;
+
+    if(selectedLoadout.length > 0) setTool(selectedLoadout[0]);
+}
+
+function setTool(tool) {
+    if (tool === 'water' && waterCooldown > 0) {
+        playSound('hurt'); return; 
+    }
+    currentTool = tool;
+    document.querySelectorAll('.tool-btn').forEach(btn => btn.classList.remove('active'));
+    let activeBtn = document.getElementById('btn-' + tool);
+    if(activeBtn) activeBtn.classList.add('active');
+    playSound('click');
+
+    // Update Tooltip
+    let infoBar = document.getElementById('tool-info-bar');
+    if (infoBar) {
+        if (tool === 'water') infoBar.innerText = "Water: Speeds up plant growth (40s CD)";
+        else if (tool === 'harvest') infoBar.innerText = "Harvest: Remove plant for seeds";
+        else {
+            let bp = allBlueprints.find(b => b.id === tool);
+            if (bp) {
+                if(bp.actionType === 'none') infoBar.innerText = `${bp.name}: Economy plant (Harvest for seeds)`;
+                else if(bp.actionType === 'slow') infoBar.innerText = `${bp.name}: Slows enemies walking through it`;
+                else infoBar.innerText = `${bp.name}: Damage ${bp.dmgMax} | Range ${bp.rangeMax}`;
+            }
+        }
+    }
+}
+
+function initMap() {
+    groundDecorations = [];
+    for (let i = 0; i < 70; i++) {
+        let x = Math.random() * V_WIDTH; let y = Math.random() * V_HEIGHT; let type = Math.random();
+        if (type < 0.4) groundDecorations.push({ type: 'pebble', x, y, size: Math.random() * 3 + 2 });
+        else if (type < 0.7) groundDecorations.push({ type: 'clover', x, y });
+        else groundDecorations.push({ type: 'tuft', x, y, size: Math.random() * 5 + 5 });
+    }
+}
+
+class Gnome {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.targetX = x; this.targetY = y;
+        this.speed = 280; this.state = 'idle';
+        this.workTimer = 0; this.workDuration = 0.3;
+        this.facingRight = true; this.bounce = 0;
+        this.currentTask = null;
+    }
+
+    setTarget(c, r, task) {
+        this.targetX = c * TILE_SIZE + TILE_SIZE / 2;
+        this.targetY = r * TILE_SIZE + TILE_SIZE / 2;
+        this.currentTask = task; this.state = 'moving';
+    }
+
+    update(dt) {
+        if (this.state === 'moving') {
+            let dx = this.targetX - this.x; let dy = this.targetY - this.y;
+            let dist = Math.hypot(dx, dy);
+            if (dist > 5) {
+                this.x += (dx / dist) * this.speed * dt; this.y += (dy / dist) * this.speed * dt;
+                this.facingRight = dx > 0; this.bounce = Math.sin(Date.now() / 50) * 5;
+            } else {
+                this.x = this.targetX; this.y = this.targetY;
+                this.state = 'working'; this.workTimer = this.workDuration; this.bounce = 0;
+            }
+        } else if (this.state === 'working') {
+            this.workTimer -= dt; this.bounce = Math.sin(Date.now() / 30) * 3;
+            if (Math.random() < 0.2) {
+                if (currentTool === 'water') particles.push(new Particle(this.x + (this.facingRight?20:-20), this.y - 10, '#4cc9f0'));
+                else if (currentTool !== 'harvest') particles.push(new Particle(this.x, this.y, '#52796f'));
+            }
+            if (this.workTimer <= 0) {
+                this.state = 'idle'; this.bounce = 0; this.executeTask();
+            }
+        }
+    }
+
+    executeTask() {
+        if (!this.currentTask) return;
+        let c = Math.floor(this.x / TILE_SIZE); let r = Math.floor(this.y / TILE_SIZE);
+        let task = this.currentTask; this.currentTask = null;
+
+        if (c < 0 || c >= COLS || r < 0 || r >= ROWS) return;
+        if (r < 2 && c >= 3 && c <= 4) { floatingTexts.push(new FloatingText("Too close!", this.x, this.y - 40, '#ef476f')); return; }
+        
+        let existingPlant = plants.find(p => p.c === c && p.r === r);
+        let isPlantTool = task !== 'water' && task !== 'harvest';
+
+        if (isPlantTool) {
+            if (!existingPlant) {
+                let bp = allBlueprints.find(b => b.id === task);
+                if (!bp) return;
+                
+                if (seeds >= bp.cost) {
+                    seeds -= bp.cost;
+                    plants.push(new Plant(c, r, bp));
+                    playSound('pop'); updateUI();
+                } else {
+                    floatingTexts.push(new FloatingText(`Need ${bp.cost} Seeds!`, this.x, this.y - 40, '#ef476f'));
+                }
+            } else {
+                floatingTexts.push(new FloatingText("Blocked!", this.x, this.y - 40, '#ef476f'));
+            }
+        } else if (task === 'water' && existingPlant) {
+            if (existingPlant.isWeed) {
+                floatingTexts.push(new FloatingText("Cannot water weeds!", this.x, this.y - 40, '#b5179e'));
+            } else if (existingPlant.level < 2 && !existingPlant.watered) {
+                existingPlant.water(); waterCooldown = WATER_CD_MAX; 
+                playSound('splash'); setTool(selectedLoadout[0]); 
+            } else if (existingPlant.watered) {
+                floatingTexts.push(new FloatingText("Already Watered!", this.x, this.y - 40, '#4cc9f0'));
+            } else {
+                floatingTexts.push(new FloatingText("Fully Grown!", this.x, this.y - 40, '#ccc'));
+            }
+        } else if (task === 'harvest' && existingPlant) {
+            if (existingPlant.isWeed) {
+                waterCooldown = 0;
+                document.getElementById('btn-water').classList.remove('disabled');
+                document.getElementById('water-desc').innerText = 'Boost';
+                floatingTexts.push(new FloatingText("Water Refreshed!", this.x, this.y - 40, '#4cc9f0'));
+            } else {
+                let bp = existingPlant.bp;
+                let gain = 0;
+                
+                if (existingPlant.level === 0) gain = bp.cost;
+                else if (existingPlant.level === 1) gain = Math.max(1, Math.floor((bp.cost + bp.harvestMax) / 2));
+                else gain = bp.harvestMax;
+                
+                seeds += gain;
+                let color = existingPlant.level === 0 ? '#fff' : '#ffd166';
+                let txt = existingPlant.level === 0 ? `Refund ${gain} 🌰` : `Harvest +${gain} 🌰`;
+                floatingTexts.push(new FloatingText(txt, this.x, this.y - 40, color));
+            }
+            plants.splice(plants.indexOf(existingPlant), 1);
+            playSound('rustle'); updateUI();
+        }
+    }
+
+    draw(ctx) {
+        ctx.save(); ctx.translate(this.x, this.y + this.bounce);
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(0, 15 - this.bounce, 12, 5, 0, 0, Math.PI * 2); ctx.fill();
+        if (!this.facingRight) ctx.scale(-1, 1);
+        ctx.fillStyle = '#4a4e69'; ctx.beginPath(); ctx.ellipse(-5, 12, 6, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(5, 12, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#118ab2'; ctx.beginPath(); ctx.roundRect(-10, -12, 20, 22, 6); ctx.fill();
+        ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(-5, -5, 2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(5, -5, 2, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#222'; ctx.fillRect(-11, 4, 22, 3); ctx.fillStyle = '#ffd166'; ctx.fillRect(-3, 3, 6, 5);
+        ctx.fillStyle = '#fce2c4'; ctx.beginPath(); ctx.arc(0, -18, 10, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.moveTo(-11, -15); ctx.lineTo(11, -15); ctx.lineTo(0, 8); ctx.fill();
+        ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(4, -20, 3, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(5, -20, 1.5, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#f4a261'; ctx.beginPath(); ctx.arc(6, -15, 4, 0, Math.PI * 2); ctx.fill();
+        ctx.fillStyle = '#ef476f'; ctx.beginPath(); ctx.moveTo(-13, -23); ctx.lineTo(13, -23); ctx.quadraticCurveTo(5, -45, 0, -55); ctx.quadraticCurveTo(-5, -40, -13, -23); ctx.fill();
+        ctx.strokeStyle = 'rgba(0,0,0,0.15)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-5, -35); ctx.quadraticCurveTo(0, -32, 5, -38); ctx.stroke();
+        ctx.restore();
+    }
+}
+
+class Plant {
+    constructor(c, r, bpOrType) {
+        this.c = c; this.r = r;
+        this.x = c * TILE_SIZE + TILE_SIZE / 2;
+        this.y = r * TILE_SIZE + TILE_SIZE / 2;
+        
+        if (typeof bpOrType === 'string' && bpOrType === 'weed') {
+            this.isWeed = true;
+            this.spreadCooldown = 5 + Math.random() * 5; 
+            this.baseVisual = 'weed';
+        } else {
+            this.isWeed = false;
+            this.bp = bpOrType;
+            this.baseVisual = this.bp.baseVisual;
+        }
+        
+        this.level = 0; this.growth = 0; this.watered = false;
+        this.fireCooldown = 0; this.bounce = 0;
+        this.windPhase = Math.random() * Math.PI * 2; 
+    }
+
+    water() {
+        if (!this.watered && this.level < 2 && !this.isWeed) {
+            this.watered = true;
+            for(let i=0; i<15; i++) particles.push(new Particle(this.x, this.y, '#4cc9f0'));
+            floatingTexts.push(new FloatingText("1.5x Growth!", this.x, this.y - 30, '#4cc9f0'));
+        }
+    }
+
+    levelUp() {
+        this.level++; this.growth = 0; this.watered = false; this.bounce = -20;
+        let pColor = this.isWeed ? '#5e2a84' : '#06d6a0';
+        for(let i=0; i<10; i++) particles.push(new Particle(this.x, this.y, pColor));
+        floatingTexts.push(new FloatingText("Grew Up!", this.x, this.y - 30, pColor));
+        if (this.isWeed) this.spreadCooldown = 5 + Math.random() * 5;
+    }
+
+    levelDown() {
+        this.level--; let threshold = this.level === 0 ? 25 : 40;
+        this.growth = threshold - 1; this.watered = false; this.bounce = -20;
+        for(let i=0; i<10; i++) particles.push(new Particle(this.x, this.y, '#a3b18a'));
+        floatingTexts.push(new FloatingText("Leveled Down!", this.x, this.y - 30, '#ef476f'));
+        playSound('hurt'); 
+    }
+
+    update(dt) {
+        this.bounce += (0 - this.bounce) * 10 * dt;
+
+        if (this.level < 2) {
+            let threshold = this.level === 0 ? 25 : 40; 
+            let speed = this.watered ? 1.5 : 1.0;
+            this.growth += speed * dt;
+            if (this.growth >= threshold) this.levelUp();
+        }
+
+        if (this.isWeed && this.level >= 1) {
+            this.spreadCooldown -= dt;
+            if (this.spreadCooldown <= 0) {
+                this.spreadCooldown = 8 + Math.random() * 6; 
+                this.attemptWeedSpread();
+            }
+        }
+
+        if (!this.isWeed && this.bp.actionType !== 'none' && this.bp.actionType !== 'slow' && this.level > 0) {
+            this.fireCooldown -= dt;
+            if (this.fireCooldown <= 0) {
+                let rangeMult = this.level === 1 ? 0.75 : 1.0;
+                let range = this.bp.rangeMax * rangeMult;
+                
+                if (this.bp.actionType === 'burst') {
+                    let targets = this.findAllTargets(range);
+                    if (targets.length > 0) {
+                        let dmgMult = this.level === 1 ? 0.5 : 1.0;
+                        let dmg = this.bp.dmgMax * dmgMult;
+                        targets.forEach(b => b.takeDamage(dmg));
+                        playSound('puff');
+                        for(let i=0; i<15 + (this.level*10); i++) particles.push(new FluffParticle(this.x, this.y - 20, range));
+                        
+                        let cdMult = this.level === 1 ? 1.2 : 1.0;
+                        this.fireCooldown = this.bp.cdMin * cdMult;
+                        this.bounce = -10;
+                    }
+                } else {
+                    let target = this.findTarget(range);
+                    if (target) {
+                        let dmgMult = this.level === 1 ? 0.5 : 1.0;
+                        let dmg = this.bp.dmgMax * dmgMult;
+                        let cdMult = this.level === 1 ? 1.2 : 1.0;
+                        
+                        if (this.bp.actionType === 'projectile') {
+                            let angle = Math.atan2((target.y - 10) - (this.y - 20), target.x - this.x);
+                            if (this.bp.actionTheme === 'bee' || this.bp.actionTheme === 'pierce_bee') {
+                                let pierce = this.bp.actionTheme === 'pierce_bee';
+                                projectiles.push(new BeeProjectile(this.x, this.y - 20, angle, dmg, pierce));
+                                playSound('bee');
+                            } else {
+                                projectiles.push(new Projectile(this.x, this.y - 20, target, dmg, '#ffd166'));
+                                playSound('shoot');
+                            }
+                        } else if (this.bp.actionType === 'lobbed') {
+                            projectiles.push(new LobbedSeed(this.x, this.y - 20, target.x, target.y, dmg));
+                            playSound('shoot'); 
+                        }
+                        
+                        this.fireCooldown = this.bp.cdMin * cdMult;
+                        this.bounce = -15;
+                    }
+                }
+            }
+        }
+        
+        if (!this.isWeed && this.bp.actionType !== 'none' && this.bp.actionType !== 'slow' && this.level === 0) {
+            this.fireCooldown -= dt;
+            if (this.fireCooldown <= 0) {
+                let range = this.bp.rangeMax * 0.5;
+                let target = this.bp.actionType === 'burst' ? null : this.findTarget(range);
+                
+                if (target || (this.bp.actionType === 'burst' && this.findAllTargets(range).length > 0)) {
+                    let dmg = this.bp.dmgMax * 0.25;
+                    
+                    if (this.bp.actionType === 'burst') {
+                        this.findAllTargets(range).forEach(b => b.takeDamage(dmg));
+                        playSound('puff');
+                        for(let i=0; i<15; i++) particles.push(new FluffParticle(this.x, this.y - 20, range));
+                    } else if (this.bp.actionType === 'projectile') {
+                        let angle = Math.atan2((target.y - 10) - (this.y - 20), target.x - this.x);
+                        if (this.bp.actionTheme === 'bee' || this.bp.actionTheme === 'pierce_bee') {
+                            projectiles.push(new BeeProjectile(this.x, this.y - 20, angle, dmg, this.bp.actionTheme === 'pierce_bee'));
+                            playSound('bee');
+                        } else {
+                            projectiles.push(new Projectile(this.x, this.y - 20, target, dmg, '#06d6a0'));
+                            playSound('shoot');
+                        }
+                    } else if (this.bp.actionType === 'lobbed') {
+                        projectiles.push(new LobbedSeed(this.x, this.y - 20, target.x, target.y, dmg));
+                        playSound('shoot'); 
+                    }
+                    this.fireCooldown = this.bp.cdMin * 1.5;
+                    this.bounce = -10;
+                }
+            }
+        }
+    }
+
+    attemptWeedSpread() {
+        let dirs = [[0,1], [1,0], [0,-1], [-1,0]];
+        dirs.sort(() => Math.random() - 0.5); 
+        for(let d of dirs) {
+            let nc = this.c + d[0]; let nr = this.r + d[1];
+            if (nc >= 0 && nc < COLS && nr >= 0 && nr < ROWS) {
+                if (nr < 2 && nc >= 3 && nc <= 4) continue; 
+                let tp = plants.find(p => p.c === nc && p.r === nr);
+                
+                if (!tp) {
+                    plants.push(new Plant(nc, nr, 'weed'));
+                    particles.push(new Particle(nc*TILE_SIZE+TILE_SIZE/2, nr*TILE_SIZE+TILE_SIZE/2, '#5e2a84', 1.0));
+                    break; 
+                } else if (!tp.isWeed && tp.level === 0) {
+                    plants.splice(plants.indexOf(tp), 1);
+                    plants.push(new Plant(nc, nr, 'weed'));
+                    for(let i=0; i<5; i++) particles.push(new Particle(nc*TILE_SIZE+TILE_SIZE/2, nr*TILE_SIZE+TILE_SIZE/2, '#b5179e'));
+                    floatingTexts.push(new FloatingText("Weeded!", nc*TILE_SIZE+TILE_SIZE/2, nr*TILE_SIZE+TILE_SIZE/2 - 30, '#b5179e'));
+                    break;
+                }
+            }
+        }
+    }
+
+    findTarget(range) {
+        let closest = null; let minDist = range;
+        for (let b of bugs) {
+            let dist = Math.hypot(b.x - this.x, b.y - this.y);
+            if (dist < minDist) { minDist = dist; closest = b; }
+        }
+        return closest;
+    }
+
+    findAllTargets(range) {
+        return bugs.filter(b => Math.hypot(b.x - this.x, b.y - this.y) <= range);
+    }
+
+    draw(ctx) {
+        ctx.save(); ctx.translate(this.x, this.y + this.bounce);
+        ctx.fillStyle = 'rgba(0,0,0,0.15)'; ctx.beginPath(); ctx.ellipse(0, 5, 12, 4, 0, 0, Math.PI * 2); ctx.fill();
+
+        let sway = Math.sin(globalTime * 2 + this.windPhase + this.x * 0.01) * 0.1;
+        ctx.translate(0, 5); ctx.rotate(sway); ctx.translate(0, -5); 
+
+        let vis = this.baseVisual;
+
+        if (vis === 'flower') {
+            if (this.level === 0) {
+                ctx.fillStyle = '#06d6a0'; ctx.beginPath(); ctx.moveTo(0, 5); ctx.quadraticCurveTo(10, -5, 15, -10); ctx.quadraticCurveTo(5, -10, 0, 0); ctx.quadraticCurveTo(-10, -5, -15, -10); ctx.quadraticCurveTo(-5, -10, 0, 5); ctx.fill();
+            } else if (this.level === 1) {
+                ctx.fillStyle = '#06d6a0'; ctx.fillRect(-2, -20, 4, 25);
+                ctx.fillStyle = '#ffd166'; for(let i=0; i<5; i++) { ctx.rotate((Math.PI*2)/5); ctx.beginPath(); ctx.ellipse(0, -10, 5, 10, 0, 0, Math.PI*2); ctx.fill(); }
+                ctx.fillStyle = '#6c584c'; ctx.beginPath(); ctx.arc(0, 0, 6, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.fillStyle = '#04936d'; ctx.fillRect(-3, -30, 6, 35);
+                ctx.beginPath(); ctx.ellipse(-10, -10, 8, 4, Math.PI/4, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10, -15, 8, 4, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.translate(0, -30); ctx.fillStyle = '#ef476f';
+                for(let i=0; i<6; i++) { ctx.rotate((Math.PI*2)/6); ctx.beginPath(); ctx.ellipse(0, -15, 7, 15, 0, 0, Math.PI*2); ctx.fill(); }
+                ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(0, 0, 10, 0, Math.PI*2); ctx.fill();
+            }
+        } else if (vis === 'stinger') {
+            ctx.fillStyle = '#2d6a4f'; 
+            if (this.level === 0) {
+                ctx.fillRect(-2, -15, 4, 20); ctx.fillStyle = '#b5179e'; ctx.beginPath(); ctx.ellipse(0, -15, 4, 8, 0, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 1) {
+                ctx.fillRect(-2, -25, 4, 30); ctx.fillStyle = '#b5179e'; ctx.beginPath(); ctx.moveTo(0, -25); ctx.lineTo(-10, -35); ctx.lineTo(10, -35); ctx.fill(); 
+                ctx.fillStyle = '#7209b7'; ctx.beginPath(); ctx.arc(0, -35, 6, 0, Math.PI, true); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.fillRect(-3, -35, 6, 40);
+                ctx.beginPath(); ctx.moveTo(-3, -15); ctx.lineTo(-15, -20); ctx.lineTo(-3, -25); ctx.fill(); ctx.beginPath(); ctx.moveTo(3, -20); ctx.lineTo(15, -25); ctx.lineTo(3, -30); ctx.fill();
+                ctx.translate(0, -35); ctx.fillStyle = '#7209b7';
+                ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-15, -10); ctx.lineTo(0, -25); ctx.lineTo(15, -10); ctx.fill(); 
+                ctx.fillStyle = '#b5179e'; ctx.beginPath(); ctx.moveTo(0, -5); ctx.lineTo(-8, -10); ctx.lineTo(0, -20); ctx.lineTo(8, -10); ctx.fill();
+                ctx.strokeStyle = '#ffd166'; ctx.lineWidth=2; ctx.beginPath(); ctx.moveTo(0, -10); ctx.lineTo(0, -30); ctx.stroke();
+            }
+        } else if (vis === 'dandelion') {
+            ctx.fillStyle = '#52796f';
+            if (this.level === 0) {
+                ctx.beginPath(); ctx.ellipse(-8, 2, 10, 4, -Math.PI/6, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(8, 2, 10, 4, Math.PI/6, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fee440'; ctx.beginPath(); ctx.arc(0, 0, 4, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 1) {
+                ctx.beginPath(); ctx.ellipse(-10, 0, 12, 5, -Math.PI/4, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10, 0, 12, 5, Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.fillRect(-2, -20, 4, 20); ctx.translate(0, -20); ctx.fillStyle = '#fee440'; 
+                for(let i=0; i<8; i++) { ctx.rotate((Math.PI*2)/8); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-3, -10); ctx.lineTo(3, -10); ctx.fill(); }
+                ctx.fillStyle = '#ffb703'; ctx.beginPath(); ctx.arc(0,0, 4, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.beginPath(); ctx.ellipse(-12, -2, 14, 5, -Math.PI/4, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(12, -2, 14, 5, Math.PI/4, 0, Math.PI*2); ctx.fill();
+                ctx.fillRect(-2, -25, 4, 25); ctx.translate(0, -25);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.4)'; ctx.beginPath(); ctx.arc(0, 0, 16, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.8)'; ctx.beginPath(); ctx.arc(0, 0, 12, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#fff'; for(let i=0; i<10; i++) { let a = Math.random() * Math.PI * 2; let d = Math.random() * 14; ctx.beginPath(); ctx.arc(Math.cos(a)*d, Math.sin(a)*d, 1, 0, Math.PI*2); ctx.fill(); }
+            }
+        } else if (vis === 'grass') {
+            ctx.fillStyle = this.level === 2 ? '#386641' : (this.level === 1 ? '#52796f' : '#8ac926');
+            let blades = this.level === 0 ? 3 : (this.level === 1 ? 6 : 10);
+            let height = this.level === 0 ? 15 : (this.level === 1 ? 25 : 40);
+            let spread = this.level === 0 ? 10 : (this.level === 1 ? 15 : 20);
+            let seed = (this.c * 13 + this.r * 7); 
+            for(let i=0; i<blades; i++) {
+                let rx = ((seed + i*17) % spread) - (spread/2); let ry = ((seed + i*23) % 10); let curve = ((seed + i*31) % 10) - 5;
+                let bladeSway = Math.sin(globalTime * 3 + seed + i) * 5;
+                ctx.beginPath(); ctx.moveTo(rx, ry); ctx.quadraticCurveTo(rx + curve + bladeSway, ry - height/2, rx + curve*1.5 + bladeSway*1.5, ry - height); ctx.quadraticCurveTo(rx + curve - 2 + bladeSway, ry - height/2, rx - 3, ry); ctx.fill();
+            }
+        } else if (vis === 'weed') {
+            ctx.fillStyle = '#2d1b2e'; 
+            if (this.level === 0) {
+                ctx.beginPath(); ctx.moveTo(0, 5); ctx.lineTo(-5, -5); ctx.lineTo(0, -10); ctx.lineTo(5, -5); ctx.fill();
+                ctx.strokeStyle = '#5e2a84'; ctx.lineWidth=2; ctx.stroke();
+            } else if (this.level === 1) {
+                ctx.strokeStyle = '#5e2a84'; ctx.lineWidth = 3;
+                ctx.beginPath(); ctx.moveTo(-5, 5); ctx.quadraticCurveTo(-15, -10, 0, -20); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(5, 5); ctx.quadraticCurveTo(15, -10, -5, -25); ctx.stroke();
+                ctx.fillStyle = '#ef233c'; ctx.beginPath(); ctx.arc(-8, -5, 2, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(5, -15, 2, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.fillStyle = '#2d1b2e'; ctx.beginPath(); ctx.arc(0, -10, 10, 0, Math.PI*2); ctx.fill();
+                ctx.strokeStyle = '#5e2a84'; ctx.lineWidth = 4;
+                let seed = this.c * 7 + this.r * 13;
+                for(let i=0; i<5; i++) {
+                    let a = (Math.PI*2/5)*i + (seed%Math.PI);
+                    ctx.beginPath(); ctx.moveTo(0, -10); ctx.quadraticCurveTo(Math.cos(a)*20, Math.sin(a)*20 - 15, Math.cos(a+1)*25, Math.sin(a+1)*25 - 15); ctx.stroke();
+                }
+                ctx.fillStyle = '#ef233c'; ctx.beginPath(); ctx.arc(-10, -20, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(10, -10, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(0, -25, 3, 0, Math.PI*2); ctx.fill();
+            }
+        } else if (vis === 'berry') {
+            ctx.fillStyle = '#3a5a40'; 
+            if (this.level === 0) {
+                ctx.fillRect(-2, -10, 4, 15); ctx.beginPath(); ctx.arc(0, -12, 6, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 1) {
+                ctx.beginPath(); ctx.ellipse(0, -15, 15, 12, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#118ab2'; ctx.beginPath(); ctx.arc(-5, -15, 3, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#ef476f'; ctx.beginPath(); ctx.arc(8, -12, 3, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#118ab2'; ctx.beginPath(); ctx.arc(2, -20, 3, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.beginPath(); ctx.ellipse(0, -20, 22, 18, 0, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.ellipse(-10, -10, 15, 12, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(10, -10, 15, 12, 0, 0, Math.PI*2); ctx.fill();
+                let seed = this.c * 11 + this.r * 17;
+                for(let i=0; i<12; i++) {
+                    let bx = ((seed + i*23) % 30) - 15; let by = -5 - ((seed + i*31) % 25);
+                    ctx.fillStyle = i%2 === 0 ? '#118ab2' : '#ef476f'; ctx.beginPath(); ctx.arc(bx, by, 3, 0, Math.PI*2); ctx.fill();
+                }
+            }
+        } else if (vis === 'arty') {
+            ctx.fillStyle = '#2d6a4f';
+            if (this.level === 0) { ctx.beginPath(); ctx.moveTo(-6, 5); ctx.lineTo(6, 5); ctx.lineTo(4, -10); ctx.lineTo(-4, -10); ctx.fill(); } 
+            else if (this.level === 1) {
+                ctx.beginPath(); ctx.moveTo(-10, 5); ctx.lineTo(10, 5); ctx.lineTo(6, -20); ctx.lineTo(-6, -20); ctx.fill();
+                ctx.fillStyle = '#e07a5f'; ctx.beginPath(); ctx.ellipse(0, -20, 6, 3, 0, 0, Math.PI*2); ctx.fill();
+            } else if (this.level === 2) {
+                ctx.beginPath(); ctx.moveTo(-12, 5); ctx.lineTo(12, 5); ctx.lineTo(8, -35); ctx.lineTo(-8, -35); ctx.fill();
+                ctx.fillStyle = '#1b4332'; ctx.beginPath(); ctx.moveTo(-12, 5); ctx.lineTo(-20, -15); ctx.lineTo(-8, -10); ctx.fill(); ctx.beginPath(); ctx.moveTo(12, 5); ctx.lineTo(20, -15); ctx.lineTo(8, -10); ctx.fill();
+                ctx.fillStyle = '#e07a5f'; ctx.beginPath(); ctx.ellipse(0, -35, 8, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#000'; ctx.beginPath(); ctx.ellipse(0, -35, 6, 2, 0, 0, Math.PI*2); ctx.fill();
+            }
+        }
+
+        ctx.restore();
+
+        // Progress Bar 
+        ctx.save(); ctx.translate(this.x, this.y + this.bounce);
+        if (this.level < 2) {
+            let threshold = this.level === 0 ? 25 : 40; let progress = this.growth / threshold;
+            ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(-15, 12, 30, 4);
+            ctx.fillStyle = this.watered ? '#4cc9f0' : '#f4a261';
+            if (this.isWeed) ctx.fillStyle = '#b5179e'; 
+            ctx.fillRect(-15, 12, 30 * progress, 4);
+        }
+        ctx.restore();
+    }
+}
+
+class BeeProjectile {
+    constructor(x, y, angle, damage, pierce) {
+        this.x = x; this.y = y; this.vx = Math.cos(angle) * 450; this.vy = Math.sin(angle) * 450;
+        this.damage = damage; this.angle = angle; this.dead = false; this.pierce = pierce;
+        this.hitSet = new Set();
+    }
+    update(dt) {
+        this.x += this.vx * dt; this.y += this.vy * dt;
+        if (this.x < -50 || this.x > V_WIDTH + 50 || this.y < -50 || this.y > V_HEIGHT + 50) { this.dead = true; return; }
+        for (let b of bugs) {
+            if (!this.hitSet.has(b) && Math.hypot(b.x - this.x, b.y - this.y) < 25 * b.sizeMult) {
+                b.takeDamage(this.damage); this.hitSet.add(b);
+                for(let i=0; i<3; i++) particles.push(new Particle(this.x, this.y, '#ffd166', 0.3));
+                if (!this.pierce) { this.dead = true; break; }
+            }
+        }
+    }
+    draw(ctx) {
+        ctx.save(); ctx.translate(this.x, this.y); ctx.rotate(this.angle);
+        ctx.fillStyle = '#222'; ctx.beginPath(); ctx.moveTo(8, 0); ctx.lineTo(0, -3); ctx.lineTo(0, 3); ctx.fill();
+        ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.ellipse(0, 0, 7, 5, 0, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = '#222'; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-3, -4); ctx.lineTo(-3, 4); ctx.stroke(); ctx.beginPath(); ctx.moveTo(1, -4); ctx.lineTo(1, 4); ctx.stroke();
+        ctx.fillStyle = 'rgba(255,255,255,0.8)'; let flap = Math.sin(globalTime * 50) * 3;
+        ctx.beginPath(); ctx.ellipse(0, -5 - flap, 3, 5, Math.PI/4, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(0, 5 + flap, 3, 5, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+        ctx.restore();
+    }
+}
+
+class Projectile {
+    constructor(x, y, target, damage, color) {
+        this.x = x; this.y = y; this.target = target; this.damage = damage; this.color = color;
+        this.speed = 400; this.dead = false;
+    }
+    update(dt) {
+        if (!bugs.includes(this.target)) { this.dead = true; return; }
+        let dx = this.target.x - this.x; let dy = (this.target.y - 10) - this.y;
+        let dist = Math.hypot(dx, dy);
+        if (dist < 10) { this.target.takeDamage(this.damage); this.dead = true; } 
+        else { this.x += (dx / dist) * this.speed * dt; this.y += (dy / dist) * this.speed * dt; }
+        particles.push(new Particle(this.x, this.y, this.color, 0.5));
+    }
+    draw(ctx) { ctx.fillStyle = this.color; ctx.beginPath(); ctx.arc(this.x, this.y, 4, 0, Math.PI * 2); ctx.fill(); }
+}
+
+class LobbedSeed {
+    constructor(startX, startY, targetX, targetY, damage) {
+        this.startX = startX; this.startY = startY; this.targetX = targetX; this.targetY = targetY;
+        this.damage = damage; this.duration = 1.0; this.timer = 0; this.dead = false;
+    }
+    update(dt) {
+        this.timer += dt;
+        if (this.timer >= this.duration) { this.dead = true; projectiles.push(new ExplosiveTrap(this.targetX, this.targetY, this.damage)); }
+    }
+    draw(ctx) {
+        let t = this.timer / this.duration;
+        let currX = this.startX + (this.targetX - this.startX) * t; let currY = this.startY + (this.targetY - this.startY) * t;
+        let arc = Math.sin(t * Math.PI) * 150; 
+        ctx.fillStyle = '#e07a5f'; ctx.beginPath(); ctx.arc(currX, currY - arc, 6, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = '#3d405b'; ctx.beginPath(); ctx.arc(currX, currY - arc, 3, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(0,0,0,0.3)'; ctx.beginPath(); ctx.ellipse(currX, currY, 6, 2, 0, 0, Math.PI*2); ctx.fill();
+    }
+}
+
+class ExplosiveTrap {
+    constructor(x, y, damage) {
+        this.x = x; this.y = y; this.damage = damage;
+        this.timer = 1.5; this.radius = 100; this.dead = false;
+    }
+    update(dt) { this.timer -= dt; if (this.timer <= 0) this.explode(); }
+    explode() {
+        this.dead = true; playSound('puff');
+        for (let b of bugs) { if (Math.hypot(b.x - this.x, b.y - this.y) <= this.radius) b.takeDamage(this.damage); }
+        for(let i=0; i<30; i++) particles.push(new FluffParticle(this.x, this.y, this.radius));
+        projectiles.push({
+            x: this.x, y: this.y, life: 0.3, maxLife: 0.3, dead: false,
+            update: function(dt) { this.life -= dt; if(this.life<=0) this.dead=true; },
+            draw: function(ctx) {
+                ctx.strokeStyle = `rgba(224, 122, 95, ${this.life/this.maxLife})`; ctx.lineWidth = 4;
+                ctx.beginPath(); ctx.arc(this.x, this.y, 100 * (1 - this.life/this.maxLife), 0, Math.PI*2); ctx.stroke();
+            }
+        });
+    }
+    draw(ctx) {
+        let blink = Math.sin(globalTime * (10 + (1.5 - this.timer)*20)) > 0;
+        ctx.fillStyle = blink ? '#ef476f' : '#e07a5f';
+        ctx.beginPath(); ctx.arc(this.x, this.y, 8, 0, Math.PI*2); ctx.fill();
+        ctx.strokeStyle = 'rgba(239, 71, 111, 0.2)'; ctx.lineWidth = 1;
+        ctx.beginPath(); ctx.arc(this.x, this.y, this.radius, 0, Math.PI*2); ctx.stroke();
+    }
+}
+
+class Bug {
+    constructor(waveNum, type = 'normal') {
+        this.x = Math.random() * V_WIDTH; this.y = V_HEIGHT + 30; 
+        this.targetX = HOUSE_X + (Math.random() * 40 - 20); this.targetY = HOUSE_Y; 
+        this.type = type; this.wobble = Math.random() * Math.PI; this.weedBuffed = false;
+
+        if (type === 'fast') {
+            this.baseSpeed = 65 + (waveNum * 3); this.maxHp = 3 + (waveNum * 1); this.sizeMult = 0.8;
+            this.color1 = '#ff595e'; this.color2 = '#c1121f';
+        } else if (type === 'tank') {
+            this.baseSpeed = 15 + (waveNum * 1); this.maxHp = 80 + (waveNum * 20); this.sizeMult = 1.35;
+            this.color1 = '#8c7851'; this.color2 = '#583101';
+        } else if (type === 'snail') {
+            this.baseSpeed = 12 + (waveNum * 0.5); this.maxHp = 60 + (waveNum * 15); this.sizeMult = 1.2;
+            this.color1 = '#a3b18a'; this.color2 = '#588157';
+        } else if (type === 'infected_snail') {
+            this.baseSpeed = 12 + (waveNum * 0.5); this.maxHp = (60 + (waveNum * 15)) * 2; 
+            this.sizeMult = 1.3; this.color1 = '#386641'; this.color2 = '#5e2a84'; this.weedSpreadTimer = 4 + Math.random() * 3; 
+        } else if (type === 'fly') {
+            this.baseSpeed = 55 + (waveNum * 2); this.maxHp = 3 + (waveNum * 1); this.sizeMult = 0.7;
+            this.color1 = '#00b4d8'; this.color2 = '#023e8a';
+        } else if (type === 'corrupted_fly') {
+            this.baseSpeed = 55 + (waveNum * 2); this.maxHp = (3 + (waveNum * 1)) * 2; 
+            this.sizeMult = 0.8; this.color1 = '#5e2a84'; this.color2 = '#1b4332'; this.weedSpreadTimer = 4 + Math.random() * 3; 
+        } else { 
+            this.baseSpeed = 30 + (waveNum * 2); this.maxHp = 6 + (waveNum * 2); this.sizeMult = 1.0;
+            this.color1 = '#6b2d5c'; this.color2 = '#8f3d79';
+        }
+        this.hp = this.maxHp;
+    }
+
+    attemptWeedSpread() {
+        let c = Math.floor(this.x / TILE_SIZE); let r = Math.floor(this.y / TILE_SIZE);
+        if (c >= 0 && c < COLS && r >= 0 && r < ROWS && !(r < 2 && c >= 3 && c <= 4)) {
+            let existingIdx = plants.findIndex(p => p.c === c && p.r === r);
+            if (existingIdx === -1) {
+                plants.push(new Plant(c, r, 'weed'));
+                particles.push(new Particle(c*TILE_SIZE+TILE_SIZE/2, r*TILE_SIZE+TILE_SIZE/2, '#5e2a84', 1.0));
+            } else {
+                let targetPlant = plants[existingIdx];
+                if (!targetPlant.isWeed && targetPlant.level === 0) {
+                    plants.splice(existingIdx, 1);
+                    plants.push(new Plant(c, r, 'weed'));
+                    for(let i=0; i<5; i++) particles.push(new Particle(targetPlant.x, targetPlant.y, '#b5179e'));
+                    floatingTexts.push(new FloatingText("Weeded!", targetPlant.x, targetPlant.y - 30, '#b5179e'));
+                }
+            }
+        }
+    }
+
+    update(dt) {
+        let dx = this.targetX - this.x; let dy = this.targetY - this.y;
+        let dist = Math.hypot(dx, dy);
+
+        if (dist < 40) { this.reachHouse(); return; }
+
+        if (this.type.includes('snail') || this.type.includes('fly')) {
+            let auraRadius = this.type.includes('snail') ? 100 : 40;
+            let drainRate = this.type.includes('snail') ? 15 : 25; 
+            
+            for (let p of plants) {
+                if (Math.hypot(p.x - this.x, p.y - this.y) <= auraRadius) {
+                    p.growth -= drainRate * dt; 
+                    if (p.growth < 0) { if (p.level > 0) p.levelDown(); else p.growth = 0; }
+                    if (Math.random() < 0.05) particles.push(new Particle(p.x, p.y - 10, this.type.includes('snail') ? '#a3b18a' : '#00b4d8', 0.5));
+                }
+            }
+        }
+
+        if (this.type === 'infected_snail' || this.type === 'corrupted_fly') {
+            this.weedSpreadTimer -= dt;
+            if (this.weedSpreadTimer <= 0) {
+                this.weedSpreadTimer = 4 + Math.random() * 3;
+                this.attemptWeedSpread();
+            }
+        }
+
+        let c = Math.floor(this.x / TILE_SIZE); let r = Math.floor(this.y / TILE_SIZE);
+        let currentPlant = plants.find(p => p.c === c && p.r === r);
+        let speedMult = 1.0;
+        
+        if (currentPlant) {
+            if (currentPlant.bp && currentPlant.bp.actionType === 'slow') {
+                let mult = currentPlant.level === 0 ? 0.5 : (currentPlant.level === 1 ? 0.75 : 1.0);
+                let slowAmount = (currentPlant.bp.slowMax / 100) * mult;
+                speedMult = Math.max(0.1, 1.0 - slowAmount); 
+                if (Math.random() < 0.1) particles.push(new Particle(this.x, this.y, '#8ac926', 0.5));
+            } else if (currentPlant.isWeed && currentPlant.level >= 1 && !this.weedBuffed) {
+                this.weedBuffed = true; let boost = this.maxHp * 0.2;
+                this.maxHp += boost; this.hp += boost;
+                floatingTexts.push(new FloatingText("Buffed!", this.x, this.y - 30, '#b5179e'));
+                for(let i=0; i<8; i++) particles.push(new Particle(this.x, this.y, '#b5179e', 0.8));
+            }
+        }
+
+        let actualSpeed = this.baseSpeed * speedMult;
+        this.x += (dx / dist) * actualSpeed * dt; this.y += (dy / dist) * actualSpeed * dt;
+        
+        if (this.type.includes('fly')) this.x += Math.cos(globalTime * 4 + this.wobble) * 120 * dt * speedMult;
+
+        let wobbleSpd = (this.type === 'fast') ? 18 : (this.type === 'tank' ? 6 : (this.type.includes('snail') ? 4 : (this.type.includes('fly') ? 0 : 10)));
+        this.wobble += dt * wobbleSpd * speedMult;
+    }
+
+    takeDamage(amount) {
+        this.hp -= amount;
+        for(let i=0; i<3; i++) particles.push(new Particle(this.x, this.y, '#90be6d'));
+        if (this.hp <= 0) this.die();
+    }
+
+    die() {
+        for(let i=0; i<15; i++) particles.push(new Particle(this.x, this.y, this.color1));
+        bugs = bugs.filter(b => b !== this); playSound('squish');
+    }
+
+    reachHouse() {
+        hp -= 1; updateUI(); floatingTexts.push(new FloatingText("-1 HP", this.x, this.y, '#ef476f'));
+        bugs = bugs.filter(b => b !== this); playSound('hurt');
+        if (hp <= 0) nav('game-over-screen');
+    }
+
+    draw(ctx) {
+        ctx.save(); ctx.translate(this.x, this.y); ctx.scale(this.sizeMult, this.sizeMult);
+        
+        if (this.weedBuffed) {
+            ctx.fillStyle = `rgba(181, 23, 158, ${0.4 + Math.sin(globalTime*10)*0.2})`;
+            ctx.beginPath(); ctx.ellipse(0, 10, 20, 10, 0, 0, Math.PI*2); ctx.fill();
+        }
+
+        if (this.type.includes('snail')) {
+            ctx.save(); ctx.scale(1/this.sizeMult, 1/this.sizeMult);
+            ctx.fillStyle = this.type === 'infected_snail' ? 'rgba(94, 42, 132, 0.15)' : 'rgba(163, 177, 138, 0.15)'; 
+            ctx.beginPath(); ctx.arc(0, 0, 100, 0, Math.PI*2); ctx.fill(); ctx.restore();
+        }
+
+        ctx.fillStyle = 'rgba(0,0,0,0.4)'; ctx.beginPath(); ctx.ellipse(0, 10, 12, 5, 0, 0, Math.PI*2); ctx.fill();
+        let angle = Math.atan2(this.targetY - this.y, this.targetX - this.x);
+        ctx.rotate(angle - Math.PI/2); ctx.rotate(Math.sin(this.wobble) * 0.2);
+
+        if (this.type.includes('snail')) {
+            ctx.fillStyle = this.color1; ctx.beginPath(); ctx.ellipse(0, -4, 6, 16, 0, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = this.color1; ctx.lineWidth = 2; ctx.beginPath(); ctx.moveTo(-3, -18); ctx.lineTo(-6, -24); ctx.stroke(); ctx.beginPath(); ctx.moveTo(3, -18); ctx.lineTo(6, -24); ctx.stroke();
+            ctx.fillStyle = this.color2; ctx.beginPath(); ctx.arc(0, 2, 12, 0, Math.PI*2); ctx.fill();
+            ctx.strokeStyle = '#344e41'; ctx.lineWidth = 2; ctx.beginPath(); ctx.arc(0, 2, 6, 0, Math.PI*1.5); ctx.stroke();
+            if (this.type === 'infected_snail') {
+                ctx.fillStyle = '#b5179e'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(-6, -10); ctx.lineTo(6, -10); ctx.fill();
+            }
+        } else if (this.type.includes('fly')) {
+            ctx.translate(0, -10 + Math.sin(globalTime * 10)*3);
+            ctx.fillStyle = this.color1; ctx.beginPath(); ctx.ellipse(0, 0, 6, 10, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = 'rgba(255,255,255,0.7)'; let flap = Math.sin(globalTime * 80) * 4;
+            ctx.beginPath(); ctx.ellipse(-6 - flap, 0, 6, 3, Math.PI/6, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(6 + flap, 0, 6, 3, -Math.PI/6, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#ef233c'; ctx.beginPath(); ctx.arc(-2, -6, 2.5, 0, Math.PI*2); ctx.arc(2, -6, 2.5, 0, Math.PI*2); ctx.fill();
+            if (this.type === 'corrupted_fly') {
+                ctx.fillStyle = '#b5179e'; ctx.beginPath(); ctx.moveTo(0, -3); ctx.lineTo(-4, -12); ctx.lineTo(4, -12); ctx.fill();
+            }
+        } else {
+            ctx.strokeStyle = '#222'; ctx.lineWidth = 2; let legWobble = Math.sin(this.wobble * 2) * 5;
+            for(let i=-1; i<=1; i++) {
+                ctx.beginPath(); ctx.moveTo(-10, i*5); ctx.lineTo(-15, i*8 + legWobble); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(10, i*5); ctx.lineTo(15, i*8 - legWobble); ctx.stroke();
+            }
+            if (this.type === 'tank') {
+                ctx.fillStyle = this.color2; ctx.beginPath(); ctx.ellipse(0, 2, 14, 16, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = this.color1; ctx.beginPath(); ctx.ellipse(0, 0, 11, 13, 0, 0, Math.PI*2); ctx.fill();
+            } else {
+                ctx.fillStyle = this.color1; ctx.beginPath(); ctx.ellipse(0, 0, 10, 14, 0, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = this.color2; ctx.beginPath(); ctx.ellipse(0, -4, 8, 6, 0, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(-4, -8, 3, 0, Math.PI*2); ctx.arc(4, -8, 3, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(-4, -9, 1.5, 0, Math.PI*2); ctx.arc(4, -9, 1.5, 0, Math.PI*2); ctx.fill();
+        }
+
+        ctx.restore();
+        ctx.save(); ctx.translate(this.x, this.y - (22 * this.sizeMult));
+        ctx.fillStyle = 'rgba(0,0,0,0.5)'; ctx.fillRect(-10, 0, 20, 4);
+        ctx.fillStyle = this.weedBuffed ? '#b5179e' : '#ef476f'; ctx.fillRect(-10, 0, 20 * Math.max(0, this.hp/this.maxHp), 4);
+        ctx.restore();
+    }
+}
+
+class Particle {
+    constructor(x, y, color, life=1) {
+        this.x = x; this.y = y; this.color = color;
+        this.vx = (Math.random() - 0.5) * 100; this.vy = (Math.random() - 0.5) * 100 - 50;
+        this.life = life; this.maxLife = life; this.size = Math.random() * 3 + 2;
+    }
+    update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.vy += 200 * dt; this.life -= dt; }
+    draw(ctx) { ctx.globalAlpha = Math.max(0, this.life / this.maxLife); ctx.fillStyle = this.color; ctx.fillRect(this.x, this.y, this.size, this.size); ctx.globalAlpha = 1; }
+}
+
+class FluffParticle {
+    constructor(x, y, range) {
+        this.x = x; this.y = y;
+        let angle = Math.random() * Math.PI * 2; let speed = 50 + Math.random() * (range * 2);
+        this.vx = Math.cos(angle) * speed; this.vy = Math.sin(angle) * speed;
+        this.life = 0.5 + Math.random() * 0.5; this.maxLife = this.life; this.size = 2 + Math.random() * 3;
+    }
+    update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.vx *= 0.9; this.vy *= 0.9; this.life -= dt; }
+    draw(ctx) { ctx.globalAlpha = Math.max(0, this.life / this.maxLife); ctx.fillStyle = '#fff'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; }
+}
+
+class SmokeParticle {
+    constructor(x, y) {
+        this.x = x; this.y = y;
+        this.life = 2.0 + Math.random(); this.maxLife = this.life; this.size = 5 + Math.random() * 5;
+        this.vx = (Math.random() - 0.5) * 10 + 5; this.vy = -15 - Math.random() * 10; 
+    }
+    update(dt) { this.x += this.vx * dt; this.y += this.vy * dt; this.size += 5 * dt; this.life -= dt; }
+    draw(ctx) { ctx.globalAlpha = Math.max(0, (this.life / this.maxLife) * 0.5); ctx.fillStyle = '#ced4da'; ctx.beginPath(); ctx.arc(this.x, this.y, this.size, 0, Math.PI*2); ctx.fill(); ctx.globalAlpha = 1; }
+}
+
+class FloatingText {
+    constructor(text, x, y, color) { this.text = text; this.x = x; this.y = y; this.color = color; this.life = 1.5; this.maxLife = 1.5; }
+    update(dt) { this.y -= 30 * dt; this.life -= dt; }
+    draw(ctx) { ctx.globalAlpha = Math.max(0, this.life / this.maxLife); ctx.fillStyle = 'rgba(0,0,0,0.8)'; ctx.font = 'bold 20px sans-serif'; ctx.textAlign = 'center'; ctx.fillText(this.text, this.x + 2, this.y + 2); ctx.fillStyle = this.color; ctx.fillText(this.text, this.x, this.y); ctx.globalAlpha = 1; }
+}
+
+function buildWaveList(w) {
+    let q = []; let totalBugs = Math.floor(2 + Math.pow(w, 1.5));
+    if (w === 1) totalBugs = 3; if (w === 2) totalBugs = 4;
+
+    let snailCount = 0; if (w >= 4) snailCount = Math.min(4, w - 3); 
+    let flyCount = 0; if (w >= 6) flyCount = Math.min(6, Math.floor((w - 4) * 1.5));
+    let infectedSnailCount = 0; let corruptedFlyCount = 0;
+
+    if (w >= 20) { infectedSnailCount = Math.min(snailCount, Math.floor((w - 19) / 2) + 1); snailCount -= infectedSnailCount; }
+    if (w >= 23) { corruptedFlyCount = Math.min(flyCount, Math.floor((w - 22) / 2) + 1); flyCount -= corruptedFlyCount; }
+
+    let remainingBugs = Math.max(1, totalBugs - snailCount - flyCount - infectedSnailCount - corruptedFlyCount);
+    
+    for(let i=0; i<snailCount; i++) q.push('snail');
+    for(let i=0; i<infectedSnailCount; i++) q.push('infected_snail');
+    for(let i=0; i<flyCount; i++) q.push('fly');
+    for(let i=0; i<corruptedFlyCount; i++) q.push('corrupted_fly');
+
+    for(let i=0; i<remainingBugs; i++) {
+        if (w < 5) q.push('normal');
+        else if (w < 9) q.push(Math.random() < 0.6 ? 'fast' : 'normal'); 
+        else { let r = Math.random(); if (r < 0.2) q.push('tank'); else if (r < 0.8) q.push('fast'); else q.push('normal'); }
+    }
+    
+    for (let i = q.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [q[i], q[j]] = [q[j], q[i]]; }
+    return q;
+}
+
+// --- Main Loop & Flow ---
+
+function startGame() {
+    document.querySelectorAll('.overlay').forEach(el => el.classList.add('hidden'));
+    document.getElementById('hud-top').classList.remove('hidden');
+    document.getElementById('toolbar').classList.remove('hidden');
+    document.getElementById('tool-info-bar').classList.remove('hidden');
+    
+    initMap(); 
+    plants = []; bugs = []; projectiles = []; particles = []; floatingTexts = []; waveQueue = [];
+    
+    seeds = 2; // Increased starting seeds
+    hp = 10; wave = 1; waveTimer = 3; waveActive = false; globalTime = 0;
+    waterCooldown = 0; globalWeedTimer = 35; 
+    
+    gnome = new Gnome(HOUSE_X, HOUSE_Y + 100);
+    
+    if(selectedLoadout.length > 0) setTool(selectedLoadout[0]);
+    else setTool('bp_flower'); // default safe option
+
+    updateUI();
+    gameState = 'playing'; playSound('start');
+}
+
+function resetGame() { nav('menu-main'); }
+
+function updateUI() {
+    document.getElementById('ui-seeds').innerText = seeds;
+    document.getElementById('ui-wave').innerText = wave;
+    document.getElementById('ui-hp').innerText = hp;
+}
+
+function updateWave(dt) {
+    if (!waveActive) {
+        waveTimer -= dt;
+        if (waveTimer <= 0) {
+            waveActive = true; waveQueue = buildWaveList(wave); spawnTimer = 0;
+            floatingTexts.push(new FloatingText(`Wave ${wave}!`, HOUSE_X, HOUSE_Y + 150, '#ef476f'));
+            updateUI();
+        }
+    } else {
+        if (waveQueue.length > 0) {
+            spawnTimer -= dt;
+            if (spawnTimer <= 0) {
+                let bugType = waveQueue.shift(); bugs.push(new Bug(wave, bugType));
+                let delay = 3.0 - (wave * 0.15); 
+                if (bugType === 'fast' || bugType === 'fly' || bugType === 'corrupted_fly') delay *= 0.5; 
+                if (bugType === 'tank' || bugType === 'snail' || bugType === 'infected_snail') delay *= 1.5; 
+                spawnTimer = Math.max(0.4, delay); 
+            }
+        } else if (bugs.length === 0) {
+            waveActive = false; wave++; waveTimer = 5; 
+            updateUI(); floatingTexts.push(new FloatingText("Wave Cleared!", HOUSE_X, HOUSE_Y + 150, '#06d6a0'));
+            playSound('win');
+        }
+    }
+}
+
+function updateToolCooldowns(dt) {
+    if (waterCooldown > 0) {
+        waterCooldown -= dt;
+        let btn = document.getElementById('btn-water'); let desc = document.getElementById('water-desc');
+        if (waterCooldown <= 0) {
+            waterCooldown = 0; btn.classList.remove('disabled'); desc.innerText = 'Boost';
+        } else {
+            btn.classList.add('disabled'); desc.innerText = `${Math.ceil(waterCooldown)}s`;
+            if (currentTool === 'water') setTool(selectedLoadout[0] || 'bp_flower'); 
+        }
+    }
+}
+
+let lastTime = 0; let houseSmokeTimer = 0;
+
+function loop(timestamp) {
+    let dt = (timestamp - lastTime) / 1000;
+    lastTime = timestamp; if (dt > 0.1) dt = 0.1;
+    
+    if (gameState === 'playing') {
+        globalTime += dt;
+        updateWave(dt); updateToolCooldowns(dt);
+        
+        globalWeedTimer -= dt;
+        if (globalWeedTimer <= 0) {
+            globalWeedTimer = Math.max(15, 25 + Math.random() * 10 - wave * 0.5); 
+            for(let i=0; i<10; i++) {
+                let c = Math.floor(Math.random() * COLS); let r = Math.floor(Math.random() * ROWS);
+                if (r < 2 && c >= 3 && c <= 4) continue; 
+                if (!plants.find(p => p.c === c && p.r === r)) {
+                    plants.push(new Plant(c, r, 'weed'));
+                    particles.push(new Particle(c*TILE_SIZE+TILE_SIZE/2, r*TILE_SIZE+TILE_SIZE/2, '#5e2a84', 1.0));
+                    break;
+                }
+            }
+        }
+
+        if (gnome) gnome.update(dt);
+        for (let i = plants.length - 1; i >= 0; i--) plants[i].update(dt);
+        bugs.forEach(b => b.update(dt));
+        
+        houseSmokeTimer -= dt;
+        if (houseSmokeTimer <= 0) {
+            particles.push(new SmokeParticle(HOUSE_X + 40, HOUSE_Y - 130)); 
+            houseSmokeTimer = 0.2 + Math.random() * 0.3;
+        }
+
+        for (let i = projectiles.length - 1; i >= 0; i--) { projectiles[i].update(dt); if (projectiles[i].dead) projectiles.splice(i, 1); }
+        for (let i = particles.length - 1; i >= 0; i--) { particles[i].update(dt); if (particles[i].life <= 0) particles.splice(i, 1); }
+        for (let i = floatingTexts.length - 1; i >= 0; i--) { floatingTexts[i].update(dt); if (floatingTexts[i].life <= 0) floatingTexts.splice(i, 1); }
+    }
+
+    draw();
+    requestAnimationFrame(loop);
+}
+
+function handleInteraction(ex, ey) {
+    if (gameState !== 'playing' || !gnome) return;
+    const rect = canvas.getBoundingClientRect();
+    const x = (ex - rect.left) / scale; const y = (ey - rect.top) / scale;
+    const c = Math.floor(x / TILE_SIZE); const r = Math.floor(y / TILE_SIZE);
+    if (c >= 0 && c < COLS && r >= 0 && r < ROWS) {
+        gnome.setTarget(c, r, currentTool);
+        for(let i=0; i<4; i++) particles.push(new Particle(x, y, '#fff', 0.2));
+    }
+}
+
+canvas.addEventListener('mousedown', (e) => handleInteraction(e.clientX, e.clientY));
+canvas.addEventListener('touchstart', (e) => { e.preventDefault(); handleInteraction(e.touches[0].clientX, e.touches[0].clientY); }, {passive: false});
+
+function resize() {
+    const container = document.getElementById('game-container');
+    const ww = container.clientWidth; const wh = container.clientHeight;
+    const aspect = V_WIDTH / V_HEIGHT; const windowAspect = ww / wh;
+    let cw, ch;
+    if (windowAspect < aspect) { cw = ww; ch = ww / aspect; } 
+    else { ch = wh; cw = ch * aspect; }
+    canvas.width = V_WIDTH; canvas.height = V_HEIGHT;
+    scale = cw / V_WIDTH; canvas.style.width = `${cw}px`; canvas.style.height = `${ch}px`;
+}
+window.addEventListener('resize', resize);
+
+function draw() {
+    ctx.fillStyle = '#4f772d'; ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+
+    if(gameState === 'playing' || gameState === 'gameover') {
+        groundDecorations.forEach(d => {
+            if (d.type === 'pebble') {
+                ctx.fillStyle = '#6c757d'; ctx.beginPath(); ctx.ellipse(d.x, d.y, d.size, d.size * 0.7, Math.random(), 0, Math.PI*2); ctx.fill();
+            } else if (d.type === 'clover') {
+                ctx.fillStyle = '#90a955'; ctx.beginPath(); ctx.arc(d.x, d.y-2, 3, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(d.x-2, d.y+2, 3, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.arc(d.x+2, d.y+2, 3, 0, Math.PI*2); ctx.fill();
+            } else if (d.type === 'tuft') {
+                ctx.strokeStyle = '#31572c'; ctx.lineWidth = 1.5; let sway = Math.sin(globalTime * 3 + d.x) * 2;
+                ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.quadraticCurveTo(d.x-2+sway, d.y-d.size/2, d.x-4+sway, d.y-d.size); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.quadraticCurveTo(d.x+sway, d.y-d.size/2, d.x+sway, d.y-d.size*1.2); ctx.stroke();
+                ctx.beginPath(); ctx.moveTo(d.x, d.y); ctx.quadraticCurveTo(d.x+2+sway, d.y-d.size/2, d.x+4+sway, d.y-d.size); ctx.stroke();
+            }
+        });
+
+        drawHouse(HOUSE_X, HOUSE_Y);
+
+        // Draw range indicator
+        if (gameState === 'playing' && gnome) {
+            let bp = allBlueprints.find(b => b.id === currentTool);
+            if (bp && bp.rangeMax && bp.actionType !== 'none' && bp.actionType !== 'slow') {
+                ctx.save();
+                ctx.translate(gnome.x, gnome.y + gnome.bounce);
+                ctx.beginPath();
+                ctx.arc(0, 0, bp.rangeMax, 0, Math.PI * 2);
+                ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+                ctx.fill();
+                ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+                ctx.lineWidth = 2;
+                ctx.setLineDash([5, 5]);
+                ctx.stroke();
+                ctx.restore();
+            }
+        }
+
+        let renderables = [];
+        if (gnome) renderables.push(gnome);
+        renderables.push(...plants, ...bugs);
+        
+        renderables.sort((a, b) => a.y - b.y);
+        renderables.forEach(ent => ent.draw(ctx));
+
+        projectiles.forEach(p => p.draw(ctx));
+        particles.forEach(p => p.draw(ctx));
+        floatingTexts.forEach(t => t.draw(ctx));
+    }
+
+    // Vignette / Menu dimming
+    if (gameState !== 'playing') {
+        ctx.fillStyle = 'rgba(0,0,0,0.6)';
+        ctx.fillRect(0, 0, V_WIDTH, V_HEIGHT);
+    }
+}
+
+function drawHouse(x, y) {
+    ctx.save(); ctx.translate(x, y - 40); 
+    ctx.fillStyle = '#a8dadc'; ctx.beginPath(); ctx.ellipse(0, 45, 30, 10, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#457b9d'; ctx.beginPath(); ctx.ellipse(-10, 50, 10, 4, 0, 0, Math.PI*2); ctx.fill(); ctx.beginPath(); ctx.ellipse(15, 48, 8, 3, 0, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#f4f1de'; ctx.fillRect(-70, -40, 140, 80);
+    ctx.fillStyle = '#81b29a'; ctx.fillRect(-55, -20, 25, 30); ctx.fillRect(30, -20, 25, 30);
+    ctx.strokeStyle = '#3d405b'; ctx.lineWidth = 3;
+    ctx.strokeRect(-55, -20, 25, 30); ctx.strokeRect(30, -20, 25, 30);
+    ctx.beginPath(); ctx.moveTo(-42.5, -20); ctx.lineTo(-42.5, 10); ctx.stroke(); ctx.beginPath(); ctx.moveTo(-55, -5); ctx.lineTo(-30, -5); ctx.stroke();
+    ctx.beginPath(); ctx.moveTo(42.5, -20); ctx.lineTo(42.5, 10); ctx.stroke(); ctx.beginPath(); ctx.moveTo(30, -5); ctx.lineTo(55, -5); ctx.stroke();
+    ctx.strokeStyle = 'rgba(255,255,255,0.4)'; ctx.lineWidth = 2;
+    ctx.beginPath(); ctx.moveTo(-50, -15); ctx.lineTo(-35, 5); ctx.stroke(); ctx.beginPath(); ctx.moveTo(35, -15); ctx.lineTo(50, 5); ctx.stroke();
+    ctx.fillStyle = '#3d405b'; ctx.fillRect(-15, 0, 30, 40);
+    ctx.strokeStyle = '#1d1e2c'; ctx.lineWidth = 1;
+    ctx.strokeRect(-12, 5, 10, 15); ctx.strokeRect(2, 5, 10, 15); ctx.strokeRect(-12, 22, 10, 15); ctx.strokeRect(2, 22, 10, 15);
+    ctx.fillStyle = '#ffd166'; ctx.beginPath(); ctx.arc(10, 22, 3, 0, Math.PI*2); ctx.fill();
+    ctx.fillStyle = '#e07a5f'; ctx.fillRect(30, -90, 20, 40);
+    ctx.fillStyle = '#3d405b'; ctx.fillRect(28, -95, 24, 5); 
+    ctx.fillStyle = '#e07a5f'; ctx.beginPath(); ctx.moveTo(-85, -40); ctx.lineTo(85, -40); ctx.lineTo(0, -90); ctx.fill();
+    ctx.strokeStyle = 'rgba(0,0,0,0.1)'; ctx.lineWidth = 2;
+    for(let i=1; i<5; i++) { let ty = -40 - (i * 10); let tx = 85 - (i * 17); ctx.beginPath(); ctx.moveTo(-tx, ty); ctx.lineTo(tx, ty); ctx.stroke(); }
+    ctx.restore();
+}
+
+const AudioContext = window.AudioContext || window.webkitAudioContext;
+let actx;
+
+function playSound(type) {
+    if (!actx) actx = new AudioContext();
+    if (actx.state === 'suspended') actx.resume();
+
+    const osc = actx.createOscillator(); const gain = actx.createGain();
+    osc.connect(gain); gain.connect(actx.destination);
+    const now = actx.currentTime;
+
+    if (type === 'click') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(600, now); osc.frequency.exponentialRampToValueAtTime(300, now + 0.1);
+        gain.gain.setValueAtTime(0.3, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'pop') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.exponentialRampToValueAtTime(800, now + 0.1);
+        gain.gain.setValueAtTime(0.5, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'splash') {
+        osc.type = 'triangle'; osc.frequency.setValueAtTime(200, now); osc.frequency.linearRampToValueAtTime(400, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2); osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'shoot') {
+        osc.type = 'square'; osc.frequency.setValueAtTime(300, now); osc.frequency.exponentialRampToValueAtTime(100, now + 0.1);
+        gain.gain.setValueAtTime(0.1, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); osc.start(now); osc.stop(now + 0.1);
+    } else if (type === 'bee') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.linearRampToValueAtTime(100, now + 0.2);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.2); osc.start(now); osc.stop(now + 0.2);
+    } else if (type === 'puff') {
+        let bufferSize = actx.sampleRate * 0.2; let buffer = actx.createBuffer(1, bufferSize, actx.sampleRate); let data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        let noise = actx.createBufferSource(); noise.buffer = buffer; let noiseFilter = actx.createBiquadFilter();
+        noiseFilter.type = 'lowpass'; noiseFilter.frequency.setValueAtTime(1500, now); noiseFilter.frequency.exponentialRampToValueAtTime(100, now + 0.2);
+        noise.connect(noiseFilter); noiseFilter.connect(gain);
+        gain.gain.setValueAtTime(0.4, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.2); noise.start(now);
+    } else if (type === 'squish') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(150, now); osc.frequency.exponentialRampToValueAtTime(50, now + 0.15);
+        gain.gain.setValueAtTime(0.2, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.15); osc.start(now); osc.stop(now + 0.15);
+    } else if (type === 'hurt') {
+        osc.type = 'sawtooth'; osc.frequency.setValueAtTime(100, now); osc.frequency.linearRampToValueAtTime(50, now + 0.3);
+        gain.gain.setValueAtTime(0.4, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.3); osc.start(now); osc.stop(now + 0.3);
+    } else if (type === 'win') {
+        osc.type = 'sine'; osc.frequency.setValueAtTime(400, now); osc.frequency.setValueAtTime(500, now + 0.1); osc.frequency.setValueAtTime(600, now + 0.2);
+        gain.gain.setValueAtTime(0.3, now); gain.gain.linearRampToValueAtTime(0.01, now + 0.4); osc.start(now); osc.stop(now + 0.4);
+    } else if (type === 'rustle') {
+        let bufferSize = actx.sampleRate * 0.1; let buffer = actx.createBuffer(1, bufferSize, actx.sampleRate); let data = buffer.getChannelData(0);
+        for (let i = 0; i < bufferSize; i++) data[i] = Math.random() * 2 - 1;
+        let noise = actx.createBufferSource(); noise.buffer = buffer; let noiseFilter = actx.createBiquadFilter();
+        noiseFilter.type = 'lowpass'; noiseFilter.frequency.value = 1000; noise.connect(noiseFilter); noiseFilter.connect(gain);
+        gain.gain.setValueAtTime(0.5, now); gain.gain.exponentialRampToValueAtTime(0.01, now + 0.1); noise.start(now);
+    }
+}
+
+// Ensure resize happens immediately so canvas isn't size 0.
+resize(); 
+requestAnimationFrame(loop);
+
+</script>
+</body>
+</html>

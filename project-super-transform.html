@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Super Transform — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.tr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.tr__poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#0e0d12}.tr__poster img{width:100%;height:100%;object-fit:cover;display:block}.tr__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 34px rgba(0,0,0,.34);transition:transform .18s ease}.tr__poster:hover .tr__play{transform:translate(-50%,-50%) scale(1.08)}.tr__play svg{width:26px;height:26px;fill:#16141b;margin-left:3px}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.gal>div{position:relative;aspect-ratio:16/9}.note{opacity:.62;font-size:.92rem}</style>
+</head>
+<body data-page="proj-supertransform">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" target="_blank" rel="noopener" href="https://alvarocga.itch.io/super-transform">Play on itch.io ↗</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" data-say="Madrid, flooded, under attack by squids. You are the interdimensional guard." id="hero" data-screen-label="Super Transform hero">
+<div class="wrap hero__in">
+<div class="mono">Shipped · itch.io · first person puzzle</div>
+<h1>Super<br>Transform</h1>
+<p class="hero__lede">Super transform is a first person puzzle videogame based on transforming different objects to traverse the rooftops. You will embody an interdimensional guard that has the mission to save the city of Madrid in a fractured reality which has been flooded (yes, now it has a beach) and is under the vengeful attack of the squids.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#role">My role ↓</a><a class="btn" href="https://alvarocga.itch.io/super-transform" target="_blank" rel="noopener">Play on itch.io ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="trailer" data-say="Trailer first. Yes, there is a beach now." id="trailer" data-screen-label="Trailer">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Trailer</h2><span class="spacer"></span><span class="sec__note">Every space is a question about form</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Trailer · Released</span><span class="spacer"></span><a class="btn" href="https://www.youtube.com/watch?v=pPfRK8eXA9U" target="_blank" rel="noopener">Watch on YouTube ↗</a></div>
+<div class="tr"><button class="tr__poster" type="button" data-yt="pPfRK8eXA9U" aria-label="Play the Super Transform trailer"><img loading="lazy" alt="Super Transform trailer still" src="https://img.youtube.com/vi/pPfRK8eXA9U/maxresdefault.jpg" data-fallback="https://img.youtube.com/vi/pPfRK8eXA9U/hqdefault.jpg"><span class="tr__play"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></span></button></div>
+</div>
+</div>
+</section>
+
+<section data-section="gallery" data-say="Screenshots go here. Drag one in if you have it." id="gallery" data-screen-label="Screenshots">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Screenshots</h2><span class="spacer"></span><span class="sec__note">Drop images into the slots</span></div>
+<div class="gal">
+<div><image-slot id="proj-supertransform-1" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
+<div><image-slot id="proj-supertransform-2" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
+<div><image-slot id="proj-supertransform-3" shape="rounded" radius="14" placeholder="Drop a Super Transform screenshot"></image-slot></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" data-say="Read the rooftop, transform, cross. One verb, every puzzle." id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Read the rooftop</div><div class="loop__d">Look at the gap and the objects around it before touching anything.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Transform</div><div class="loop__d">Change an object into what the crossing needs. Transformation is the verb the whole game is built on.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Traverse</div><div class="loop__d">Cross, land on the next rooftop, and read the next problem.</div></div></div>
+</div>
+</section>
+
+<section data-section="role" data-say="Puzzle and gameplay design around a single transformation verb." id="role" data-screen-label="My role">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>What I owned</h2></div>
+<div class="about">
+<div>
+<p>Transformation as the verb: every space is a question about which form to be in.</p>
+<div class="chips"><span class="chip chip--hot">Puzzle design</span><span class="chip chip--hot">Gameplay design</span></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Puzzle · gameplay design</dd>
+<dt>Platform</dt><dd>PC — itch.io</dd>
+<dt>State</dt><dd>Released</dd>
+<dt>Team</dt><dd>Student/indie team</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="problems" data-say="One verb means difficulty comes from the room, not new mechanics." id="problems" data-screen-label="Design problems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">05</span><h2>Design problems</h2></div>
+<div class="rolegrid"><dl class="contact-card"><dt>One verb, many puzzles</dt><dd>With transformation as the only tool, difficulty has to come from what is in the room rather than from new mechanics.</dd></dl><dl class="contact-card"><dt>Legibility in first person</dt><dd>A puzzle you solve by looking needs the solution visible from the place you are standing.</dd></dl></div>
+</div>
+</section>
+
+<section data-section="systems" data-say="Object transformation, rooftop to rooftop, all in first person." id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">06</span><h2>Systems in the shipped game</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/projects/super-transform</span></div>
+<div class="proto"><div class="proto__name">Puzzle</div><ul class="proto__sys"><li>Object transformation as the core verb</li><li>Rooftop-to-rooftop traversal</li><li>First person spatial reading</li></ul></div><div class="proto"><div class="proto__name">World</div><ul class="proto__sys"><li>Fractured-reality Madrid, flooded</li><li>Interdimensional guard as the player role</li><li>Squid attack as the framing threat</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="pipeline" data-say="Notes on the team still to come." id="pipeline" data-screen-label="Team and pipeline">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">07</span><h2>Team &amp; pipeline</h2><span class="spacer"></span><span class="sec__note">Notes pending</span></div>
+<div class="about">
+<div><p class="note">Team size, how the work moved between departments, and what the pipeline looked like day to day — tell me and I will write this section properly rather than guess at it.</p></div>
+<dl class="contact-card"><dt>Postmortem</dt><dd class="note">What you would change with another pass. Same as above: give me the notes and this becomes a real section.</dd></dl>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" data-say="Ask him what a puzzle needs to be readable from where you stand." id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>document.querySelectorAll(".tr__poster img").forEach(function(im){function fb(){if(im.dataset.fallback&&im.src!==im.dataset.fallback)im.src=im.dataset.fallback}im.addEventListener("error",fb);var chk=function(){if(im.naturalWidth&&im.naturalWidth<=160)fb()};im.complete?chk():im.addEventListener("load",chk)});
+document.querySelectorAll(".tr__poster").forEach(function(b){b.addEventListener("click",function(){var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+b.dataset.yt+"?autoplay=1&rel=0";f.title=b.getAttribute("aria-label");f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;b.replaceWith(f)})});</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

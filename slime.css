@@ -1,0 +1,41 @@
+/* companion slime for subpages — wears the look saved on the home page */
+:root{--sl-hi:240,240,245;--sl-mid:186,186,200;--sl-deep:92,92,110;--sl-edge:28,26,36;--sl-face:237,230,218;--sl-eye:60,48,40}
+.slime{position:fixed;z-index:40;left:0;top:0;width:76px;height:76px;cursor:pointer;touch-action:none;will-change:transform}
+.slime__body{position:absolute;inset:0;border-radius:50%;background:radial-gradient(circle at 34% 28%,rgba(var(--sl-hi),.6) 2%,rgba(var(--sl-mid),.5) 26%,rgba(var(--sl-deep),.52) 64%,rgba(var(--sl-edge),.72));transition:background .5s var(--ease);backdrop-filter:blur(3px) saturate(1.5);box-shadow:0 16px 30px -14px rgba(30,91,46,.5),inset 0 -9px 18px rgba(16,60,28,.28),inset 0 0 0 1px rgba(255,255,255,.35);transform-origin:50% 88%;will-change:transform}
+.slime__body::after{content:"";position:absolute;inset:0;z-index:3;border-radius:50%;background:radial-gradient(circle at 34% 26%,rgba(255,255,255,.34),rgba(255,255,255,0) 40%),radial-gradient(circle at 72% 80%,rgba(18,68,34,.26),transparent 58%);pointer-events:none}
+.slime__gloss{position:absolute;z-index:4;left:20%;top:15%;width:26%;height:19%;border-radius:50%;background:rgba(255,255,255,.8);filter:blur(2px)}
+.slime__face{position:absolute;left:50%;top:50%;width:54%;height:47%;transform:translate(-50%,-50%);border-radius:48% 48% 44% 44%;background:rgba(var(--sl-face),.9);transition:background .5s var(--ease);filter:blur(.5px) drop-shadow(0 2px 4px rgba(18,68,34,.3));z-index:1}
+.slime__ear{position:absolute;top:-13%;width:32%;height:32%;border-radius:50%;background:rgba(var(--sl-face),.9);transition:background .5s var(--ease)}
+.slime__ear--l{left:-3%}
+.slime__ear--r{right:-3%}
+.slime__eye{position:absolute;z-index:2;top:36%;width:13%;height:22%;border-radius:3px;background:rgba(var(--sl-eye),.92);transition:width .35s var(--ease),height .35s var(--ease),border-radius .35s var(--ease),background .5s var(--ease)}
+.slime__eye--c{left:24%}
+.slime__eye--y{right:24%}
+[data-eyes="round"] .slime__eye{top:34%;width:18%;height:18%;border-radius:50%}
+[data-eyes="oval"] .slime__eye{top:32%;width:13%;height:26%;border-radius:50%}
+[data-eyes="sleepy"] .slime__eye{top:44%;width:19%;height:6%;border-radius:99px}
+[data-eyes="spark"] .slime__eye{top:33%;width:19%;height:21%;border-radius:0;clip-path:polygon(50% 0,60% 40%,100% 50%,60% 60%,50% 100%,40% 60%,0 50%,40% 40%)}
+[data-eyes="wink"] .slime__eye--c{top:44%;width:19%;height:6%;border-radius:99px}
+[data-eyes="wide"] .slime__eye{top:32%;width:22%;height:24%;border-radius:40%}
+[data-eyes="tall"] .slime__eye{top:26%;width:10%;height:34%;border-radius:99px}
+[data-eyes="cross"] .slime__eye{top:34%;width:18%;height:18%;border-radius:0;clip-path:polygon(38% 0,62% 0,62% 38%,100% 38%,100% 62%,62% 62%,62% 100%,38% 100%,38% 62%,0 62%,0 38%,38% 38%)}
+[data-eyes="angry"] .slime__eye{top:34%;width:19%;height:11%;border-radius:2px}
+[data-eyes="angry"] .slime__eye--c{transform:rotate(14deg)}
+[data-eyes="angry"] .slime__eye--y{transform:rotate(-14deg)}
+[data-eyes="dizzy"] .slime__eye{top:33%;width:19%;height:19%;border-radius:50%;background:none;border:2.5px solid rgba(var(--sl-eye),.92)}
+[data-eyes="bead"] .slime__eye{top:38%;width:9%;height:9%;border-radius:50%}
+.bubble{position:fixed;z-index:39;left:0;top:0;max-width:min(300px,52vw);padding:13px 17px;border-radius:18px 18px 6px 18px;background:rgba(255,255,255,.92);border:1px solid var(--line);backdrop-filter:blur(16px);box-shadow:0 18px 40px -24px rgba(22,20,27,.6);font-size:14.5px;line-height:1.4;opacity:0;transform:translateY(8px) scale(.96);transition:opacity .45s var(--ease),transform .45s var(--ease);pointer-events:none}
+.bubble.is-on{opacity:1;transform:none}
+.menu{position:fixed;z-index:41;left:0;top:0;padding:10px;border-radius:20px;background:rgba(255,255,255,.92);border:1px solid var(--line);backdrop-filter:blur(18px);box-shadow:0 26px 60px -28px rgba(22,20,27,.65);display:grid;gap:2px;opacity:0;transform:translateY(10px) scale(.95);transform-origin:100% 100%;transition:.4s var(--ease);pointer-events:none}
+.menu.is-on{opacity:1;transform:none;pointer-events:auto}
+.menu{transform-origin:0 100%}
+.menu button{display:flex;align-items:center;gap:12px;width:210px;padding:10px 13px;border:0;border-radius:13px;background:transparent;font:inherit;font-size:14.5px;color:var(--ink);cursor:pointer;text-align:left;transition:.25s var(--ease)}
+.menu button:hover,.menu button.is-here{background:linear-gradient(100deg,rgba(220,209,255,.75),rgba(255,213,190,.6))}
+.menu button i{font-family:var(--f-m);font-size:10px;color:var(--ink-3);font-style:normal}
+@media(max-width:640px){.bubble{max-width:calc(100vw - 130px)}}
+@keyframes slimeSquish{0%{transform:scale(1,1)}18%{transform:scale(1.22,.74) translateY(9%)}38%{transform:scale(.86,1.2) translateY(-7%)}58%{transform:scale(1.09,.92) translateY(3%)}78%{transform:scale(.97,1.04)}100%{transform:scale(1,1)}}
+.slime.is-poked .slime__body{animation:slimeSquish .58s cubic-bezier(.22,1.1,.3,1)}
+.slime.is-poked .slime__gloss{animation:slimeGloss .58s ease-out}
+@keyframes slimeGloss{0%{transform:none;opacity:1}22%{transform:translate(14%,26%) scale(1.3,.6);opacity:.75}100%{transform:none;opacity:1}}
+
+.menu .menu__toggle{margin-top:6px;border-top:1px solid rgba(22,20,27,.1);opacity:.8}

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: Sonar Salvage — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-sonar">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · diegetic UI</div>
+<h1>Sonar<br>Salvage</h1>
+<p class="hero__lede">You never see the trench — only what the claw's lamp reaches. Drive a crane down 2,400 metres of dark on a two-minute battery, and the battery is also the light.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-sonar-salvage.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Trolley ←→ · winch ↑↓ · claw = space</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-sonar-salvage.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-sonar-salvage.html" title="Sonar Salvage prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Descend</div><div class="loop__d">Pay out cable into the trench, seeing only what the lamp cone reaches.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Grab</div><div class="loop__d">Read the sonar and swing the claw on its damped spring onto the salvage.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Surface</div><div class="loop__d">Haul up before the battery that lights the way runs out, then go deeper.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>By anchoring a 2D salvaging minigame in diegetic interfaces and physics-driven precision rather than arbitrary fail states, a 3D spatial task can be successfully synthesized into an immersive, highly replayable sub-system that feels physically grounded within the broader game world.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>How can a 3D salvaging task be effectively managed and satisfyingly represented through a 2D minigame interface?</li><li>How do physics-based movement and momentum affect the tactile feel and long-term replayability of the mechanic?</li><li>Does a completely diegetic, resource-constrained approach make contextual sense within the larger fiction?</li></ul>
+<h3>Diegetic UX and organic pressure</h3>
+<p>To make a 2D minigame feel like a natural extension of a 3D world, the design brilliantly collapses the boundary between the player and the avatar's equipment.</p>
+<p><strong>The Screen Within a Screen:</strong> By stripping away floating UI in favor of a manufacturer plate, physical gauges, and a sonar screen, the UX hierarchy is entirely diegetic. The 2D interpretation is satisfying because the player is essentially operating a diegetic interface inside the game's fiction, perfectly contextualizing the format shift.</p>
+<p><strong>The Battery Dual-Function:</strong> Tying the timer directly to the light source is an elegant piece of system design. It removes the need for artificial warning text or flashing numbers. The physical shrinking of the visible screen creates a visceral, creeping pressure that communicates the fail state organically, ensuring the tension feels earned rather than mechanically imposed.</p>
+<h3>Physics as the core skill check</h3>
+<p>Replacing a standard, predictable input method with a physics-based system is what guarantees the mechanic remains engaging on the fiftieth playthrough.</p>
+<p><strong>The Damped Spring:</strong> Moving the claw off rigid rails and onto a damped spring fundamentally alters the interaction loop. It introduces momentum, sway, and inertia, transforming a simple vertical descent into a complex mechanical problem.</p>
+<p><strong>Precision over Speed:</strong> Because the claw must settle before a successful grab, and grazing a rock drops the payload, the game actively punishes rushing. It shifts the required skill away from twitch reaction speed and toward deliberate, methodical spatial management. Replayability is sustained because the player is constantly working to master a tangible physics system and their own impatience, rather than simply memorizing a static layout.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Two minutes is enough for one clean descent and no mistakes, which makes failure feel like the run was decided at the start; a partial-recovery reward would let a bad run still teach something. Spring damping is tuned for keyboard — touch needs a shorter cable or stronger damping. The build keeps a live debug panel for lamp cone, ambient radius and cable length, which is how the lighting was tuned in the first place.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · game feel · diegetic UI</dd>
+<dt>Target</dt><dd>Touch and keyboard</dd>
+<dt>Built with</dt><dd>HTML5 canvas, Web Audio, vanilla JS</dd>
+<dt>State</dt><dd>Playable test build with debug panel</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/sonar-salvage</span></div>
+<div class="proto"><div class="proto__name">Crane control</div><ul class="proto__sys"><li>Trolley traverses the gantry; winch pays out cable</li><li>Claw on a damped spring — momentum carries</li><li>Open/close grab with a single input</li></ul></div>
+<div class="proto"><div class="proto__name">Light &amp; visibility</div><ul class="proto__sys"><li>Masked lighting: ambient glow plus a directional cone</li><li>Cone flips upward while reeling in</li><li>Reach shrinks with the battery</li></ul></div>
+<div class="proto"><div class="proto__name">Pressure</div><ul class="proto__sys"><li>120-second battery drives both timer and light</li><li>2,400-metre trench — descent is most of the run</li><li>Rock collisions drop the salvage</li></ul></div>
+<div class="proto"><div class="proto__name">Presentation</div><ul class="proto__sys"><li>Diegetic terminal frame, gauge and manufacturer plate</li><li>Synthesised sonar and machinery audio</li><li>Debug sliders for lamp length, width and ambient</li></ul></div>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the tuning notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

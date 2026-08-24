@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: The Last Piece — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-lastpiece">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · one-handed</div>
+<h1>The Last<br>Piece</h1>
+<p class="hero__lede">A king alone on a 5×8 board, climbing. Chess movement supplies the tactics, a d6 against defence supplies the risk, and Focus lets you buy a second chance at the moment it matters.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-last-piece.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Tap a piece, then a tile</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-last-piece.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-last-piece.html" title="The Last Piece prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Position</div><div class="loop__d">Move the king by chess rules across a 5×8 board of blocked lines.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Gamble</div><div class="loop__d">Attack with a d6 against the target’s defence, type advantage shaving the number.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Bank</div><div class="loop__d">Hits pay Focus, Focus buys the reroll — then the cleared floor rebuilds harder.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>By replacing the perfect information of traditional chess with calculated risk and an active resource economy, the spatial logic of chess movement can successfully anchor a single-character adventure, shifting the focus from absolute determinism to dynamic probability management.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>How can chess mechanics be adapted into a single-character adventure, and what rules must be kept or discarded?</li><li>At what point does the introduction of chance cause the system to stop feeling like chess?</li><li>How can uncertain combat outcomes and resource economies create a unique, engaging twist on a classic formula?</li></ul>
+<h3>Dismantling perfect information</h3>
+<p>Traditional chess relies on absolute certainty: if a piece can reach a square, the capture is guaranteed. Adapting this for a single-character adventure requires breaking that rule while preserving the spatial identity of the board.</p>
+<p><strong>Movement as the Anchor:</strong> Retaining the exact movement patterns (the knight's L-shape, the bishop's diagonals) is what tethers the system to its roots. If you change how pieces move, the game loses its identity; by changing only the outcome of the movement, you create a distinct tactical mutation.</p>
+<p><strong>Uncertainty as Conflict:</strong> Introducing a d6 combat roll against a target's defense fundamentally alters the interaction. It changes a capture from a mathematical certainty into a strategic gamble, forcing the player to weigh spatial positioning against statistical risk.</p>
+<h3>The resource economy loop</h3>
+<p>To prevent the randomness from feeling punishing, the design introduces a tight retention loop centered on a specific currency.</p>
+<p><strong>Focus as a Safety Net:</strong> Earning Focus on a successful hit and spending it to reroll failures creates an elegant, self-sustaining economy of momentum.</p>
+<p><strong>Recoverable Failure:</strong> This system directly answers how to keep a losing streak engaging without removing the tension. By tying the currency to success, it ensures that players who engage aggressively are rewarded with the capital needed to mitigate future bad luck.</p>
+<h3>Recontextualizing the board</h3>
+<p>The addition of type advantage adds a necessary layer of complexity to compensate for controlling a single entity rather than a full board of pieces.</p>
+<p><strong>Spatial Rock-Paper-Scissors:</strong> Overlaying a systemic advantage (bishop beats rook, rook beats knight) forces the player to evaluate the board differently.</p>
+<p><strong>Picking the Fight:</strong> Reading the grid is no longer just about safe squares and lines of sight; it is about plotting a route that aligns movement capabilities with optimal combat matchups, ensuring the experience remains mentally demanding.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Focus caps at five, which makes late floors feel comfortable — a soft cap tied to floor number might hold tension longer. Enemy pawns promote at random on reaching the far rank, which is dramatic but unreadable; telegraphing the promotion a turn early is the obvious next test. And rock density scales with floor, so it currently constrains the player more than the enemies.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · combat math · roguelike structure</dd>
+<dt>Target</dt><dd>One-handed mobile, portrait</dd>
+<dt>Built with</dt><dd>React, Tailwind</dd>
+<dt>State</dt><dd>Playable test build</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/the-last-piece</span></div>
+<div class="proto"><div class="proto__name">Board &amp; movement</div><ul class="proto__sys"><li>5×8 grid, chess move sets per piece type</li><li>Rocks block lines — density scales with floor</li></ul></div>
+<div class="proto"><div class="proto__name">Resolution</div><ul class="proto__sys"><li>d6 roll against the target's defence value</li><li>Defence 3–5 by piece; the roll is shown on the tile</li></ul></div>
+<div class="proto"><div class="proto__name">Focus economy</div><ul class="proto__sys"><li>+1 Focus per successful hit, capped at 5</li><li>Spend 1 to reroll — offered only on a bad outcome</li></ul></div>
+<div class="proto"><div class="proto__name">Run structure</div><ul class="proto__sys"><li>Clear the floor to advance; the board rebuilds harder</li><li>Enemy pawns promote to knight, rook or bishop</li><li>Type advantages shave defence: bishop → rook → knight → bishop</li></ul></div>
+</div>
+</div>
+</section>
+
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the balance notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

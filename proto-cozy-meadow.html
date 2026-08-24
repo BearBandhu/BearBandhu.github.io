@@ -1,0 +1,922 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Cozy Elevated Meadow: Flora & Fauna</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Nunito:wght@400;700;900&display=swap');
+        
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #87CEEB; font-family: 'Nunito', sans-serif; touch-action: none; user-select: none; }
+        #gameCanvas { display: block; width: 100%; height: 100%; }
+
+        .glass-panel { background: rgba(255, 255, 255, 0.85); backdrop-filter: blur(8px); border-bottom: 4px solid rgba(0,0,0,0.1); border-radius: 16px; }
+        .tool-btn { transition: all 0.2s ease; transform-origin: center bottom; }
+        .tool-btn:hover { transform: scale(1.1) translateY(-5px); }
+        .tool-btn.active { background-color: #E2E8F0; border-color: #94A3B8; box-shadow: inset 0 4px 6px rgba(0,0,0,0.1); transform: scale(1.05); }
+        
+        .seed-item { transition: all 0.2s; }
+        .seed-item:hover:not(.locked) { background-color: #f1f5f9; transform: scale(1.05); cursor: pointer; }
+        .seed-item.active { background-color: #e2e8f0; border: 2px solid #64748b; }
+        .seed-item.locked { opacity: 0.5; filter: grayscale(100%); cursor: not-allowed; }
+
+        .menu-scroll { max-height: 60vh; overflow-y: auto; scrollbar-width: thin; scrollbar-color: #CBD5E1 transparent; }
+
+        body.tool-hand { cursor: grab; } body.tool-hand:active { cursor: grabbing; }
+        body.tool-trowel { cursor: crosshair; } body.tool-water { cursor: pointer; }
+        body.tool-seed { cursor: crosshair; } body.tool-harvest { cursor: pointer; }
+        body.tool-pond, body.tool-rock { cursor: crosshair; }
+
+        .hidden { display: none !important; }
+        .fade-in { animation: fadeIn 0.5s ease-out; }
+        .slide-up { animation: slideUp 0.3s ease-out forwards; }
+        
+        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
+        @keyframes slideUp { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+
+        #notifications { pointer-events: none; z-index: 50; }
+    </style>
+</head>
+<body class="tool-hand fade-in">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <div id="notifications" class="absolute top-20 left-1/2 transform -translate-x-1/2 flex flex-col gap-2 items-center"></div>
+
+    <!-- UI Overlay -->
+    <div id="uiLayer" class="absolute inset-0 pointer-events-none flex flex-col justify-between p-4 z-10">
+        
+        <!-- Top Bar -->
+        <div class="flex justify-between items-start">
+            <div class="glass-panel px-6 py-3 shadow-lg pointer-events-auto flex items-center gap-4">
+                <div>
+                    <h1 class="text-2xl font-black text-gray-800 tracking-wide drop-shadow-sm">Elevated Meadow</h1>
+                    <p class="text-sm text-gray-600 font-bold">Total Harvests: <span id="harvestCount" class="text-green-600">0</span></p>
+                </div>
+                <div class="w-px h-10 bg-gray-300 mx-2"></div>
+                <button id="btnJournal" class="w-12 h-12 rounded-xl bg-indigo-100 border-2 border-indigo-300 hover:bg-indigo-200 shadow-sm flex items-center justify-center text-2xl transition-transform hover:scale-105" title="Open Almanac">
+                    📖
+                </button>
+            </div>
+            
+            <!-- Weather Indicator -->
+            <div id="weatherStatus" class="glass-panel px-4 py-2 shadow-lg font-bold text-gray-700 flex items-center gap-2">
+                ☀️ Clear Skies
+            </div>
+        </div>
+
+        <!-- Journal Modal (Hidden) -->
+        <div id="journalModal" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 w-full max-w-2xl glass-panel p-6 shadow-2xl pointer-events-auto z-20">
+            <div class="flex justify-between items-center mb-4 border-b pb-2">
+                <h2 class="text-2xl font-black text-gray-800">Meadow Almanac</h2>
+                <button id="btnCloseJournal" class="text-gray-500 hover:text-red-500 text-xl font-bold">✕</button>
+            </div>
+            <div id="journalContent" class="grid grid-cols-2 sm:grid-cols-3 gap-4 menu-scroll p-2">
+                <!-- Populated by JS -->
+            </div>
+        </div>
+
+        <!-- Bottom Bar -->
+        <div class="flex flex-col items-center gap-4 pointer-events-auto">
+            
+            <div id="seedMenu" class="hidden glass-panel w-[90%] max-w-2xl p-4 shadow-xl flex flex-wrap justify-center gap-3 menu-scroll"></div>
+
+            <div class="glass-panel px-4 py-2 shadow-xl flex gap-2 sm:gap-3 items-center flex-wrap justify-center">
+                <button class="tool-btn active w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="hand" title="Pan">🖐️</button>
+                <div class="w-px h-8 bg-gray-300 mx-1"></div>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="trowel" title="Dig Hole">⛏️</button>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 shadow-sm flex flex-col items-center justify-center text-xl relative" data-tool="seed" id="btnOpenSeeds" title="Plant Seed">
+                    🌱<span id="currentSeedBadge" class="absolute -top-2 -right-2 bg-green-500 w-5 h-5 rounded-full border-2 border-white text-[10px] flex items-center justify-center text-white font-bold shadow-md hidden"></span>
+                </button>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-white border-2 border-gray-200 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="water" title="Water">🚿</button>
+                <div class="w-px h-8 bg-gray-300 mx-1"></div>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-blue-50 border-2 border-blue-200 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="pond" title="Dig Pond">💧</button>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-gray-100 border-2 border-gray-300 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="rock" title="Place Rock">🪨</button>
+                <div class="w-px h-8 bg-gray-300 mx-1"></div>
+                <button class="tool-btn w-12 h-12 rounded-2xl bg-amber-100 border-2 border-amber-300 shadow-sm flex flex-col items-center justify-center text-xl" data-tool="harvest" title="Harvest">✂️</button>
+            </div>
+            <div class="text-xs text-white drop-shadow-md font-bold mb-2 text-center px-4">Ponds passively water nearby plants. Cross-breed flowers by planting different types close together!</div>
+        </div>
+    </div>
+
+<script>
+// --- GAME DATA & PROGRESSION ---
+
+const PLANT_TYPES = {
+    // Base Plants (Growth speeds reduced by 80%)
+    GRASS: { id: 'grass', name: 'Meadow Grass', desc: 'Soft and swaying.', icon: '🌾', growSpeed: 0.00012, unlockAt: 0, type: 'plant' },
+    DAISY: { id: 'daisy', name: 'Daisy', desc: 'A simple classic.', icon: '🌼', growSpeed: 0.00008, unlockAt: 0, type: 'plant' },
+    DANDELION: { id: 'dandelion', name: 'Dandelion', desc: 'Makes a wish.', icon: '🏵️', growSpeed: 0.00010, unlockAt: 3, type: 'plant' },
+    BLUEBELL: { id: 'bluebell', name: 'Bluebell', desc: 'Rings in the wind.', icon: '🎐', growSpeed: 0.00006, unlockAt: 8, type: 'plant' },
+    TULIP: { id: 'tulip', name: 'Tulip', desc: 'Bright and sturdy.', icon: '🌷', growSpeed: 0.00007, unlockAt: 15, type: 'plant' },
+    ROSE: { id: 'rose', name: 'Rose', desc: 'Beautiful but thorny.', icon: '🌹', growSpeed: 0.00004, unlockAt: 25, type: 'plant' },
+    SUNFLOWER: { id: 'sunflower', name: 'Sunflower', desc: 'Follows the sun.', icon: '🌻', growSpeed: 0.00004, unlockAt: 40, type: 'plant' },
+    
+    // Hybrids 
+    PINK_ROSE: { id: 'pink_rose', name: 'Pink Rose', desc: 'A rare hybrid of a Rose and a Daisy.', icon: '🌸', growSpeed: 0.00003, unlockAt: 999, type: 'plant', parents: ['rose', 'daisy'] },
+    GOLDEN_LILY: { id: 'golden_lily', name: 'Golden Lily', desc: 'A radiant hybrid of a Sunflower and Bluebell.', icon: '⚜️', growSpeed: 0.00003, unlockAt: 999, type: 'plant', parents: ['sunflower', 'bluebell'] },
+    FIRE_TULIP: { id: 'fire_tulip', name: 'Fire Tulip', desc: 'A fiery hybrid of a Dandelion and Tulip.', icon: '🌺', growSpeed: 0.00003, unlockAt: 999, type: 'plant', parents: ['dandelion', 'tulip'] },
+
+    // Trees
+    OAK: { id: 'oak', name: 'Oak Tree', desc: 'A massive ancient tree.', icon: '🌳', growSpeed: 0.00002, unlockAt: 60, type: 'tree' },
+    
+    // Environment
+    POND: { id: 'pond', name: 'Small Pond', desc: 'Waters plants nearby passively.', icon: '💧', type: 'env' },
+    ROCK: { id: 'rock', name: 'Garden Rock', desc: 'A decorative heavy stone.', icon: '🪨', type: 'env' }
+};
+
+let inventory = { 'grass': 5, 'daisy': 5 };
+let totalHarvests = 0;
+let discoveredEntities = ['grass', 'daisy', 'pond', 'rock'];
+
+const canvas = document.getElementById('gameCanvas');
+const ctx = canvas.getContext('2d');
+let width, height;
+let camera = { x: 0, targetX: 0 };
+const worldWidth = 5000; 
+
+let plants = [];
+let creatures = [];
+let clouds = [];
+let particles = [];
+let floatingTexts = [];
+
+let currentTool = 'hand';
+let selectedSeed = 'daisy';
+
+// Weather & Time Systems
+let timeOfDay = 0; // 0 to 2PI
+let globalWind = 0;
+let globalTime = 0;
+let weather = {
+    isRaining: false,
+    intensity: 0, // 0 to 1
+    timer: 0 // frames remaining for current weather event
+};
+
+let pointer = { x: 0, y: 0, isDown: false };
+let startDragX = 0, lastDragX = 0, hasDraggedSignificant = false;
+
+// --- TERRAIN MATH ---
+function getGroundLimits(worldX) {
+    let baseHorizon = height * 0.38; 
+    let baseBottom = height * 0.78;  
+    let curveTop = Math.sin(worldX / 500) * 20 + Math.sin(worldX / 250) * 10;
+    let curveBot = Math.sin((worldX+200) / 600) * 30 + Math.sin((worldX+100) / 300) * 15;
+    return { topY: baseHorizon + curveTop, bottomY: baseBottom + curveBot };
+}
+
+function getScreenY(worldX, worldZ) {
+    let limits = getGroundLimits(worldX);
+    return limits.topY + worldZ * (limits.bottomY - limits.topY);
+}
+
+function resize() {
+    width = window.innerWidth; height = window.innerHeight;
+    canvas.width = width; canvas.height = height;
+}
+
+function init() {
+    resize(); window.addEventListener('resize', resize);
+    
+    plants.push(new Entity(width/2, 0.2, 'daisy', 1.0));
+    plants.push(new Entity(width/2 + 80, 0.5, 'pond', 1.0));
+    plants.push(new Entity(width/2 - 100, 0.8, 'rock', 1.0));
+    plants.push(new Entity(width/2 - 40, 0.3, 'grass', 0.8));
+
+    for(let i=0; i<15; i++) clouds.push({ x: Math.random() * worldWidth, y: Math.random() * (height * 0.3), speed: 0.05 + Math.random() * 0.2, scale: 0.5 + Math.random() * 1.5, opacity: 0.4 + Math.random() * 0.4 });
+    for(let i=0; i<15; i++) creatures.push(new Creature());
+
+    camera.x = (width/2) - (width/2); camera.targetX = camera.x;
+
+    setupUI(); setupInput();
+    setInterval(crossBreedLogic, 10000); 
+    requestAnimationFrame(gameLoop);
+}
+
+// --- CLASSES ---
+
+class Entity {
+    constructor(worldX, worldZ, type, initialGrowth = 0) {
+        this.id = Math.random().toString(36).substr(2, 9);
+        this.x = worldX; this.z = worldZ; 
+        this.type = type; 
+        this.growth = initialGrowth;
+        this.moisture = 0;
+        this.setProperties();
+    }
+
+    setProperties() {
+        if(!this.type) return;
+        let pData = PLANT_TYPES[this.type.toUpperCase()];
+        this.category = pData.type; 
+        
+        this.maxHeight = 50 + Math.random() * 30;
+        if(this.type === 'sunflower') this.maxHeight = 110 + Math.random() * 40;
+        if(this.type.includes('tulip')) this.maxHeight = 60 + Math.random() * 20;
+        if(this.category === 'tree') this.maxHeight = 220 + Math.random() * 80;
+        if(this.category === 'env') this.maxHeight = 0; 
+        
+        this.swayOffset = Math.random() * Math.PI * 2;
+        this.swayFactor = this.category === 'tree' ? 0.1 : 0.5 + Math.random() * 0.5;
+        this.stemCurves = [(Math.random()-0.5)*20, (Math.random()-0.5)*20];
+    }
+
+    update() {
+        if (!this.type || this.category === 'env') return; 
+
+        if (weather.isRaining) this.moisture += 0.005;
+        if (this.moisture > 0) {
+            this.moisture -= 0.0005;
+            if(this.moisture > 1) this.moisture = 1;
+        }
+
+        if (this.growth < 1) {
+            let speed = PLANT_TYPES[this.type.toUpperCase()].growSpeed;
+            if (this.moisture > 0) speed *= 2.5; 
+            this.growth += speed;
+            if (this.growth >= 1) {
+                this.growth = 1;
+                spawnParticle(this.x, this.z, getScreenY(this.x, this.z) - this.maxHeight * (0.6 + this.z*0.6), 'sparkle');
+            }
+        }
+    }
+}
+
+class Creature {
+    constructor() {
+        this.x = Math.random() * worldWidth; this.z = Math.random(); 
+        let r = Math.random();
+        this.type = r > 0.8 ? 'bird' : (r > 0.6 ? 'frog' : (r > 0.3 ? 'butterfly' : 'bee'));
+        
+        this.altitude = this.type === 'frog' ? 0 : 40 + Math.random() * 100;
+        if(this.type === 'bird') this.altitude = 200 + Math.random() * 150;
+
+        this.vx = (Math.random() > 0.5 ? 1 : -1) * (0.2 + Math.random() * 0.5);
+        if (this.type === 'frog') this.vx *= 0; 
+        if (this.type === 'bee') this.vx *= 1.5;
+        if (this.type === 'bird') this.vx = (Math.random() > 0.5 ? 2 : -2);
+
+        this.time = Math.random() * 100;
+        this.color = `hsl(${Math.random()*360}, 70%, 60%)`;
+        this.target = null;
+        this.stateTimer = 0;
+    }
+
+    update() {
+        this.time += 0.05; this.x += this.vx;
+        if (this.x < -200) this.x = worldWidth + 200;
+        if (this.x > worldWidth + 200) this.x = -200;
+
+        if(weather.intensity > 0.5 && (this.type === 'butterfly' || this.type === 'bee')) {
+            this.altitude += (0 - this.altitude) * 0.05; 
+            this.vx *= 0.9;
+        }
+
+        if (this.type === 'frog') {
+            this.stateTimer--;
+            if(this.stateTimer <= 0) {
+                let pond = plants.find(p => p.type === 'pond' && Math.abs(p.x - this.x) < 300);
+                if(pond && Math.random() > 0.5) {
+                    this.vx = (pond.x - this.x) * 0.02;
+                    this.z += (pond.z - this.z) * 0.05;
+                } else {
+                    this.vx = (Math.random() - 0.5) * 2;
+                }
+                this.altitude = 15; 
+                this.stateTimer = 60 + Math.random() * 100;
+            }
+            if(this.altitude > 0) this.altitude -= 1; 
+            else { this.altitude = 0; this.vx *= 0.8; }
+        } else if (this.type === 'bird') {
+            this.altitude += Math.sin(this.time * 0.5) * 0.5;
+        } else if (this.type === 'butterfly' && weather.intensity < 0.5) {
+            this.altitude = 60 + Math.sin(this.time) * 30;
+        } else if (this.type === 'bee' && weather.intensity < 0.5) {
+            if (!this.target && Math.random() < 0.02) {
+                let blooms = plants.filter(p => p.category === 'plant' && p.growth > 0.8 && Math.abs(p.x - this.x) < 200);
+                if(blooms.length > 0) this.target = blooms[Math.floor(Math.random()*blooms.length)];
+            }
+            if (this.target) {
+                let dx = this.target.x - this.x; let dz = this.target.z - this.z;
+                this.x += dx * 0.01; this.z += dz * 0.01;
+                let plantScale = 0.6 + this.target.z * 0.6;
+                let targetAlt = this.target.maxHeight * this.target.growth * plantScale;
+                this.altitude += (targetAlt - this.altitude) * 0.05;
+                if (Math.abs(dx) < 10) { if(Math.random() < 0.02) this.target = null; }
+            } else {
+                this.altitude = 50 + Math.sin(this.time * 2) * 10;
+            }
+        }
+    }
+
+    draw(ctx) {
+        ctx.save();
+        if (this.vx < 0 && this.type !== 'frog') ctx.scale(-1, 1);
+        if (this.type === 'frog' && this.vx < 0) ctx.scale(-1, 1);
+
+        if (this.type === 'butterfly') {
+            let flap = Math.abs(Math.sin(this.time * 4));
+            ctx.fillStyle = this.color;
+            ctx.beginPath(); ctx.ellipse(0, 0, 8 * flap, 10, Math.PI/4, 0, Math.PI*2);
+            ctx.ellipse(-2, -2, 6 * flap, 8, -Math.PI/4, 0, Math.PI*2); ctx.fill();
+        } else if (this.type === 'bee') {
+            ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.ellipse(0, 0, 6, 4, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#000000'; ctx.fillRect(-2, -4, 2, 8); ctx.fillRect(2, -3, 2, 6);
+            ctx.fillStyle = 'rgba(255,255,255,0.7)'; 
+            let flap = Math.abs(Math.sin(this.time * 10));
+            ctx.beginPath(); ctx.ellipse(0, -5, 4, 6 * flap, 0, 0, Math.PI*2); ctx.fill();
+        } else if (this.type === 'frog') {
+            ctx.fillStyle = '#15803d'; 
+            ctx.beginPath(); ctx.ellipse(0, -4, 8, 5, 0, 0, Math.PI*2); ctx.fill();
+            ctx.beginPath(); ctx.arc(4, -7, 2, 0, Math.PI*2); ctx.fill(); 
+            ctx.fillStyle = '#000'; ctx.beginPath(); ctx.arc(4, -7, 1, 0, Math.PI*2); ctx.fill(); 
+            if(this.altitude > 0) { 
+                ctx.strokeStyle = '#15803d'; ctx.lineWidth = 2;
+                ctx.beginPath(); ctx.moveTo(-6,-2); ctx.lineTo(-10, 2); ctx.stroke();
+            }
+        } else if (this.type === 'bird') {
+            ctx.fillStyle = this.color;
+            ctx.beginPath(); ctx.ellipse(0, 0, 10, 4, 0, 0, Math.PI*2); ctx.fill(); 
+            ctx.beginPath(); ctx.arc(8, -2, 4, 0, Math.PI*2); ctx.fill(); 
+            ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.moveTo(11, -2); ctx.lineTo(15, -1); ctx.lineTo(11, 0); ctx.fill(); 
+            let flap = Math.sin(this.time * 8);
+            ctx.fillStyle = this.color;
+            ctx.beginPath(); ctx.ellipse(0, flap > 0 ? -5 : 5, 4, 8*Math.abs(flap), 0, 0, Math.PI*2); ctx.fill(); 
+        }
+        ctx.restore();
+    }
+}
+
+class FloatingText {
+    constructor(x, z, startY, text, color) { this.x = x; this.z = z; this.y = startY; this.text = text; this.color = color; this.life = 1.0; }
+    update() { this.y -= 1; this.life -= 0.02; }
+    draw(ctx, screenX) {
+        ctx.globalAlpha = Math.max(0, this.life); ctx.fillStyle = this.color; ctx.font = 'bold 20px Nunito'; ctx.textAlign = 'center';
+        ctx.strokeStyle = 'white'; ctx.lineWidth = 3; ctx.strokeText(this.text, screenX, this.y); ctx.fillText(this.text, screenX, this.y); ctx.globalAlpha = 1.0;
+    }
+}
+class Particle {
+    constructor(worldX, worldZ, screenY, type) {
+        this.x = worldX; this.z = worldZ; this.y = screenY; this.type = type; this.life = 1.0;
+        this.vx = (Math.random() - 0.5) * 2; this.vy = (Math.random() - 0.5) * 2;
+        if(type === 'water') { this.vx = (Math.random() - 0.5) * 3; this.vy = Math.random() * 2 + 2; } 
+        else if (type === 'rain') { this.vx = globalWind * 5; this.vy = 8 + Math.random() * 4; }
+        else if (type === 'dirt') { this.vy = -Math.random() * 3 - 1; } 
+    }
+    update() {
+        this.x += this.vx; this.y += this.vy;
+        if (this.type === 'water' || this.type === 'dirt' || this.type === 'rain') { this.vy += 0.2; this.life -= 0.02; } 
+        else if (this.type === 'sparkle') { this.life -= 0.02; this.y -= 0.5; } 
+    }
+    draw(ctx) {
+        ctx.globalAlpha = this.life;
+        if (this.type === 'water' || this.type === 'rain') { ctx.fillStyle = 'rgba(96, 165, 250, 0.6)'; ctx.beginPath(); ctx.arc(0, 0, this.type==='rain'?1.5:3, 0, Math.PI*2); ctx.fill(); } 
+        else if (this.type === 'dirt') { ctx.fillStyle = '#78350f'; ctx.fillRect(-2, -2, 4, 4); } 
+        else if (this.type === 'sparkle') { ctx.fillStyle = '#fef08a'; ctx.beginPath(); ctx.arc(0, 0, 2, 0, Math.PI*2); ctx.fill(); } 
+        ctx.globalAlpha = 1.0;
+    }
+}
+
+// --- CORE MECHANICS & LOGIC ---
+
+function showToast(title, desc, icon) {
+    let container = document.getElementById('notifications');
+    let toast = document.createElement('div');
+    toast.className = 'glass-panel px-4 py-2 flex items-center gap-3 slide-up shadow-xl';
+    toast.innerHTML = `<span class="text-3xl">${icon}</span><div><h3 class="font-black text-gray-800 leading-tight">${title}</h3><p class="text-xs font-bold text-green-600">${desc}</p></div>`;
+    container.appendChild(toast);
+    setTimeout(() => { toast.style.animation = 'fadeIn 0.5s ease-out reverse forwards'; setTimeout(() => toast.remove(), 500); }, 4000);
+}
+
+function checkDiscovered(id) {
+    if(!discoveredEntities.includes(id)) {
+        discoveredEntities.push(id);
+        let data = PLANT_TYPES[id.toUpperCase()];
+        showToast('New Discovery!', `${data.name} added to Almanac.`, data.icon);
+        buildJournal();
+    }
+}
+
+function checkUnlocks() {
+    let newUnlocks = false;
+    Object.values(PLANT_TYPES).forEach(plant => {
+        if (!discoveredEntities.includes(plant.id) && totalHarvests >= plant.unlockAt && plant.unlockAt !== 999) {
+            checkDiscovered(plant.id);
+            inventory[plant.id] = (inventory[plant.id] || 0) + 3; 
+            newUnlocks = true;
+        }
+    });
+    if(newUnlocks) renderSeedMenu();
+}
+
+function crossBreedLogic() {
+    let maturePlants = plants.filter(p => p.category === 'plant' && p.growth >= 0.9);
+    
+    Object.values(PLANT_TYPES).forEach(hybrid => {
+        if(!hybrid.parents) return;
+        
+        let p1 = hybrid.parents[0]; let p2 = hybrid.parents[1];
+        
+        for(let i=0; i<maturePlants.length; i++) {
+            for(let j=i+1; j<maturePlants.length; j++) {
+                let a = maturePlants[i]; let b = maturePlants[j];
+                if ((a.type === p1 && b.type === p2) || (a.type === p2 && b.type === p1)) {
+                    let dist = Math.hypot(a.x - b.x, (a.z - b.z)*200);
+                    if (dist < 80 && Math.random() < 0.3) { 
+                        inventory[hybrid.id] = (inventory[hybrid.id] || 0) + 1;
+                        checkDiscovered(hybrid.id);
+                        
+                        let mx = (a.x + b.x)/2; let mz = (a.z + b.z)/2;
+                        for(let k=0; k<15; k++) spawnParticle(mx, mz, getScreenY(mx, mz), 'sparkle');
+                        floatingTexts.push(new FloatingText(mx, mz, getScreenY(mx, mz)-40, `✨ Hybrid Seed! ✨`, '#d946ef'));
+                        renderSeedMenu();
+                        return; 
+                    }
+                }
+            }
+        }
+    });
+}
+
+function updateWeatherLogic() {
+    if (weather.isRaining) {
+        weather.timer--;
+        if (weather.timer <= 0) {
+            weather.isRaining = false;
+            let ws = document.getElementById('weatherStatus');
+            ws.innerHTML = '☀️ Clear Skies'; ws.className = 'glass-panel px-4 py-2 shadow-lg font-bold text-gray-700 flex items-center gap-2';
+        }
+    } else {
+        // Random chance to start rain (approx every 30-50 seconds)
+        if (Math.random() < 0.0005) {
+            weather.isRaining = true;
+            weather.timer = 1500 + Math.random() * 1500; // Lasts 25 to 50 seconds
+            let ws = document.getElementById('weatherStatus');
+            ws.innerHTML = '🌧️ Gentle Rain'; ws.className = 'glass-panel px-4 py-2 shadow-lg font-bold text-blue-700 flex items-center gap-2 bg-blue-50';
+        }
+    }
+    
+    // Smooth transition for sky
+    if(weather.isRaining && weather.intensity < 1) weather.intensity += 0.005;
+    if(!weather.isRaining && weather.intensity > 0) weather.intensity -= 0.005;
+
+    // Spawn global rain particles
+    if(weather.intensity > 0.1 && Math.random() < weather.intensity) {
+        for(let i=0; i<3; i++) {
+            let wx = camera.x + Math.random() * width;
+            let wz = Math.random();
+            let limits = getGroundLimits(wx);
+            spawnParticle(wx, wz, limits.topY - 500, 'rain'); 
+        }
+    }
+
+    // Ponds passively water nearby plants
+    if(globalTime % 1 < 0.05) { 
+        let ponds = plants.filter(p => p.type === 'pond');
+        ponds.forEach(pond => {
+            plants.forEach(p => {
+                if(p !== pond && Math.hypot(p.x - pond.x, (p.z - pond.z)*200) < 150) {
+                    p.moisture += 0.002; 
+                    if(p.moisture > 1) p.moisture = 1;
+                }
+            });
+        });
+    }
+}
+
+function setupInput() {
+    const attachEvt = (type, handler) => canvas.addEventListener(type, handler, {passive: false});
+    
+    attachEvt('pointerdown', e => {
+        if(e.target.closest('.glass-panel') || e.target.closest('#journalModal')) return;
+        pointer.isDown = true; startDragX = e.clientX; lastDragX = e.clientX; hasDraggedSignificant = false; pointer.x = e.clientX; pointer.y = e.clientY;
+    });
+
+    attachEvt('pointermove', e => {
+        pointer.x = e.clientX; pointer.y = e.clientY;
+        if (pointer.isDown) {
+            let dx = e.clientX - lastDragX;
+            if (Math.abs(e.clientX - startDragX) > 10) hasDraggedSignificant = true;
+            if (currentTool === 'hand' || hasDraggedSignificant) camera.targetX -= dx;
+            else if (currentTool === 'water') doWaterLogic();
+            lastDragX = e.clientX;
+        }
+    });
+
+    attachEvt('pointerup', e => {
+        pointer.isDown = false;
+        if (!hasDraggedSignificant && !e.target.closest('.glass-panel')) handleCanvasClick(pointer.x, pointer.y);
+    });
+    
+    attachEvt('wheel', e => { if(!document.getElementById('journalModal').classList.contains('hidden')) return; camera.targetX += e.deltaX + e.deltaY; });
+}
+
+function handleCanvasClick(screenX, screenY) {
+    let worldX = screenX + camera.x;
+    let limits = getGroundLimits(worldX);
+    
+    if (screenY >= limits.topY - 50 && screenY <= limits.bottomY + 50) {
+        let worldZ = Math.max(0, Math.min(1, (screenY - limits.topY) / (limits.bottomY - limits.topY)));
+        
+        let nearestPlant = null; let minDist = Infinity;
+        plants.forEach(p => {
+            let dist = Math.hypot(p.x - worldX, (p.z - worldZ) * 200);
+            let hitRadius = (p.category === 'tree') ? 80 : (p.category === 'env' ? 60 : 30); 
+            if (dist < hitRadius && dist < minDist) { minDist = dist; nearestPlant = p; }
+        });
+
+        if (currentTool === 'trowel') {
+            if (!nearestPlant) { plants.push(new Entity(worldX, worldZ, null)); for(let i=0; i<8; i++) spawnParticle(worldX, worldZ, screenY, 'dirt'); }
+        } 
+        else if (currentTool === 'pond' || currentTool === 'rock') {
+            if(!nearestPlant || nearestPlant.type === null) {
+                if(nearestPlant) { nearestPlant.type = currentTool; nearestPlant.setProperties(); nearestPlant.growth = 1; }
+                else { plants.push(new Entity(worldX, worldZ, currentTool, 1)); }
+                for(let i=0; i<15; i++) spawnParticle(worldX, worldZ, screenY, 'dirt');
+                checkDiscovered(currentTool);
+            }
+        }
+        else if (currentTool === 'seed') {
+            if (nearestPlant && nearestPlant.type === null) {
+                if (inventory[selectedSeed] > 0) {
+                    inventory[selectedSeed]--;
+                    nearestPlant.type = selectedSeed;
+                    nearestPlant.growth = 0; nearestPlant.setProperties();
+                    for(let i=0; i<5; i++) spawnParticle(worldX, worldZ, screenY, 'dirt');
+                    renderSeedMenu();
+                } else { showToast('Out of Seeds!', `Harvest ${PLANT_TYPES[selectedSeed.toUpperCase()].name} to get more!`, '❌'); }
+            }
+        }
+        else if (currentTool === 'water') { doWaterLogic(); }
+        else if (currentTool === 'harvest') {
+            if (nearestPlant && nearestPlant.category !== 'env' && nearestPlant.type && nearestPlant.growth >= 0.8) {
+                let type = nearestPlant.type; let data = PLANT_TYPES[type.toUpperCase()];
+                
+                // Adjust yield: 1-2 seeds for plants, 1 for trees
+                let yieldCount = nearestPlant.category === 'tree' ? 1 : Math.floor(Math.random() * 2) + 1;
+                inventory[type] = (inventory[type] || 0) + yieldCount;
+                totalHarvests++; document.getElementById('harvestCount').innerText = totalHarvests;
+                
+                floatingTexts.push(new FloatingText(nearestPlant.x, nearestPlant.z, getScreenY(nearestPlant.x, nearestPlant.z) - 50, `+${yieldCount} ${data.icon}`, '#15803d'));
+                for(let i=0; i<10; i++) spawnParticle(nearestPlant.x, nearestPlant.z, getScreenY(nearestPlant.x, nearestPlant.z), 'sparkle');
+                
+                nearestPlant.type = null; nearestPlant.growth = 0; nearestPlant.category = null;
+                renderSeedMenu(); checkUnlocks();
+            }
+        }
+    }
+}
+
+function doWaterLogic() {
+    let worldX = pointer.x + camera.x; let limits = getGroundLimits(worldX);
+    if (pointer.y >= limits.topY - 100 && pointer.y <= limits.bottomY + 100) {
+        let approxZ = Math.max(0, Math.min(1, (pointer.y - limits.topY) / (limits.bottomY - limits.topY)));
+        for(let i=0; i<2; i++) spawnParticle(worldX + (Math.random()-0.5)*30, approxZ, pointer.y, 'water');
+        plants.forEach(p => {
+            if(p.category === 'env') return;
+            if (Math.hypot(p.x - worldX, (p.z - approxZ) * 200) < 80) { p.moisture += 0.05; if(p.moisture > 1) p.moisture = 1; }
+        });
+    }
+}
+
+function spawnParticle(x, z, y, type) { particles.push(new Particle(x, z, y, type)); }
+
+// --- UI SETUP ---
+function setupUI() {
+    renderSeedMenu(); buildJournal();
+
+    document.querySelectorAll('.tool-btn').forEach(btn => {
+        if(btn.dataset.tool) {
+            btn.addEventListener('click', (e) => {
+                if(btn.dataset.tool === 'seed') {
+                    document.getElementById('seedMenu').classList.toggle('hidden');
+                    if(document.getElementById('seedMenu').classList.contains('hidden')) setTool('seed');
+                } else {
+                    document.getElementById('seedMenu').classList.add('hidden');
+                    setTool(btn.dataset.tool);
+                }
+            });
+        }
+    });
+
+    document.getElementById('btnJournal').onclick = () => {
+        document.getElementById('journalModal').classList.remove('hidden');
+        buildJournal();
+    };
+    document.getElementById('btnCloseJournal').onclick = () => document.getElementById('journalModal').classList.add('hidden');
+}
+
+function renderSeedMenu() {
+    const seedMenu = document.getElementById('seedMenu');
+    const badge = document.getElementById('currentSeedBadge');
+    seedMenu.innerHTML = '';
+
+    Object.values(PLANT_TYPES).forEach(plant => {
+        if(plant.type === 'env') return; 
+        
+        let isDiscovered = discoveredEntities.includes(plant.id);
+        if(plant.unlockAt === 999 && !isDiscovered) return;
+
+        let isUnlocked = isDiscovered || (totalHarvests >= plant.unlockAt);
+        let count = inventory[plant.id] || 0;
+        
+        let btn = document.createElement('button');
+        if (isUnlocked) {
+            btn.className = `seed-item relative flex flex-col items-center justify-center p-3 rounded-xl bg-white/80 border-2 border-transparent shadow-sm ${plant.id === selectedSeed ? 'active border-slate-500' : ''}`;
+            btn.innerHTML = `<span class="text-3xl mb-1">${plant.icon}</span><span class="text-[10px] font-black text-gray-800 uppercase tracking-wide">${plant.name}</span>
+                <div class="absolute -top-2 -right-2 bg-slate-700 text-white text-[10px] font-bold px-2 py-0.5 rounded-full border-2 border-white">${count}</div>`;
+            btn.onclick = () => {
+                selectedSeed = plant.id; setTool('seed'); seedMenu.classList.add('hidden');
+                renderSeedMenu(); badge.classList.remove('hidden'); badge.innerText = count;
+            };
+        } else {
+            btn.className = `seed-item locked flex flex-col items-center justify-center p-3 rounded-xl bg-gray-200 border-2 border-gray-300 shadow-inner`;
+            btn.innerHTML = `<span class="text-2xl mb-1 text-gray-400">🔒</span><span class="text-[10px] font-bold text-gray-500 text-center leading-tight">Harvest ${plant.unlockAt}</span>`;
+        }
+        seedMenu.appendChild(btn);
+    });
+    if(discoveredEntities.includes(selectedSeed)) badge.innerText = inventory[selectedSeed] || 0;
+}
+
+function buildJournal() {
+    const content = document.getElementById('journalContent');
+    content.innerHTML = '';
+    
+    Object.values(PLANT_TYPES).forEach(item => {
+        let isDiscovered = discoveredEntities.includes(item.id);
+        let div = document.createElement('div');
+        
+        if (isDiscovered) {
+            div.className = 'bg-white rounded-xl p-3 shadow-sm border border-gray-100 flex flex-col items-center text-center';
+            div.innerHTML = `
+                <div class="text-4xl mb-2 drop-shadow-md">${item.icon}</div>
+                <h3 class="font-black text-gray-800 text-sm leading-tight">${item.name}</h3>
+                <p class="text-[10px] text-gray-500 font-bold mt-1">${item.desc}</p>
+                ${item.parents ? `<p class="text-[9px] text-purple-500 font-bold mt-1 bg-purple-50 px-2 rounded-full border border-purple-100">Hybrid Plant</p>` : ''}
+            `;
+        } else {
+            if(item.unlockAt === 999) {
+                div.className = 'bg-gray-50 rounded-xl p-3 border border-dashed border-gray-300 flex flex-col items-center justify-center text-center opacity-50';
+                div.innerHTML = `<div class="text-2xl mb-1">❓</div><h3 class="font-bold text-gray-400 text-xs">Mystery Hybrid</h3>`;
+            } else {
+                div.className = 'bg-gray-100 rounded-xl p-3 shadow-inner border border-gray-200 flex flex-col items-center justify-center text-center grayscale opacity-60';
+                div.innerHTML = `<div class="text-3xl mb-1">${item.icon}</div><h3 class="font-bold text-gray-600 text-sm">Locked</h3><p class="text-[10px] text-gray-500 mt-1">Harvest ${item.unlockAt} plants</p>`;
+            }
+        }
+        content.appendChild(div);
+    });
+}
+
+function setTool(tool) {
+    currentTool = tool;
+    document.querySelectorAll('.tool-btn').forEach(b => b.classList.remove('active'));
+    document.querySelector(`[data-tool="${tool}"]`).classList.add('active');
+    document.body.className = `tool-${tool}`;
+}
+
+// --- RENDERING ART ---
+function drawLeaf(ctx, size) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(size, -size/2, size, -size); ctx.quadraticCurveTo(size/2, -size, 0, 0); ctx.fill(); }
+function drawPetal(ctx, w, h) { ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-w, -h/3, -w/2, -h, 0, -h); ctx.bezierCurveTo(w/2, -h, w, -h/3, 0, 0); ctx.fill(); }
+
+function renderPlant(ctx, plant) {
+    let g = plant.growth; let h = plant.maxHeight * g; 
+    let sway = Math.sin(globalTime * 2 + plant.swayOffset) * globalWind * 10 * plant.swayFactor * g;
+    
+    if (plant.category === 'env') {
+        if(plant.type === 'pond') {
+            ctx.fillStyle = '#0369a1'; ctx.beginPath(); ctx.ellipse(0, 0, 40, 15, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#38bdf8'; ctx.beginPath(); ctx.ellipse(-5, -2, 25, 8, 0, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#15803d'; 
+            ctx.beginPath(); ctx.arc(-15, 5, 4, 0, Math.PI*1.8); ctx.fill();
+            ctx.beginPath(); ctx.arc(10, -5, 6, 0, Math.PI*1.7); ctx.fill();
+        } else if (plant.type === 'rock') {
+            ctx.fillStyle = '#64748b';
+            ctx.beginPath(); ctx.moveTo(-20, 0); ctx.lineTo(-10, -15); ctx.lineTo(15, -20); ctx.lineTo(25, 0); ctx.fill();
+            ctx.fillStyle = '#94a3b8'; 
+            ctx.beginPath(); ctx.moveTo(-15, 0); ctx.lineTo(-5, -12); ctx.lineTo(10, -16); ctx.lineTo(20, 0); ctx.fill();
+        }
+        return;
+    }
+
+    let holeSize = plant.category === 'tree' ? 30 : 16;
+    ctx.fillStyle = plant.moisture > 0.1 ? '#451a03' : 'rgba(0,0,0,0.15)';
+    if(plant.type === null) ctx.fillStyle = '#5c2a12'; 
+    ctx.beginPath(); ctx.ellipse(0, 0, holeSize, holeSize*0.4, 0, 0, Math.PI*2); ctx.fill();
+
+    if (!plant.type || g < 0.05) return; 
+    let hg = g > 0.2 ? (g - 0.2) / 0.8 : 0; 
+
+    // --- GRASS ---
+    if (plant.type === 'grass') {
+        ctx.strokeStyle = '#16a34a'; ctx.lineWidth = 3; ctx.lineCap = 'round';
+        ctx.beginPath();
+        ctx.moveTo(0,0); ctx.quadraticCurveTo(sway - 10*g, -h*0.5, sway - 20*g, -h*0.8);
+        ctx.moveTo(0,0); ctx.quadraticCurveTo(sway, -h*0.6, sway, -h);
+        ctx.moveTo(0,0); ctx.quadraticCurveTo(sway + 10*g, -h*0.5, sway + 20*g, -h*0.7);
+        if(g > 0.5) { ctx.moveTo(0,0); ctx.quadraticCurveTo(sway - 25*g, -h*0.3, sway - 30*g, -h*0.5); ctx.moveTo(0,0); ctx.quadraticCurveTo(sway + 25*g, -h*0.3, sway + 30*g, -h*0.5); }
+        ctx.stroke();
+        if (g > 0.9) { ctx.fillStyle = '#fef08a'; ctx.beginPath(); ctx.arc(sway, -h, 2, 0, Math.PI*2); ctx.fill(); }
+        return;
+    }
+
+    // --- TREES ---
+    if (plant.category === 'tree') {
+        if (g < 0.2) {
+             ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.lineTo(sway, -h); ctx.lineWidth=4; ctx.strokeStyle='#16a34a'; ctx.stroke();
+             ctx.save(); ctx.translate(sway, -h); ctx.rotate(Math.PI/4); drawLeaf(ctx, 8); ctx.restore(); return;
+        }
+        if (plant.type === 'oak') {
+            ctx.strokeStyle = '#5c2a12'; ctx.lineWidth = 18 * g; ctx.lineCap = 'round';
+            ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(sway, -h*0.8); ctx.stroke();
+            if (hg > 0) {
+                ctx.fillStyle = '#15803d'; ctx.beginPath(); ctx.arc(sway, -h*0.8, 45*hg, 0, Math.PI*2); ctx.fill();
+                ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.arc(sway-30*hg, -h*0.8+10*hg, 35*hg, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(sway+30*hg, -h*0.8+10*hg, 35*hg, 0, Math.PI*2); ctx.fill();
+                ctx.beginPath(); ctx.arc(sway, -h*0.8-35*hg, 40*hg, 0, Math.PI*2); ctx.fill();
+            }
+        }
+        return;
+    }
+
+    // --- FLOWERS ---
+    if (g < 0.2) {
+        ctx.fillStyle = '#16a34a'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.quadraticCurveTo(sway, -h, sway, -h); ctx.lineWidth = 4; ctx.strokeStyle = '#16a34a'; ctx.stroke();
+        ctx.save(); ctx.translate(sway, -h); ctx.rotate(Math.PI/4); drawLeaf(ctx, 6); ctx.restore();
+        ctx.save(); ctx.translate(sway, -h); ctx.rotate(-Math.PI/4 + Math.PI); drawLeaf(ctx, 6); ctx.restore(); return;
+    }
+
+    ctx.beginPath(); ctx.moveTo(0, 0);
+    let cp1x = plant.stemCurves[0] * g + sway*0.5; let cp1y = -h * 0.5; let endX = sway; let endY = -h;
+    ctx.quadraticCurveTo(cp1x, cp1y, endX, endY);
+    ctx.lineWidth = plant.type === 'sunflower' ? 6 : 4; ctx.strokeStyle = plant.type.includes('rose') ? '#14532d' : '#15803d'; 
+    ctx.lineCap = 'round'; ctx.stroke();
+
+    let numLeaves = Math.floor(g * 4); ctx.fillStyle = ctx.strokeStyle;
+    for(let i=1; i<=numLeaves; i++) {
+        let t = i / (numLeaves + 1); let lx = (1-t)*(1-t)*0 + 2*(1-t)*t*cp1x + t*t*endX; let ly = (1-t)*(1-t)*0 + 2*(1-t)*t*cp1y + t*t*endY;
+        ctx.save(); ctx.translate(lx, ly); ctx.rotate((i%2===0 ? 1 : -1) * (Math.PI/4) + sway*0.05);
+        drawLeaf(ctx, (plant.type === 'sunflower' ? 20 : 10) * g); ctx.restore();
+    }
+
+    if (g > 0.4) {
+        ctx.save(); ctx.translate(endX, endY); ctx.rotate(sway * 0.02); 
+        let hgHead = (g - 0.4) / 0.6; 
+        
+        if(plant.type === 'daisy') {
+            ctx.fillStyle = '#ffffff'; for(let i=0; i<12; i++) { ctx.save(); ctx.rotate((Math.PI*2/12) * i); drawPetal(ctx, 4*hgHead, 16*hgHead); ctx.restore(); }
+            ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.arc(0, 0, 6*hgHead, 0, Math.PI*2); ctx.fill();
+        } else if(plant.type === 'sunflower') {
+            ctx.fillStyle = '#facc15'; for(let i=0; i<20; i++) { ctx.save(); ctx.rotate((Math.PI*2/20) * i); drawPetal(ctx, 5*hgHead, 24*hgHead); ctx.restore(); }
+            ctx.fillStyle = '#422006'; ctx.beginPath(); ctx.arc(0, 0, 14*hgHead, 0, Math.PI*2); ctx.fill();
+            ctx.fillStyle = '#271203'; ctx.beginPath(); ctx.arc(0, 0, 10*hgHead, 0, Math.PI*2); ctx.fill();
+        } else if(plant.type === 'tulip') {
+            ctx.fillStyle = '#f43f5e'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-12*hgHead, 0, -18*hgHead, -25*hgHead, -6*hgHead, -30*hgHead); ctx.lineTo(0, -18*hgHead); ctx.lineTo(6*hgHead, -30*hgHead); ctx.bezierCurveTo(18*hgHead, -25*hgHead, 12*hgHead, 0, 0, 0); ctx.fill();
+        } else if(plant.type === 'rose') {
+            ctx.fillStyle = '#e11d48'; ctx.beginPath(); ctx.arc(0, -6*hgHead, 10*hgHead, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#be123c'; ctx.beginPath(); ctx.arc(0, -7*hgHead, 7*hgHead, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#9f1239'; ctx.beginPath(); ctx.arc(0, -8*hgHead, 4*hgHead, 0, Math.PI*2); ctx.fill();
+        } else if(plant.type === 'bluebell') {
+            ctx.fillStyle = '#60a5fa'; for(let i=0; i<3; i++) { ctx.save(); ctx.translate(0, i * 10 * hgHead); ctx.rotate(Math.PI + Math.PI/6 * (i%2==0?1:-1)); drawPetal(ctx, 5*hgHead, 10*hgHead); ctx.restore(); }
+        } else if(plant.type === 'dandelion') {
+            ctx.strokeStyle = `rgba(255,255,255, ${0.8 - hgHead*0.2})`; ctx.lineWidth = 1; for(let i=0; i<30; i++) { ctx.save(); ctx.rotate((Math.PI*2/30) * i); ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(0, -15*hgHead); ctx.stroke(); ctx.fillStyle = 'rgba(255,255,255,0.8)'; ctx.beginPath(); ctx.arc(0, -15*hgHead, 1.5, 0, Math.PI*2); ctx.fill(); ctx.restore(); }
+        }
+        else if(plant.type === 'pink_rose') {
+            ctx.fillStyle = '#f472b6'; ctx.beginPath(); ctx.arc(0, -6*hgHead, 10*hgHead, 0, Math.PI*2); ctx.fill(); ctx.fillStyle = '#db2777'; ctx.beginPath(); ctx.arc(0, -7*hgHead, 7*hgHead, 0, Math.PI*2); ctx.fill();
+        } else if(plant.type === 'golden_lily') {
+            ctx.fillStyle = '#fef08a'; for(let i=0; i<6; i++) { ctx.save(); ctx.rotate((Math.PI*2/6) * i); drawPetal(ctx, 4*hgHead, 22*hgHead); ctx.restore(); } ctx.strokeStyle = '#f59e0b'; ctx.lineWidth = 2; for(let i=0; i<3; i++) { ctx.beginPath(); ctx.moveTo(0,0); ctx.lineTo(-3+i*3, -10*hgHead); ctx.stroke(); }
+        } else if(plant.type === 'fire_tulip') {
+            ctx.fillStyle = '#ea580c'; ctx.beginPath(); ctx.moveTo(0, 0); ctx.bezierCurveTo(-14*hgHead, 0, -20*hgHead, -28*hgHead, -8*hgHead, -35*hgHead); ctx.lineTo(0, -20*hgHead); ctx.lineTo(8*hgHead, -35*hgHead); ctx.bezierCurveTo(20*hgHead, -28*hgHead, 14*hgHead, 0, 0, 0); ctx.fill();
+            ctx.fillStyle = '#facc15'; ctx.beginPath(); ctx.moveTo(0, -5*hgHead); ctx.bezierCurveTo(-6*hgHead, -5*hgHead, -10*hgHead, -20*hgHead, 0, -25*hgHead); ctx.bezierCurveTo(10*hgHead, -20*hgHead, 6*hgHead, -5*hgHead, 0, -5*hgHead); ctx.fill(); 
+        }
+
+        ctx.restore();
+    }
+}
+
+function drawSky(ctx) {
+    let skyHue = 200 + Math.sin(timeOfDay) * 20; let skyLight = 70 + Math.sin(timeOfDay) * 10; 
+    
+    if(weather.intensity > 0) { skyLight -= 20 * weather.intensity; skyHue = 220; }
+
+    let grad = ctx.createLinearGradient(0, 0, 0, height);
+    grad.addColorStop(0, `hsl(${skyHue}, ${80 - 40*weather.intensity}%, ${skyLight}%)`); 
+    grad.addColorStop(1, `hsl(${skyHue - 20}, ${70 - 30*weather.intensity}%, ${skyLight + 15}%)`);
+    ctx.fillStyle = grad; ctx.fillRect(0, 0, width, height);
+    
+    let sunY = height*0.4 - Math.sin(timeOfDay + Math.PI/4) * (height*0.6);
+    let sunX = width/2 - Math.cos(timeOfDay + Math.PI/4) * (width*0.5);
+    
+    ctx.globalAlpha = 1 - weather.intensity; 
+    if (sunY < height*0.8) {
+        ctx.fillStyle = 'rgba(255, 248, 180, 0.8)'; ctx.beginPath(); ctx.arc(sunX, sunY, 60, 0, Math.PI*2); ctx.fill();
+        ctx.fillStyle = 'rgba(255, 248, 180, 0.2)'; ctx.beginPath(); ctx.arc(sunX, sunY, 100, 0, Math.PI*2); ctx.fill();
+    }
+    ctx.globalAlpha = 1.0;
+}
+
+function drawHills(ctx) {
+    function drawHillLayer(offsetBase, amplitude, frequency, color, parallax) {
+        ctx.fillStyle = color; ctx.beginPath(); ctx.moveTo(0, height); 
+        for (let x = 0; x <= width + 20; x += 20) { let limits = getGroundLimits(x + camera.x); ctx.lineTo(x, limits.topY - offsetBase + Math.sin((x + camera.x * parallax) / frequency) * amplitude); }
+        ctx.lineTo(width, height); ctx.fill();
+    }
+    let c1 = weather.intensity > 0.5 ? '#34d399' : '#6ee7b7';
+    let c2 = weather.intensity > 0.5 ? '#10b981' : '#34d399';
+    drawHillLayer(120, 50, 1000, c1, 0.2); drawHillLayer(40, 30, 600, c2, 0.4);
+}
+
+function drawElevatedGround(ctx) {
+    let grassColor = weather.intensity > 0.5 ? '#059669' : '#10b981';
+    ctx.fillStyle = grassColor; ctx.beginPath();
+    for (let x = 0; x <= width + 20; x += 20) { let limits = getGroundLimits(x + camera.x); if(x===0) ctx.moveTo(x, limits.topY); else ctx.lineTo(x, limits.topY); }
+    for (let x = width + 20; x >= 0; x -= 20) { let limits = getGroundLimits(x + camera.x); ctx.lineTo(x, limits.bottomY); } ctx.fill();
+
+    let dirtGrad = ctx.createLinearGradient(0, height * 0.7, 0, height);
+    dirtGrad.addColorStop(0, '#5c2a12'); dirtGrad.addColorStop(1, '#78350f');
+    ctx.fillStyle = dirtGrad; ctx.beginPath();
+    for (let x = 0; x <= width + 20; x += 20) { let limits = getGroundLimits(x + camera.x); if(x===0) ctx.moveTo(x, limits.bottomY); else ctx.lineTo(x, limits.bottomY); }
+    ctx.lineTo(width + 20, height); ctx.lineTo(0, height); ctx.fill();
+    
+    ctx.strokeStyle = '#047857'; ctx.lineWidth = 4; ctx.beginPath();
+    for (let x = 0; x <= width + 20; x += 20) { let limits = getGroundLimits(x + camera.x); if(x===0) ctx.moveTo(x, limits.bottomY); else ctx.lineTo(x, limits.bottomY); }
+    ctx.stroke();
+}
+
+// --- MAIN LOOP ---
+function gameLoop() {
+    globalTime += 0.016; timeOfDay += 0.001; if(timeOfDay > Math.PI * 2) timeOfDay = 0;
+    globalWind = Math.sin(globalTime * 0.5) * 0.5 + Math.sin(globalTime * 0.1) * 0.3;
+
+    updateWeatherLogic();
+
+    camera.x += (camera.targetX - camera.x) * 0.1;
+    if(camera.x < 0) { camera.x = 0; camera.targetX = 0; }
+    if(camera.x > worldWidth - width) { camera.x = worldWidth - width; camera.targetX = worldWidth - width; }
+
+    ctx.clearRect(0, 0, width, height);
+
+    drawSky(ctx);
+    
+    let cloudFill = weather.intensity > 0.5 ? 'rgba(156, 163, 175, 0.9)' : 'rgba(255,255,255,0.8)';
+    ctx.fillStyle = cloudFill;
+    clouds.forEach(c => {
+        c.x += c.speed + globalWind * 0.5; if(c.x > worldWidth + 200) c.x = -200;
+        let screenX = c.x - camera.x * 0.1; ctx.globalAlpha = c.opacity;
+        ctx.beginPath(); ctx.arc(screenX, c.y, 30*c.scale, 0, Math.PI*2); ctx.arc(screenX + 25*c.scale, c.y - 10*c.scale, 25*c.scale, 0, Math.PI*2); ctx.arc(screenX + 50*c.scale, c.y, 20*c.scale, 0, Math.PI*2); ctx.fill();
+    });
+    ctx.globalAlpha = 1.0;
+
+    drawHills(ctx);
+    if(Math.random() < 0.05 && weather.intensity < 0.5) spawnParticle(camera.x - 100 + Math.random()*(width+200), 0.5, Math.random()*height*0.5, 'wind');
+    drawElevatedGround(ctx);
+
+    let renderables = [];
+    plants.forEach(p => { p.update(); if (p.x > camera.x - 200 && p.x < camera.x + width + 200) renderables.push({ type: 'plant', z: p.z, sortY: getScreenY(p.x, p.z), data: p }); });
+    creatures.forEach(c => { c.update(); if (c.x > camera.x - 150 && c.x < camera.x + width + 150) renderables.push({ type: 'creature', z: c.z, sortY: getScreenY(c.x, c.z), data: c }); });
+
+    renderables.sort((a, b) => a.sortY - b.sortY);
+
+    renderables.forEach(item => {
+        let screenX = item.data.x - camera.x;
+        ctx.save();
+        if (item.type === 'plant') {
+            ctx.translate(screenX, item.sortY);
+            let scale = 0.6 + item.data.z * 0.6; ctx.scale(scale, scale);
+            renderPlant(ctx, item.data);
+            
+            if(currentTool === 'harvest' && item.data.category === 'plant' && item.data.growth >= 0.8) {
+                 ctx.strokeStyle = 'rgba(255, 255, 255, 0.5)'; ctx.lineWidth = 2; ctx.beginPath(); ctx.ellipse(0, 0, 20, 8, 0, 0, Math.PI*2); ctx.stroke();
+            }
+        } else if (item.type === 'creature') {
+            let drawY = item.sortY - item.data.altitude;
+            if (item.data.altitude > 0) {
+                ctx.fillStyle = 'rgba(0,0,0,0.1)'; ctx.beginPath(); ctx.ellipse(screenX, item.sortY, 6, 2, 0, 0, Math.PI*2); ctx.fill();
+            }
+            ctx.translate(screenX, drawY);
+            let scale = 0.6 + item.data.z * 0.6; ctx.scale(scale, scale);
+            item.data.draw(ctx);
+        }
+        ctx.restore();
+    });
+
+    for(let i=particles.length-1; i>=0; i--) {
+        let p = particles[i]; p.update();
+        ctx.save(); ctx.translate(p.x - camera.x, p.y);
+        if(p.type !== 'wind' && p.type !== 'rain') { let scale = 0.6 + (p.z || 0.5) * 0.6; ctx.scale(scale, scale); }
+        p.draw(ctx); ctx.restore();
+        if(p.life <= 0 || p.y > height) particles.splice(i, 1);
+    }
+    
+    for(let i=floatingTexts.length-1; i>=0; i--) {
+        let ft = floatingTexts[i]; ft.update();
+        ft.draw(ctx, ft.x - camera.x);
+        if(ft.life <= 0) floatingTexts.splice(i, 1);
+    }
+
+    requestAnimationFrame(gameLoop);
+}
+
+window.onload = init;
+</script>
+</body>
+</html>

@@ -1,0 +1,110 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: Caravan Defense — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-caravan">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · one-handed</div>
+<h1>Caravan<br>Defense</h1>
+<p class="hero__lede">The thing you defend is also the thing that moves. Gather out in the field, steer the caravan away from the mesas, and spend what you carried on engineering or magic before the next wave lands.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-caravan-defense.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Joystick or WASD · hold steer to pull the caravan</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-caravan-defense.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-caravan-defense.html" title="Caravan Defense prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Gather</div><div class="loop__d">Leave the caravan for resources — distance from it is the risk dial.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Defend</div><div class="loop__d">Fight what the field sends while steering the caravan clear of the mesas.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Upgrade</div><div class="loop__d">Spend what you carried on engineering or magic before the next stretch.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>By integrating an autonomous, continuously moving defense objective and a physical resource economy into a reverse-bullet-hell framework, a game can successfully synthesize the high-stakes fantasy of a wandering merchant, fundamentally altering the genre's standard spatial mechanics without overwhelming the player with dual-control complexity.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>What happens when resource gathering and terrain management are injected into a horde-survival system?</li><li>Can managing two separate entities function cohesively as a viable gameplay mechanic, and is it too complex?</li><li>Should a defense objective like the caravan move automatically, or is it better to give the player direct control?</li></ul>
+<h3>Managing spatial tension</h3>
+<p>To address the potential complexity of controlling two entities, the design cleverly delegates movement to the system, transforming the player's positioning into a primary interactive mechanic.</p>
+<p><strong>Distance as a Risk Dial:</strong> Having the caravan move automatically brilliantly resolves the dual-control problem. Instead of forcing physical micromanagement, the cognitive load shifts entirely to spatial UX. The player naturally sets their own difficulty; every second spent deep in the horde harvesting mithril is a calculated gamble against the caravan steering into hazardous terrain.</p>
+<p><strong>The Carry Capacity Loop:</strong> Requiring players to physically return to the caravan to bank resources establishes a tightly structured retention loop within the core gameplay. It turns a greedy gathering run into an improvised escort mission for your own loot, snapping focus back to the vulnerable entity and ensuring the dual-focus design feels cohesive rather than fragmented.</p>
+<h3>System progression and escalation</h3>
+<p>The upgrade paths and enemy staging support the wandering merchant fantasy by demanding constant adaptation.</p>
+<p><strong>Dual-Branch Flowcharts:</strong> Splitting upgrades between engineering (the caravan) and magic (the player) perfectly organizes a potentially overwhelming progression system. Players can dynamically adjust their build to patch weaknesses in their run—heavily armoring the caravan if they struggle with terrain management, or buffing the player character to support aggressive, deep-foraging strategies.</p>
+<p><strong>Wave-Based Habit Breaking:</strong> Tying enemy introductions to specific waves rather than a static timer ensures the ecosystem remains hostile to complacency. Invalidating a comfortable foraging habit forces the player to immediately re-evaluate their spatial relationship with the caravan, ensuring the movement never feels passive.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Steering is a hold-to-attract button, which is readable but means the caravan drifts whenever the player is busy — a set-a-heading input might give better intent. Mesa collisions do heavy damage with no recovery mechanic, so one lapse can end an otherwise good run. And the two upgrade trees are currently priced against the same three resources, which flattens the choice between them.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · economy · wave &amp; boss pacing</dd>
+<dt>Target</dt><dd>One-handed mobile, joystick + one action</dd>
+<dt>Built with</dt><dd>HTML5 canvas, Tailwind, vanilla JS</dd>
+<dt>State</dt><dd>Playable test build — boss pass</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/caravan-defense</span></div>
+<div class="proto"><div class="proto__name">Movement &amp; steering</div><ul class="proto__sys"><li>Virtual joystick for the player, WASD on desktop</li><li>Hold steer to pull the caravan toward your position</li><li>Mesas deal heavy damage on contact</li></ul></div>
+<div class="proto"><div class="proto__name">Economy</div><ul class="proto__sys"><li>Wood, stone and mithril gathered in the field</li><li>Limited bag — resources bank only on return</li></ul></div>
+<div class="proto"><div class="proto__name">Upgrades</div><ul class="proto__sys"><li>Engineering tree: caravan, cannons, hull</li><li>Magic Academy tree: player abilities</li><li>Wizard card picks between waves</li></ul></div>
+<div class="proto"><div class="proto__name">Threat curve</div><ul class="proto__sys"><li>Wave size and enemy mix scale over time</li><li>Fast at wave 6, boss at wave 8, heavy at wave 15</li><li>Caravan HP is the single fail state</li></ul></div>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the balance notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

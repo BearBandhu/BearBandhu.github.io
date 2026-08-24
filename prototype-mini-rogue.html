@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Prototype: Mini Rogue — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.about h3{font-size:1.02rem;margin:30px 0 10px;padding-bottom:9px;border-bottom:1px solid rgba(22,20,27,.12)}.about h3:first-child{margin-top:0}.qs{margin:0;padding-left:1.1em}.qs li{margin-bottom:8px}</style>
+</head>
+<body data-page="proto-minirogue">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" href="index.html">All prototypes</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Prototype hero">
+<div class="wrap hero__in">
+<div class="mono">Prototype · playable in browser · one-handed</div>
+<h1>Mini<br>Rogue</h1>
+<p class="hero__lede">A minimalist tabletop roguelike in portrait. Four hero classes descend through a growing multi-biome grid where combat is dice you can nudge with Focus, weapons wear out and evolve, and the body of your last run is waiting on the floor where you died.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#design">Design notes ↓</a><a class="btn" href="proto-mini-rogue.html" target="_blank" rel="noopener">Open standalone ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="play" id="play" data-screen-label="Playable build">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Play it</h2><span class="spacer"></span><span class="sec__note">Pick a class, then walk the grid</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Live build · runs in this page</span><span class="spacer"></span><a class="btn" href="proto-mini-rogue.html" target="_blank" rel="noopener">Open fullscreen ↗</a></div>
+<div class="playable__solo"><iframe src="proto-mini-rogue.html" title="Mini Rogue prototype"></iframe></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Explore</div><div class="loop__d">Spend a Food, read the grid, and choose which rooms to walk — monsters, treasure, merchant, points of interest.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Fight</div><div class="loop__d">Roll the weapon’s dice against affinities and armour, bending results with Focus before the strike locks.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Build</div><div class="loop__d">Turn loot into relics, repairs, weapon levels and camp rests, then descend into a harder floor.</div></div></div>
+</div>
+</section>
+
+<section data-section="design" id="design" data-screen-label="Design intent">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>What it tests</h2></div>
+<div class="about">
+<div>
+<h3>The hypothesis</h3>
+<p>A complex, tabletop-depth roguelike can be condensed into a one-handed mobile session by shifting the complexity away from spatial movement and into interconnected resource economies, allowing players to manipulate probability without removing the thrill of chance.</p>
+<h3>The core questions</h3>
+<ul class="qs"><li>Can a complex dungeon-crawling experience be synthesized into a casual but engaging session-based experience?</li><li>How can a game grant players control over a highly luck-based system without undermining the luck itself or bypassing the dice roll?</li></ul>
+<h3>Controlling the roll</h3>
+<p>To address the tension between luck and player control, the design relies on probability manipulation rather than guaranteed outcomes.</p>
+<p><strong>Focus as a Modifier:</strong> By allowing players to spend Focus to shift a die's value up or down by one, the physical roll remains the dramatic centerpiece of combat. The bad roll is preserved, but it is transformed from a frustrating verdict into a strategic cost.</p>
+<p><strong>Tactical Advantage:</strong> Implementing damage types, vulnerabilities, and advantage (rolling 2d and keeping the highest) rewards pre-combat preparation. The player controls the conditions of the roll, ensuring the luck-based system feels fair and responsive to their choices while the dice still dictate the final math.</p>
+<h3>Synthesizing complexity for one-handed play</h3>
+<p>To condense tabletop complexity into a session-based mobile format, the game relies on a clean UX hierarchy and overlapping system flows that demand constant decision-making without complex physical inputs.</p>
+<p><strong>The Paradox of Weapon Investment:</strong> Treating weapons as a decaying resource that also gains XP distills complex inventory management into a single, high-stakes choice. Players must actively wear down the tools they are investing in, forcing a constant risk assessment of when to strike and when to absorb damage with a shield.</p>
+<p><strong>Food as the Clock:</strong> Using Food to dictate pacing strips away the need for sprawling dungeon traversal mechanics. Every step, camp, or detour for a merchant is weighed directly against survival, cleanly synthesizing exploration into a press-your-luck economic decision.</p>
+<p><strong>The Ghost System:</strong> Turning a previous death into an Echo mini-boss or a loot recovery opportunity establishes a natural retention loop. It ties isolated, casual sessions together, ensuring that even a short, failed run directly shapes the ecosystem of the next attempt.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ Open questions</button><div class="expand__body">Weapon durability and weapon XP pull against each other — the weapon you level is the weapon you break, and it is not yet clear whether that tension is the good kind. Biome weighting ramps by floor, so late floors can stack two hostile affinity sets against a weapon the player already committed to; a read on the coming biome would let them prepare. And the Echo fight is the most interesting content in the build while also being the punishment for losing, which means most players will meet it at their weakest.</div></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Systems design · dice and damage math · roguelike structure</dd>
+<dt>Target</dt><dd>One-handed mobile, portrait</dd>
+<dt>Built with</dt><dd>React, Tailwind</dd>
+<dt>State</dt><dd>Playable test build</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="systems" id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Systems in the build</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes/mini-rogue</span></div>
+<div class="proto"><div class="proto__name">Classes &amp; progression</div><ul class="proto__sys"><li>Crusader (armour), Rogue (gold, burst), Mage (low HP, high impact), Priestess (food, healing)</li><li>15-tier XP curve; extra attack dice at levels 5, 10 and 15</li><li>Active abilities unlock at levels 2 and 4, paid for in Focus</li></ul></div>
+<div class="proto"><div class="proto__name">Dice combat</div><ul class="proto__sys"><li>Roll the weapon's dice — d3 to d12 — plus level dice</li><li>Spend Focus to shift individual dice ±1 before locking the strike</li><li>Weakness rolls 2d keep highest; resistance halves damage</li><li>Exploding dice on max faces; criticals bypass armour</li></ul></div>
+<div class="proto"><div class="proto__name">Weapons &amp; gear</div><ul class="proto__sys"><li>Active and reserve slot; switching mid-fight costs a turn</li><li>Aggressive weapons split damage with their durability; shields absorb it</li><li>Weapon XP with branching evolutions — Dagger → Twin Fangs / Venom Fangs</li><li>Relic slots for armour, max HP, damage or max Focus</li></ul></div>
+<div class="proto"><div class="proto__name">Dungeon</div><ul class="proto__sys"><li>Two areas per floor on a coordinate grid, growing with depth from 3×3</li><li>Biomes — Dungeon, Water, Rot, Hell — seed and spread by floor depth</li><li>Rooms: entrance, exit, monsters, ambush, merchant, treasure, POI</li><li>Floor boss per biome gates the descent</li></ul></div>
+<div class="proto"><div class="proto__name">POIs &amp; economy</div><ul class="proto__sys"><li>Altars and shrines: d6 checks for heals, relics and weapon buffs, or damage</li><li>Biome events — sunken chests, spore clouds, fire shrines</li><li>Trials: multiple-choice questions on weaknesses and lore for high-tier rewards</li><li>Merchant with moods and dialogue — food, relic trade, weapon repair</li></ul></div>
+<div class="proto"><div class="proto__name">Survival &amp; Ghost</div><ul class="proto__sys"><li>Descending costs 1 Food; starving costs 3 HP; eating in combat is 1d4 HP + 2 Focus</li><li>Camp for 2 Food — 3 rest turns at 5 HP and 2 Focus each</li><li>Death saves a record; a later run finds Your Previous Body</li><li>Loot it to reclaim your gear, or it rises as an Echo carrying your old loadout</li></ul></div>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the balance notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All prototypes</a>
+</div>
+</div>
+</footer>
+
+<script>
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+</script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>

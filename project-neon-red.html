@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Neon Red — Alejandro Melian</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>.tr{position:relative;width:100%;aspect-ratio:16/9;border:0;overflow:hidden;background:#0e0d12}.tr iframe{position:absolute;inset:0;width:100%;height:100%;border:0}.tr__poster{position:absolute;inset:0;width:100%;height:100%;border:0;padding:0;cursor:pointer;background:#0e0d12}.tr__poster img{width:100%;height:100%;object-fit:cover;display:block}.tr__play{position:absolute;left:50%;top:50%;transform:translate(-50%,-50%);width:76px;height:76px;border-radius:50%;background:rgba(255,255,255,.92);display:grid;place-items:center;box-shadow:0 10px 34px rgba(0,0,0,.34);transition:transform .18s ease}.tr__poster:hover .tr__play{transform:translate(-50%,-50%) scale(1.08)}.tr__play svg{width:26px;height:26px;fill:#16141b;margin-left:3px}.rolegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:14px;margin-top:18px}.gal{display:grid;grid-template-columns:repeat(auto-fit,minmax(280px,1fr));gap:14px}.gal>div{position:relative;aspect-ratio:16/9}.note{opacity:.62;font-size:.92rem}</style>
+</head>
+<body data-page="proj-neonred">
+<div class="field"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Game design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a><a class="btn" target="_blank" rel="noopener" href="https://alvarocga.itch.io/neonred">Play on itch.io ↗</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" data-say="A platformer built for speedrunners. The red line is the whole game." id="hero" data-screen-label="Neon Red hero">
+<div class="wrap hero__in">
+<div class="mono">Shipped · itch.io · platformer for speedrunners</div>
+<h1>Neon<br>Red</h1>
+<p class="hero__lede">Neon Red is a platformer for speedrunners. By utilizing the red line connecting your arm and hand, you'll need to use momentum and swings to reach the goal as quickly as possible. Defeat enemies and strive to improve your times.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#role">My role ↓</a><a class="btn" href="https://alvarocga.itch.io/neonred" target="_blank" rel="noopener">Play on itch.io ↗</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+</div>
+</header>
+
+<section data-section="trailer" data-say="Watch someone who is good at it. It moves fast." id="trailer" data-screen-label="Trailer">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Trailer</h2><span class="spacer"></span><span class="sec__note">The line is the whole verb</span></div>
+<div class="playable">
+<div class="playable__head"><span class="protos__dot"></span><span class="mono">Trailer · Released</span><span class="spacer"></span><a class="btn" href="https://www.youtube.com/watch?v=NoE4qOLrqMI" target="_blank" rel="noopener">Watch on YouTube ↗</a></div>
+<div class="tr"><button class="tr__poster" type="button" data-yt="NoE4qOLrqMI" aria-label="Play the Neon Red trailer"><img loading="lazy" alt="Neon Red trailer still" src="https://img.youtube.com/vi/NoE4qOLrqMI/maxresdefault.jpg" data-fallback="https://img.youtube.com/vi/NoE4qOLrqMI/hqdefault.jpg"><span class="tr__play"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></span></button></div>
+</div>
+</div>
+</section>
+
+<section data-section="gallery" data-say="Screenshots go here. Drag one in if you have it." id="gallery" data-screen-label="Screenshots">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Screenshots</h2><span class="spacer"></span><span class="sec__note">Drop images into the slots</span></div>
+<div class="gal">
+<div><image-slot id="proj-neonred-1" shape="rounded" radius="14" placeholder="Drop a Neon Red screenshot"></image-slot></div>
+<div><image-slot id="proj-neonred-2" shape="rounded" radius="14" placeholder="Drop a Neon Red screenshot"></image-slot></div>
+<div><image-slot id="proj-neonred-3" shape="rounded" radius="14" placeholder="Drop a Neon Red screenshot"></image-slot></div>
+</div>
+</div>
+</section>
+
+<section data-section="loop" data-say="Swing, carry momentum, beat the time. That is it." id="loop" data-screen-label="Core loop">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Core loop</h2></div>
+<div class="loop"><div class="loop__step"><div class="loop__n">01</div><div class="loop__t">Swing</div><div class="loop__d">The red line between arm and hand is the traversal tool. Everything else follows from where you anchor it.</div></div><div class="loop__step"><div class="loop__n">02</div><div class="loop__t">Carry momentum</div><div class="loop__d">Speed is inherited between swings, so a clean route is a chain rather than a series of jumps.</div></div><div class="loop__step"><div class="loop__n">03</div><div class="loop__t">Beat the time</div><div class="loop__d">Enemies and the clock both cost you. The run is the score.</div></div></div>
+</div>
+</section>
+
+<section data-section="role" data-say="Combat and encounter design — enemy roles and honest telegraphs." id="role" data-screen-label="My role">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>What I owned</h2></div>
+<div class="about">
+<div>
+<p>Enemy roles, honest telegraphs, encounters built to teach.</p>
+<div class="chips"><span class="chip chip--hot">Combat design</span><span class="chip chip--hot">Encounter design</span></div>
+</div>
+<dl class="contact-card">
+<dt>Discipline</dt><dd>Combat · encounter design</dd>
+<dt>Platform</dt><dd>PC — itch.io</dd>
+<dt>State</dt><dd>Released</dd>
+<dt>Team</dt><dd>Student/indie team</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section data-section="problems" data-say="A telegraph a runner cannot see at speed is a random death." id="problems" data-screen-label="Design problems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">05</span><h2>Design problems</h2></div>
+<div class="rolegrid"><dl class="contact-card"><dt>Combat inside a speedrun</dt><dd>Enemies have to be readable at full momentum — a telegraph a runner cannot see at speed is a random death, not a challenge.</dd></dl><dl class="contact-card"><dt>Encounters that teach</dt><dd>Placement introduces one idea at a time so a first run explains the swing and a tenth run optimises it.</dd></dl></div>
+</div>
+</section>
+
+<section data-section="systems" data-say="Momentum carries between swings. A clean route is one chain." id="systems" data-screen-label="Systems">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">06</span><h2>Systems in the shipped game</h2></div>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/projects/neon-red</span></div>
+<div class="proto"><div class="proto__name">Movement</div><ul class="proto__sys"><li>Red line tether between arm and hand</li><li>Momentum-carrying swings</li><li>Route optimisation as the skill ceiling</li></ul></div><div class="proto"><div class="proto__name">Combat</div><ul class="proto__sys"><li>Enemies placed against traversal lines</li><li>Telegraphs readable at speed</li><li>Times as the progression metric</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="pipeline" data-say="Notes on the team still to come." id="pipeline" data-screen-label="Team and pipeline">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">07</span><h2>Team &amp; pipeline</h2><span class="spacer"></span><span class="sec__note">Notes pending</span></div>
+<div class="about">
+<div><p class="note">Team size, how the work moved between departments, and what the pipeline looked like day to day — tell me and I will write this section properly rather than guess at it.</p></div>
+<dl class="contact-card"><dt>Postmortem</dt><dd class="note">What you would change with another pass. Same as above: give me the notes and this becomes a real section.</dd></dl>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" data-say="Ask him how you teach a swing without stopping the runner." id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Want the design notes behind it?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>document.querySelectorAll(".tr__poster img").forEach(function(im){function fb(){if(im.dataset.fallback&&im.src!==im.dataset.fallback)im.src=im.dataset.fallback}im.addEventListener("error",fb);var chk=function(){if(im.naturalWidth&&im.naturalWidth<=160)fb()};im.complete?chk():im.addEventListener("load",chk)});
+document.querySelectorAll(".tr__poster").forEach(function(b){b.addEventListener("click",function(){var f=document.createElement("iframe");f.src="https://www.youtube-nocookie.com/embed/"+b.dataset.yt+"?autoplay=1&rel=0";f.title=b.getAttribute("aria-label");f.allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";f.allowFullscreen=true;b.replaceWith(f)})});</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+</body>
+</html>
