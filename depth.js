@@ -4,6 +4,7 @@ screens=[].slice.call(deck.querySelectorAll('.screen')),N=screens.length,
 prog=document.getElementById('prog'),hint=document.getElementById('hint'),
 slime=document.getElementById('slime'),bubble=document.getElementById('bubble'),menu=document.getElementById('menu'),
 lb=document.getElementById('lb'),lbf=document.getElementById('lbf'),lbx=document.getElementById('lbx');
+screens.forEach(function(s,i){s.setAttribute('role','group');s.setAttribute('aria-roledescription','panel');s.setAttribute('aria-label',(s.dataset.name||('Panel '+(i+1)))+' — '+(i+1)+' of '+N)});
 var H=window.innerHeight,cur=0,live=-1,reduce=matchMedia('(prefers-reduced-motion:reduce)').matches;
 var quick=matchMedia('(pointer:coarse)').matches||innerWidth<820;
 var LERP=quick?0.22:0.13,SNAP=quick?0.17:0.09,SWIPE=quick?0.3:0.42;

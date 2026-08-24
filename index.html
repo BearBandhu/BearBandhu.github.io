@@ -21,10 +21,11 @@
 @media(max-height:720px){.contact h2{font-size:clamp(2rem,7vh,3.4rem)}.ctc{margin:14px 0 18px}.ctc__row{padding:9px 2px}}</style>
 </head>
 <body>
+<a class="skip" href="#work">Skip to the work</a>
 <div class="scroller" id="scroller">
 <div class="deck" id="deck">
-<div class="field"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
-<div class="grain"></div>
+<div class="field" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="grain" aria-hidden="true"></div>
 
 <section class="screen" data-screen-label="Hero" data-name="Home" data-say="Hi. I'm the guide. Scroll and I'll walk you through Alejandro's work.">
 <div class="screen__in">
@@ -121,9 +122,9 @@
 </section>
 
 <div class="hud">
-<div class="prog" id="prog"></div>
+<div class="prog" id="prog" aria-hidden="true"></div>
 <div class="hint" id="hint"><i></i><span class="mono">Scroll</span></div>
-<div class="bubble" id="bubble"></div>
+<div class="bubble" id="bubble" role="status" aria-live="polite"></div>
 <div class="menu" id="menu"></div>
 <div class="slime" id="slime" role="button" tabindex="0" aria-label="Open navigation"><div class="slime__body"><span class="slime__gloss"></span><span class="slime__face"><i class="slime__ear slime__ear--l"></i><i class="slime__ear slime__ear--r"></i><i class="slime__eye slime__eye--c"></i><i class="slime__eye slime__eye--y"></i></span></div></div>
 </div>
@@ -132,6 +133,8 @@
 
 <div class="lb" id="lb"><button class="lb__x" id="lbx" type="button" aria-label="Close">✕</button><div class="lb__f" id="lbf"></div></div>
 
+<script src="i18n-es.js"></script>
+<script src="i18n.js"></script>
 <script src="slime-palettes.js"></script>
 <script src="achievements.js"></script>
 <script src="depth.js"></script>

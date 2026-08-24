@@ -11,7 +11,7 @@ contact:'Seen enough? He answers email.'
 };
 var SPOTS={hero:[.9,.3],play:[.95,.52],trailer:[.95,.5],gallery:[.94,.58],loop:[.94,.28],role:[.93,.34],problems:[.94,.3],design:[.93,.3],systems:[.94,.62],pipeline:[.93,.36],contact:[.16,.68]};
 var frag=document.createElement('div');
-frag.innerHTML='<div class="bubble" id="bubble"></div><div class="menu" id="menu"></div>'+
+frag.innerHTML='<div class="bubble" id="bubble" role="status" aria-live="polite"></div><div class="menu" id="menu"></div>'+
 '<div class="slime" id="slime" role="button" tabindex="0" aria-label="Companion menu"><div class="slime__body"><span class="slime__gloss"></span><span class="slime__face"><i class="slime__ear slime__ear--l"></i><i class="slime__ear slime__ear--r"></i><i class="slime__eye slime__eye--c"></i><i class="slime__eye slime__eye--y"></i></span></div></div>';
 while(frag.firstChild)document.body.appendChild(frag.firstChild);
 var slime=document.getElementById('slime'),bubble=document.getElementById('bubble'),menu=document.getElementById('menu'),

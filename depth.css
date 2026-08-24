@@ -1,7 +1,7 @@
 :root{
 --paper:#FAF7F4;--ink:#16141B;--ink-2:rgba(22,20,27,.62);--ink-3:rgba(22,20,27,.38);
 --peach:#FFD5BE;--lilac:#DCD1FF;--mint:#C6EFDC;--sky:#CFE4FF;--blush:#FFD8E8;
---line:rgba(22,20,27,.11);--card:rgba(255,255,255,.72);
+--line:rgba(22,20,27,.11);--card:rgba(255,255,255,.72);--violet:#6B4EE6;
 --f-d:"Bricolage Grotesque",serif;--f-s:"Schibsted Grotesk",system-ui,sans-serif;--f-m:"JetBrains Mono",monospace;
 --ease:cubic-bezier(.22,.85,.28,1);--settle:cubic-bezier(.4,.5,.25,1);--pad:6vw;
 }
@@ -312,3 +312,10 @@ body.has-toast .hint,body.has-toast .bubble{opacity:0!important;pointer-events:n
 .screen::-webkit-scrollbar{width:0;height:0}
 .screen__in{max-height:none}
 }
+
+/* ---------- accessibility ---------- */
+:focus-visible{outline:2.5px solid var(--violet);outline-offset:3px;border-radius:5px}
+.skip{position:fixed;left:14px;top:-60px;z-index:200;padding:11px 18px;border-radius:999px;background:var(--ink);color:var(--paper);font:600 14px/1 var(--f-s);text-decoration:none;transition:top .18s ease}
+.skip:focus{top:14px;outline:2.5px solid var(--violet);outline-offset:3px}
+.sr{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap;border:0}
+@media(prefers-contrast:more){:root{--ink-2:rgba(22,20,27,.86);--ink-3:rgba(22,20,27,.68);--line:rgba(22,20,27,.34)}}
