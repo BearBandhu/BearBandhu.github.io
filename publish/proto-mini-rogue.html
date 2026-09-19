@@ -1,0 +1,2276 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+  <title>Mini Rogue</title>
+  <script src="https://unpkg.com/react@18.3.1/umd/react.development.js" integrity="sha384-hD6/rw4ppMLGNu3tX5cjIb+uRZ7UkRJ6BPkLpg4hAu/6onKUg4lLsHAs9EBPT82L" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/react-dom@18.3.1/umd/react-dom.development.js" integrity="sha384-u6aeetuaXnQ38mYT8rp6sbXaQe3NL9t+IBXmnYxwkUI2Hw4bsp2Wvmx4yRQF1uAm" crossorigin="anonymous"></script>
+  <script src="https://unpkg.com/@babel/standalone@7.29.0/babel.min.js" integrity="sha384-m08KidiNqLdpJqLq95G/LEi8Qvjl/xUYll3QILypMoQ65QorJ9Lvtp2RXYGBFj1y" crossorigin="anonymous"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Share+Tech+Mono&family=Cinzel:wght@400;600&display=swap" rel="stylesheet">
+  <style>
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body, #root { height:100%; width:100%; overflow:hidden; }
+    body { background:#080808; color:#c8c8c8; font-family:'Share Tech Mono',monospace; -webkit-tap-highlight-color:transparent; user-select:none; }
+    .cinzel { font-family:'Cinzel',serif; }
+    ::-webkit-scrollbar { width:2px; }
+    ::-webkit-scrollbar-track { background:#080808; }
+    ::-webkit-scrollbar-thumb { background:#2a2a2a; }
+    @keyframes fadeIn    { from{opacity:0;transform:translateY(6px);} to{opacity:1;transform:translateY(0);} }
+    @keyframes pulse     { 0%,100%{opacity:1;} 50%{opacity:0.35;} }
+    @keyframes diceAnim  { 0%{transform:scale(1.2) rotate(-5deg);} 50%{transform:scale(0.9) rotate(5deg);} 100%{transform:scale(1) rotate(0);} }
+    @keyframes overlayIn { from{opacity:0;transform:scale(0.97);} to{opacity:1;transform:scale(1);} }
+    @keyframes levelGlow { 0%,100%{opacity:0.6;} 50%{opacity:1;} }
+    .anim-fade    { animation:fadeIn 0.3s ease forwards; }
+    .anim-pulse   { animation:pulse 1.2s ease infinite; }
+    .anim-dice    { animation:diceAnim 0.12s ease; }
+    .anim-overlay { animation:overlayIn 0.2s ease forwards; }
+    .anim-glow    { animation:levelGlow 1.4s ease infinite; }
+    .btn { display:flex; align-items:center; justify-content:center; border:1px solid #252525; background:transparent; color:#909090; font-family:'Share Tech Mono',monospace; font-size:10px; letter-spacing:0.15em; text-transform:uppercase; padding:10px 14px; cursor:pointer; transition:border-color 0.15s,color 0.15s,background 0.15s; -webkit-tap-highlight-color:transparent; }
+    .btn:hover,.btn:active { border-color:#555; color:#ddd; background:rgba(255,255,255,0.03); }
+    .btn:disabled { opacity:0.25; pointer-events:none; }
+    .btn-primary { border-color:#777; color:#ccc; }
+    .btn-primary:hover,.btn-primary:active { border-color:#aaa; color:#fff; background:rgba(255,255,255,0.04); }
+    .btn-danger  { border-color:#4a1a1a; color:#b05050; }
+    .btn-danger:hover { border-color:#b05050; color:#d07070; }
+    .btn-amber   { border-color:#4a3a10; color:#a08030; }
+    .btn-amber:hover { border-color:#a08030; color:#c0a040; }
+    .btn-green   { border-color:#1a3a1a; color:#508050; }
+    .btn-green:hover { border-color:#508050; color:#70a070; }
+    .hp-bar-track { background:#111; height:2px; width:100%; }
+    .hp-bar-fill  { background:#666; height:2px; transition:width 0.4s ease; }
+    .hp-bar-fill.low  { background:#7a3333; }
+    .hp-bar-fill.boss { background:#6a4020; }
+    @keyframes hitFlash  { 0%{opacity:1;} 30%{opacity:0.3;} 100%{opacity:1;} }
+    @keyframes knockout  { 0%{opacity:1;transform:scale(1);} 40%{opacity:0.8;transform:scale(1.1) rotate(-3deg);} 100%{opacity:0.2;transform:scale(0.85) rotate(5deg);} }
+    .knocked { animation:knockout 0.4s ease forwards; }
+    .hit-flash { animation:hitFlash 0.4s ease; }
+  </style>
+</head>
+<body>
+<div id="root"></div>
+<script type="text/babel">
+const { useState, useEffect, useRef, useMemo, useCallback } = React;
+
+// ── Icons ─────────────────────────────────────────────────────────────────────
+const Ico = ({ size=16, stroke=1, cls='', d }) => (
+  <svg width={size} height={size} viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth={stroke} strokeLinecap="round" strokeLinejoin="round" className={cls} dangerouslySetInnerHTML={{ __html: d }} />
+);
+const IHeart   = p=><Ico {...p} d='<path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>'/>;
+const IShield  = p=><Ico {...p} d='<path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/>'/>;
+const ICoins   = p=><Ico {...p} d='<circle cx="8" cy="8" r="6"/><path d="M18.09 10.37A6 6 0 1 1 10.34 18"/><path d="M7 6h1v4"/><path d="m16.71 13.88.7.71-2.82 2.82"/>'/>;
+const IDrum    = p=><Ico {...p} d='<path d="M15.6 8.4a3.8 3.8 0 0 0-5.4 0l-5.6 5.6a2.8 2.8 0 1 0 4 4l5.6-5.6a3.8 3.8 0 0 0 0-5.4z"/><path d="M17.4 7c-.2 0-.4-.1-.6-.2a1.5 1.5 0 1 1 2.4-2 1.5 1.5 0 1 1-1.8 2.2z"/>'/>;
+const IStar    = p=><Ico {...p} d='<polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>'/>;
+const ISkull   = p=><Ico {...p} d='<circle cx="12" cy="11" r="5"/><path d="M9 17v1a1 1 0 0 0 1 1h4a1 1 0 0 0 1-1v-1"/><line x1="9" y1="13" x2="9.01" y2="13"/><line x1="15" y1="13" x2="15.01" y2="13"/>'/>;
+const ISword   = p=><Ico {...p} d='<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="21" y2="21"/>'/>;
+const IZap     = p=><Ico {...p} d='<polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>'/>;
+const IFlame   = p=><Ico {...p} d='<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'/>;
+const ITrap    = p=><Ico {...p} d='<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'/>;
+const IShop    = p=><Ico {...p} d='<path d="M6 2 3 6v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2V6l-3-4z"/><line x1="3" y1="6" x2="21" y2="6"/><path d="M16 10a4 4 0 0 1-8 0"/>'/>;
+const ICamp    = p=><Ico {...p} d='<path d="M12 2L2 19h20L12 2z"/><path d="M12 6l4 8H8l4-8z"/>'/>;
+const IChest   = p=><Ico {...p} d='<path d="M4 8h16"/><rect x="2" y="4" width="20" height="16" rx="2"/><line x1="12" y1="8" x2="12" y2="20"/>'/>;
+const IArrow   = p=><Ico {...p} d='<line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/>'/>;
+const ICheck   = p=><Ico {...p} d='<polyline points="20 6 9 17 4 12"/>'/>;
+const IExit    = p=><Ico {...p} d='<path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/>'/>;
+const ISparkle = p=><Ico {...p} d='<path d="m12 3-1.912 5.813a2 2 0 0 1-1.275 1.275L3 12l5.813 1.912a2 2 0 0 1 1.275 1.275L12 21l1.912-5.813a2 2 0 0 1 1.275-1.275L21 12l-5.813-1.912a2 2 0 0 1-1.275-1.275L12 3Z"/>'/>;
+const IBarrel  = p=><Ico {...p} d='<rect x="4" y="2" width="16" height="20" rx="4"/><path d="M4 10h16"/><path d="M4 14h16"/>'/>;
+const IGold    = p=><Ico {...p} d='<circle cx="12" cy="12" r="8"/><path d="M12 8v8"/><path d="M8 12h8"/>'/>;
+const ISwords  = p=><Ico {...p} d='<polyline points="14.5 17.5 3 6 3 3 6 3 17.5 14.5"/><line x1="13" y1="19" x2="19" y2="13"/><line x1="16" y1="16" x2="21" y2="21"/><polyline points="9.5 6.5 6 3"/><polyline points="17.5 9.5 21 6"/>'/>;
+const ILock    = p=><Ico {...p} d='<rect x="3" y="11" width="18" height="11" rx="2" ry="2"/><path d="M7 11V7a5 5 0 0 1 10 0v4"/>'/>
+const ICircle  = p=><Ico {...p} d='<circle cx="12" cy="12" r="9"/>'/>;
+const IDrop    = p=><Ico {...p} d='<path d="M12 2.69l5.66 5.66a8 8 0 1 1-11.31 0z"/>'/>;
+const IAlert   = p=><Ico {...p} d='<path d="m21.73 18-8-14a2 2 0 0 0-3.48 0l-8 14A2 2 0 0 0 4 21h16a2 2 0 0 0 1.73-3Z"/><line x1="12" y1="9" x2="12" y2="13"/><line x1="12" y1="17" x2="12.01" y2="17"/>'/>;
+const ICrown   = p=><Ico {...p} d='<path d="m2 4 3 12h14l3-12-6 7-4-7-4 7-6-7zm3 16h14"/>'/>;
+const IAnchor  = p=><Ico {...p} d='<circle cx="12" cy="5" r="3"/><line x1="12" y1="8" x2="12" y2="22"/><path d="M5 12H2a10 10 0 0 0 20 0h-3"/>'/>;
+const IWind    = p=><Ico {...p} d='<path d="M17.7 7.7a2.5 2.5 0 1 1 1.8 4.3H2"/><path d="M9.6 4.6A2 2 0 1 1 11 8H2"/><path d="M12.6 19.4A2 2 0 1 0 14 16H2"/>'/>;
+const ISwap    = p=><Ico {...p} d='<path d="m19 9-4-4v3H6v2h9v3z"/><path d="m5 15 4 4v-3h9v-2H9v-3z"/>'/>;
+const IEye     = p=><Ico {...p} d='<path d="M2 12s3-7 10-7 10 7 10 7-3 7-10 7-10-7-10-7Z"/><circle cx="12" cy="12" r="3"/>'/>;
+
+// ── Flat icon portraits ──────────────────────────────────────────────────────
+const ILeaf    = p=><Ico {...p} d='<path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 4.18 2 8 0 5.5-4.78 10-10 10z"/><path d="M2 21c0-3 1.85-5.36 5.08-6C9.5 14.52 12 13 13 12"/>'/>;
+const IFire    = p=><Ico {...p} d='<path d="M8.5 14.5A2.5 2.5 0 0 0 11 12c0-1.38-.5-2-1-3-1.072-2.143-.224-4.054 2-6 .5 2.5 2 4.9 4 6.5 2 1.6 3 3.5 3 5.5a7 7 0 1 1-14 0c0-1.153.433-2.294 1-3a2.5 2.5 0 0 0 2.5 2.5z"/>'/>;
+const IBone    = p=><Ico {...p} d='<path d="M17 10c.7-.7 1-1.6 1-2.5a3.5 3.5 0 0 0-7 0c0 .9.3 1.8 1 2.5l-6 6c-.7-.7-1.6-1-2.5-1a3.5 3.5 0 0 0 0 7c.9 0 1.8-.3 2.5-1L10 17c.7.7 1.6 1 2.5 1a3.5 3.5 0 0 0 0-7c-.9 0-1.8.3-2.5 1z"/>'/>;
+
+const FlatPortrait = ({icon: Icon, color='#505050', hit=false, bg=null, size=52}) => {
+  const c = hit ? '#c06060' : color;
+  return (
+    <div style={{
+      width:'100%', height:'100%',
+      display:'flex', alignItems:'center', justifyContent:'center',
+      position:'relative',
+    }}>
+      <div style={{
+        position:'absolute', width:80, height:80, borderRadius:'50%',
+        border:'1px solid '+(hit?'#c06060':(bg||color)), opacity:0.12,
+      }}/>
+      <span style={{color:c, transition:'color 0.25s', display:'flex'}}>
+        <Icon size={size} stroke={1.2}/>
+      </span>
+    </div>
+  );
+};
+
+// ── Player class portraits ────────────────────────────────────────────────────
+const PortraitCrusader  = ({hit=false}) => <FlatPortrait icon={IShield} color="#707070" hit={hit}/>;
+const PortraitRogue     = ({hit=false}) => <FlatPortrait icon={IZap}    color="#707070" hit={hit}/>;
+const PortraitMage      = ({hit=false}) => <FlatPortrait icon={IStar}   color="#707070" hit={hit}/>;
+const PortraitPriestess = ({hit=false}) => <FlatPortrait icon={IHeart}  color="#707070" hit={hit}/>;
+
+// ── Enemy portraits ───────────────────────────────────────────────────────────
+// Dungeon biome
+const PortraitRat      = ({hit=false}) => <FlatPortrait icon={ICircle}  color="#555"    hit={hit}/>;
+const PortraitSlime    = ({hit=false}) => <FlatPortrait icon={IDrop}    color="#4a7a4a" hit={hit}/>;
+const PortraitGoblin   = ({hit=false}) => <FlatPortrait icon={ISkull}   color="#6a5a3a" hit={hit}/>;
+const PortraitSpider   = ({hit=false}) => <FlatPortrait icon={IAlert}   color="#5a5a5a" hit={hit}/>;
+const PortraitSkeleton = ({hit=false}) => <FlatPortrait icon={ISword}   color="#6a6a6a" hit={hit}/>;
+const PortraitBoss     = ({hit=false}) => <FlatPortrait icon={ICrown}   color="#a07030" hit={hit} size={56}/>;
+
+// ── Merchant portrait (animated) ─────────────────────────────────────────────
+const PortraitMerchant = ({mood='idle'}) => {
+  const [frame, setFrame] = React.useState(0);
+  const [showCoin, setShowCoin] = React.useState(false);
+
+  React.useEffect(()=>{
+    const t = setInterval(()=>setFrame(f=>(f+1)%80),80);
+    return()=>clearInterval(t);
+  },[]);
+
+  React.useEffect(()=>{
+    if(frame===0&&mood==='idle'){ setShowCoin(true); setTimeout(()=>setShowCoin(false),1600); }
+  },[frame]);
+
+  const dialogs = {
+    idle:     ["Wares for the weary...", "Gold speaks louder.", "What'll it be?", "Finest goods around."],
+    browsing: ["Take your time.", "Quality guaranteed.", "Everything has a price.", "The best, for the bold."],
+    bought:   ["Pleasure doing business.", "A wise investment.", "Come back anytime.", "May it serve you well."],
+    left:     ["Bah. Next time.", "Your loss.", "The offer stands.", "Safe travels... maybe."],
+  };
+  const dlg = dialogs[mood]||dialogs.idle;
+  const line = dlg[Math.floor(frame/40)%dlg.length];
+  const color = mood==='left'?'#444':mood==='bought'?'#508050':'#505050';
+  const coinY = showCoin ? Math.max(20, 40 - Math.abs(Math.sin(frame*0.25))*28) : 40;
+
+  return (
+    <div style={{display:'flex',flexDirection:'column',alignItems:'center',width:'100%',gap:8}}>
+      <div style={{position:'relative',width:80,height:80,display:'flex',alignItems:'center',justifyContent:'center'}}>
+        <div style={{position:'absolute',width:72,height:72,borderRadius:'50%',border:'1px solid '+color,opacity:0.15}}/>
+        <span style={{color,transition:'color 0.4s',display:'flex'}}><IShop size={48} stroke={1.2}/></span>
+        {showCoin && (
+          <div style={{
+            position:'absolute', top:coinY-8, right:8,
+            width:10,height:10,borderRadius:'50%',
+            border:'1px solid #a08030',
+            transition:'top 0.05s linear',
+          }}/>
+        )}
+      </div>
+      <div style={{
+        padding:'5px 10px', border:'1px solid #1a1a1a',
+        fontSize:8, letterSpacing:'0.1em', color:mood==='bought'?'#2a3a2a':mood==='left'?'#3a2a2a':'#2a2a2a',
+        textTransform:'uppercase', textAlign:'center', minHeight:24,
+        transition:'color 0.3s', width:'100%',
+      }}>
+        {line}
+      </div>
+    </div>
+  );
+};
+
+// Biome monster flat portraits
+const PortraitDeepCrawler = ({hit=false}) => <FlatPortrait icon={IAnchor} color="#2a5a8a" hit={hit}/>;
+const PortraitBogWraith   = ({hit=false}) => <FlatPortrait icon={IWind}   color="#2a5a8a" hit={hit}/>;
+const PortraitFungalHulk  = ({hit=false}) => <FlatPortrait icon={ILeaf}   color="#3a6a3a" hit={hit} size={54}/>;
+const PortraitPlagueRat   = ({hit=false}) => <FlatPortrait icon={ICircle} color="#3a6a3a" hit={hit}/>;
+const PortraitEmberImp    = ({hit=false}) => <FlatPortrait icon={IFire}   color="#8a4a20" hit={hit}/>;
+const PortraitBoneDemon   = ({hit=false}) => <FlatPortrait icon={IBone}   color="#8a4a20" hit={hit} size={54}/>;
+
+const PLAYER_PORTRAITS = {
+  crusader: PortraitCrusader,
+  rogue: PortraitRogue,
+  mage: PortraitMage,
+  priestess: PortraitPriestess
+};
+
+const ENEMY_PORTRAITS = {
+  rat: PortraitRat,
+  slime: PortraitSlime,
+  goblin: PortraitGoblin,
+  spider: PortraitSpider,
+  skeleton: PortraitSkeleton,
+  boss: PortraitBoss
+};
+
+const BIOME_ENEMY_PORTRAITS = {
+  deepcrawler: PortraitDeepCrawler,
+  bogwraith:   PortraitBogWraith,
+  fungalhulk:  PortraitFungalHulk,
+  plaguerat:   PortraitPlagueRat,
+  emberimp:    PortraitEmberImp,
+  bonedemon:   PortraitBoneDemon,
+};
+const ALL_ENEMY_PORTRAITS = {...ENEMY_PORTRAITS, ...BIOME_ENEMY_PORTRAITS};
+
+// ── Constants ─────────────────────────────────────────────────────────────────
+const CLASSES = [
+  { id:'crusader', name:'Crusader', hp:15, food:3, gold:2, armor:1, xp:0, icon:IShield, desc:'Stalwart defender. Starts with armor.',
+    ability1:{ name:'Holy Strike',   cost:1, effectType:'MODIFIER',  desc:'+2 to each die',    unlockLv:2 },
+    ability2:{ name:'Divine Shield', cost:2, effectType:'BLOCK',     desc:'Block next hit',     unlockLv:4 } },
+  { id:'rogue', name:'Rogue', hp:12, food:3, gold:6, armor:0, xp:0, icon:IZap, desc:'Cunning and fast. Starts with gold.',
+    ability1:{ name:'Backstab', cost:1, effectType:'MODIFIER', desc:'Double even rolls', unlockLv:2 },
+    ability2:{ name:'Vanish',   cost:1, effectType:'EVADE',    desc:'Evade next attack', unlockLv:4 } },
+  { id:'mage', name:'Mage', hp:10, food:3, gold:4, armor:0, xp:0, icon:IStar, desc:'Fragile but powerful spells.',
+    ability1:{ name:'Fireball',  cost:1, effectType:'MODIFIER',   desc:'Set all dice to 5', unlockLv:2 },
+    ability2:{ name:'Time Warp', cost:2, effectType:'SKIP_ENEMY', desc:'Skip enemy turn',  unlockLv:4 } },
+  { id:'priestess', name:'Priestess', hp:13, food:4, gold:2, armor:0, xp:0, icon:IHeart, desc:'Sustain fighter. Extra food.',
+    ability1:{ name:'Heal',   cost:1, effectType:'HEAL_3',  desc:'Restore 3 HP',         unlockLv:2 },
+    ability2:{ name:'Purify', cost:1, effectType:'PURIFY',  desc:'Remove armor debuffs', unlockLv:4 } },
+];
+
+const WEAPON_POOL = [
+  { id:'basic',    name:'Basic Weapon',    weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:1, diceType:6,  maxDur:9,  dmgTags:['slashing'],         wMaxLv:3, desc:'Normal attack. 1d6 slashing.' },
+  { id:'dagger',   name:'Dagger',          weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:2, diceType:3,  maxDur:6,  dmgTags:['slashing','pierce'], wMaxLv:5, desc:'Fast strikes. 2d3. Slash+Pierce.' },
+  { id:'legsword', name:'Legendary Sword', weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:1, diceType:6,  maxDur:9,  dmgTags:['slashing'],         wMaxLv:3, desc:'Roll 6 explodes. 1d6 slashing.' },
+  { id:'axe',      name:'Blood Axe',       weaponType:'aggressive', dmgBonus:1, armor:0, diceCount:1, diceType:6,  maxDur:8,  dmgTags:['slashing'],         wMaxLv:5, desc:'+1 flat. 1d6 slashing.' },
+  { id:'greataxe', name:'Great Axe',       weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:1, diceType:10, maxDur:8,  dmgTags:['slashing'],         wMaxLv:3, desc:'Brutal. 1d10 slashing.' },
+  { id:'mace',     name:'Heavy Mace',      weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:2, diceType:6,  maxDur:9,  dmgTags:['blunt','blunt'],    wMaxLv:3, desc:'2d6 blunt, even rolls -3.' },
+  { id:'bow',      name:'Short Bow',       weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:1, diceType:8,  maxDur:6,  dmgTags:['pierce'],           wMaxLv:3, desc:'Ranged. 1d8 pierce.' },
+  { id:'shield',   name:'Defender Shield', weaponType:'defensive',  dmgBonus:0, armor:1, diceCount:1, diceType:4,  maxDur:12, dmgTags:['blunt'],            wMaxLv:3, desc:'1d4 blunt. Full dmg to weapon.' },
+  { id:'tower',    name:'Tower Shield',    weaponType:'defensive',  dmgBonus:0, armor:1, diceCount:1, diceType:4,  maxDur:15, dmgTags:['blunt'],            wMaxLv:3, desc:'1d4 blunt. Fortress durability.' },
+  { id:'buckler',  name:'Buckler',         weaponType:'defensive',  dmgBonus:0, armor:0, diceCount:1, diceType:6,  maxDur:8,  dmgTags:['blunt'],            wMaxLv:3, desc:'1d6 blunt. Full dmg to weapon.' },
+  { id:'steelsword',   name:'Steel Sword',    weaponType:'aggressive', dmgBonus:2, armor:0, diceCount:1, diceType:6,  maxDur:12, dmgTags:['slashing'],        wMaxLv:1, special:'explode5', desc:'Explodes on 5+. 1d6+2 slashing.' },
+  { id:'twinfangs',    name:'Twin Fangs',     weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:3, diceType:3,  maxDur:9,  dmgTags:['slashing','pierce','pierce'], wMaxLv:5, desc:'3d3 slash+pierce.' },
+  { id:'venomfangs',   name:'Venom Fangs',    weaponType:'aggressive', dmgBonus:1, armor:0, diceCount:3, diceType:3,  maxDur:12, dmgTags:['slashing','pierce','rot'],    wMaxLv:1, desc:'3d3. Rot on last die.' },
+  { id:'runeblade',    name:'Runeblade',      weaponType:'aggressive', dmgBonus:1, armor:0, diceCount:1, diceType:6,  maxDur:12, dmgTags:['slashing'],        wMaxLv:1, special:'explode5', desc:'Explodes on 5+. 1d6+1.' },
+  { id:'warblade',     name:'Warblade',       weaponType:'aggressive', dmgBonus:2, armor:0, diceCount:1, diceType:6,  maxDur:12, dmgTags:['slashing'],        wMaxLv:5, desc:'+2 flat. 1d6 slash.' },
+  { id:'reaver',       name:'Reaver',         weaponType:'aggressive', dmgBonus:3, armor:0, diceCount:1, diceType:6,  maxDur:15, dmgTags:['slashing'],        wMaxLv:1, desc:'+3 flat. 1d6 slash.' },
+  { id:'executioner',  name:'Executioner',    weaponType:'aggressive', dmgBonus:0, armor:0, diceCount:1, diceType:12, maxDur:12, dmgTags:['slashing'],        wMaxLv:1, special:'critmax', desc:'1d12. Max roll = double damage.' },
+  { id:'warhammer',    name:'Warhammer',      weaponType:'aggressive', dmgBonus:1, armor:0, diceCount:3, diceType:6,  maxDur:12, dmgTags:['blunt','blunt','blunt'], wMaxLv:1, desc:'3d6 blunt, no penalty.' },
+  { id:'longbow',      name:'Longbow',        weaponType:'aggressive', dmgBonus:1, armor:0, diceCount:1, diceType:10, maxDur:9,  dmgTags:['pierce'],          wMaxLv:1, desc:'1d10+1 pierce.' },
+  { id:'bulwark',      name:'Bulwark',        weaponType:'defensive',  dmgBonus:0, armor:2, diceCount:1, diceType:6,  maxDur:15, dmgTags:['blunt'],           wMaxLv:1, desc:'+2 armor. 1d6 blunt.' },
+  { id:'aegis',        name:'Aegis',          weaponType:'defensive',  dmgBonus:0, armor:3, diceCount:1, diceType:4,  maxDur:18, dmgTags:['blunt'],           wMaxLv:1, special:'absorbcrit', desc:'+3 armor. Absorbs crits.' },
+  { id:'parryingblade',name:'Parrying Blade', weaponType:'aggressive', dmgBonus:0, armor:1, diceCount:1, diceType:8,  maxDur:9,  dmgTags:['slashing'],        wMaxLv:1, desc:'1d8 slash. +1 armor.' },
+];
+
+const WEAPON_UPGRADES = {
+  basic:     { transforms:['steelsword'] },
+  dagger:    { transforms:['twinfangs','venomfangs'] },
+  legsword:  { transforms:['runeblade'] },
+  axe:       { transforms:['warblade','reaver'] },
+  greataxe:  { transforms:['executioner'] },
+  mace:      { transforms:['warhammer'] },
+  bow:       { transforms:['longbow'] },
+  shield:    { transforms:['bulwark'] },
+  tower:     { transforms:['aegis'] },
+  buckler:   { transforms:['parryingblade'] },
+  twinfangs: { transforms:['venomfangs'] },
+  warblade:  { transforms:['reaver'] },
+};
+
+const WEAPON_LV_XP = [0, 3, 6, 10, 15]; 
+
+const getWeaponLevel = (wXp) => {
+  let lv = 1;
+  for(let i=0;i<WEAPON_LV_XP.length;i++) { if(wXp>=WEAPON_LV_XP[i]) lv=i+1; }
+  return lv;
+};
+
+const xpToNextWLv = (wXp, wMaxLv) => {
+  const lv = getWeaponLevel(wXp);
+  if(lv>=wMaxLv) return null; 
+  return WEAPON_LV_XP[lv] - wXp; 
+};
+
+const makeWeapon = (pool_weapon) => ({
+  ...pool_weapon,
+  dur: pool_weapon.maxDur,
+  wXp: 0,       
+  wLv: 1,       
+  baseId: pool_weapon.baseId || pool_weapon.id, 
+});
+const STARTING_WEAPON = makeWeapon(WEAPON_POOL[0]);
+const BASE_WEAPON_POOL = WEAPON_POOL.slice(0, 10);
+
+const DMG_TYPE_COLORS = { slashing:'#7a5a3a', pierce:'#3a5a7a', blunt:'#5a5a5a', fire:'#8a4a20', rot:'#4a6a3a' };
+const DMG_TYPE_LABELS = { slashing:'SL', pierce:'PI', blunt:'BL', fire:'FI', rot:'RO' };
+
+const ENEMY_AFFINITIES = {
+  rat:          { weak:['pierce'],   resist:[] },
+  slime:        { weak:['fire'],     resist:['slashing'] },
+  goblin:       { weak:['slashing'], resist:[] },
+  spider:       { weak:['fire'],     resist:['pierce'] },
+  skeleton:     { weak:['blunt'],    resist:['slashing'] },
+  boss:         { weak:['fire'],     resist:['blunt'] },
+  deepcrawler:  { weak:['pierce'],   resist:['blunt'] },
+  bogwraith:    { weak:['fire'],     resist:['slashing'] },
+  plaguerat:    { weak:['fire'],     resist:[] },
+  fungalhulk:   { weak:['fire'],     resist:['pierce'] },
+  emberimp:     { weak:['pierce'],   resist:['fire'] },
+  bonedemon:    { weak:['blunt'],    resist:['fire'] },
+};
+
+const resolveDamage = (dice, weapon, abilityOverrideTag, enemyId, dmgBonus) => {
+  const aff = ENEMY_AFFINITIES[enemyId] || { weak:[], resist:[] };
+  let total = 0;
+  const results = dice.map((d, i) => {
+    if(d.result === 1) return { result:1, finalResult:0, tag: abilityOverrideTag || weapon.dmgTags?.[i] || weapon.dmgTags?.[0] || 'slashing', modified:null };
+    const tag = abilityOverrideTag || weapon.dmgTags?.[i] || weapon.dmgTags?.[0] || 'slashing';
+    let fr = d.result;
+    let modified = null;
+    if(aff.weak.includes(tag)) {
+      modified = 'weak';
+    }
+    if(aff.resist.includes(tag)) {
+      fr = Math.floor(fr / 2);
+      modified = 'resist';
+    }
+    total += fr;
+    return { result: d.result, finalResult: fr, tag, modified };
+  });
+  total = total > 0 ? total + (dmgBonus||0) : 0;
+  return { totalDmg: total, diceResults: results };
+};
+
+// ── POI (Point of Interest) system ───────────────────────────────────────────
+const POI_POOL = [
+  {
+    id:'altar', type:'roll', name:'Forsaken Altar',
+    flavor:'A bloodstained altar hums with forgotten power. An inscription reads: OFFER OR SUFFER.',
+    goodReward:'FULL_HEAL', badEffect:'DAMAGE_3',
+    goodLabel:'The altar pulses. Your wounds close.', badLabel:'Dark energy tears through you. -3 HP.',
+  },
+  {
+    id:'shrine', type:'roll', name:'Crumbling Shrine',
+    flavor:'A small stone shrine, offerings long decayed. Something still watches.',
+    goodReward:'WEAPON_DROP', badEffect:'WEAPON_DAMAGE',
+    goodLabel:'A weapon materializes from the offerings.', badLabel:'The shrine lashes out, damaging your weapon.',
+  },
+  {
+    id:'statue', type:'roll', name:'Weeping Statue',
+    flavor:'A stone figure weeps dark ichor. Touching it feels like a gamble.',
+    goodReward:'NORMAL_TRINKET', badEffect:'DAMAGE_2',
+    goodLabel:'The statue presses a relic into your hand.', badLabel:'The ichor burns. -2 HP.',
+  },
+  {
+    id:'well', type:'roll', name:'Whispering Well',
+    flavor:'The well whispers promises. Reach in and see what fate provides.',
+    goodReward:'REPAIR_ALL', badEffect:'DAMAGE_2',
+    goodLabel:'Your weapons emerge gleaming. All repaired.', badLabel:'Something bites. -2 HP.',
+  },
+  {
+    id:'mirror', type:'roll', name:'Shattered Mirror',
+    flavor:'Seven shards reflect seven futures. Only one is yours.',
+    goodReward:'REVEAL_ADJ', badEffect:'ARMORDOWN',
+    goodLabel:'Adjacent rooms revealed.', badLabel:'Your reflection curses your armor. -1 armor.',
+  },
+  {
+    id:'inscription', type:'abc', name:'Ancient Inscription',
+    flavor:'Three runes glow above the door. The correct sequence grants passage. The wrong one... does not.',
+    question:'Which element is the bane of undead in most lore?',
+    options:['A. Shadow','B. Fire','C. Ice'],
+    answer:1, 
+    goodReward:'NORMAL_TRINKET', badEffect:'DAMAGE_3',
+  },
+  {
+    id:'tome', type:'abc', name:'Tome of Trials',
+    flavor:'A floating tome demands you prove your worth before granting its secrets.',
+    question:'A skeleton warrior is most vulnerable to which damage type?',
+    options:['A. Slashing','B. Pierce','C. Blunt'],
+    answer:2, 
+    goodReward:'WEAPON_DROP', badEffect:'WEAPON_DAMAGE',
+  },
+  {
+    id:'door', type:'abc', name:'Sealed Door',
+    flavor:'Three symbols. One opens. One traps. One leads back.',
+    question:'What does a defensive weapon do when broken?',
+    options:['A. Deals half damage','B. Player takes full damage','C. Weapon is lost'],
+    answer:1, 
+    goodReward:'REPAIR_ALL', badEffect:'DAMAGE_2',
+  },
+  {
+    id:'oracle', type:'abc', name:'Bound Oracle',
+    flavor:'A chained figure offers a single question. Answer well.',
+    question:'Which chest type guarantees a rare relic?',
+    options:['A. Barrel','B. Wooden Chest','C. Gold Chest'],
+    answer:2, 
+    goodReward:'FULL_HEAL', badEffect:'ARMORDOWN',
+  },
+];
+
+const ROOM_TYPES = ['MONSTER','MONSTER','MONSTER','TREASURE','TREASURE','TREASURE','MERCHANT'];
+const rollChestType = () => { const r=Math.random(); return r<0.45?'barrel':r<0.75?'wood':'gold'; };
+
+const BIOMES = {
+  dungeon: { id:'dungeon', name:'Dungeon', color:'#2a2a2a', borderColor:'#252525', textColor:'#444' },
+  water:   { id:'water',   name:'Water',   color:'#0a1a2a', borderColor:'#1a3a5a', textColor:'#2a5a8a' },
+  rot:     { id:'rot',     name:'Rot',     color:'#0a1a0a', borderColor:'#1a3a1a', textColor:'#2a6a2a' },
+  hell:    { id:'hell',    name:'Hell',    color:'#1a0a00', borderColor:'#5a2008', textColor:'#8a3a10' },
+};
+
+const FLOOR_BIOME_WEIGHTS = {
+  1: [100, 0,  0,  0 ],
+  2: [70,  15, 15, 0 ],
+  3: [50,  15, 25, 10],
+  4: [30,  10, 20, 40],
+  5: [20,  10, 20, 50],
+  6: [10,  10, 20, 60],
+  7: [10,  5,  15, 70],
+  8: [0,   5,  10, 85],
+};
+
+const rollBiome = (floor) => {
+  const w = FLOOR_BIOME_WEIGHTS[Math.min(floor, 8)] || FLOOR_BIOME_WEIGHTS[8];
+  const total = w.reduce((a,b)=>a+b,0);
+  let r = Math.random()*total;
+  const keys = ['dungeon','water','rot','hell'];
+  for(let i=0;i<keys.length;i++){
+    r -= w[i];
+    if(r<=0) return keys[i];
+  }
+  return 'dungeon';
+};
+
+const DUNGEON_MONSTERS = [
+  { id:'rat',      name:'Giant Rat',       hpBase:2, dmgBase:1, diceType:4, minFloor:1, weak:['pierce'],   resist:[] },
+  { id:'slime',    name:'Acid Slime',      hpBase:5, dmgBase:1, diceType:4, minFloor:1, weak:['fire'],     resist:['slashing'] },
+  { id:'goblin',   name:'Goblin Scrapper', hpBase:4, dmgBase:2, diceType:6, minFloor:1, weak:['slashing'], resist:[] },
+  { id:'spider',   name:'Cave Spider',     hpBase:3, dmgBase:3, diceType:6, minFloor:2, weak:['fire'],     resist:['pierce'] },
+  { id:'skeleton', name:'Skeleton Guard',  hpBase:6, dmgBase:2, diceType:6, minFloor:2, weak:['blunt'],    resist:['slashing'] },
+];
+const WATER_MONSTERS = [
+  { id:'deepcrawler', name:'Deep Crawler', hpBase:4, dmgBase:2, diceType:6, minFloor:1, weak:['pierce'],   resist:['blunt'] },
+  { id:'bogwraith',   name:'Bog Wraith',   hpBase:3, dmgBase:4, diceType:8, minFloor:2, weak:['fire'],     resist:['slashing'] },
+];
+const ROT_MONSTERS = [
+  { id:'plaguerat',  name:'Plague Rat',   hpBase:3, dmgBase:2, diceType:4, minFloor:1, weak:['fire'],  resist:[] },
+  { id:'fungalhulk', name:'Fungal Hulk',  hpBase:7, dmgBase:3, diceType:8, minFloor:2, weak:['fire'],  resist:['pierce'] },
+  { id:'skeleton',   name:'Skeleton Guard',hpBase:6, dmgBase:2, diceType:6, minFloor:2, weak:['blunt'], resist:['slashing'] },
+];
+const HELL_MONSTERS = [
+  { id:'emberimp',  name:'Ember Imp',   hpBase:3, dmgBase:3, diceType:6, minFloor:1, weak:['pierce'], resist:['fire'] },
+  { id:'bonedemon', name:'Bone Demon',  hpBase:8, dmgBase:4, diceType:10,minFloor:2, weak:['blunt'],  resist:['fire'] },
+];
+const BIOME_MONSTERS = { dungeon:DUNGEON_MONSTERS, water:WATER_MONSTERS, rot:ROT_MONSTERS, hell:HELL_MONSTERS };
+
+const FLOOR_BOSSES = {
+  1: { id:'boss', name:'Stone Warden',  biome:'dungeon', hp:22, damage:4, diceType:8, weak:['fire'],  resist:['blunt'] },
+  2: { id:'boss', name:'Tide Sovereign',biome:'water',   hp:36, damage:6, diceType:8, weak:['blunt'], resist:['pierce'] },
+  3: { id:'boss', name:'Rot Prophet',   biome:'rot',     hp:50, damage:7, diceType:8, weak:['fire'],  resist:['rot'] },
+  4: { id:'boss', name:'Infernal Duke', biome:'hell',    hp:58, damage:9, diceType:10,weak:['pierce'],resist:['fire'] },
+  5: { id:'boss', name:'Abyss Walker',  biome:'hell',    hp:66, damage:10,diceType:10,weak:['blunt'], resist:['fire'] },
+  6: { id:'boss', name:'Vile Keeper',   biome:'rot',     hp:74, damage:11,diceType:10,weak:['fire'],  resist:['rot'] },
+  7: { id:'boss', name:'Tide Colossus', biome:'water',   hp:82, damage:12,diceType:12,weak:['pierce'],resist:['blunt'] },
+  8: { id:'boss', name:'The Undying',   biome:'hell',    hp:90, damage:14,diceType:12,weak:['fire'],  resist:['blunt'] },
+};
+
+const BIOME_POIS = {
+  dungeon: [], 
+  water: [
+    { id:'sunkenchest', type:'body', name:'Sunken Chest', biome:'water',
+      flavor:'A chest gleams beneath dark water. Reaching in could disturb something.',
+      goodReward:'NORMAL_TRINKET', badEffect:'WATER_AMBUSH',
+      goodLabel:'You drag the chest free. A relic inside.', badLabel:'Something grabs your arm. It surfaces.', },
+    { id:'whirlpool', type:'roll', name:'Whirlpool',  biome:'water',
+      flavor:'A slow vortex pulls at everything. It feels like a door to somewhere else.',
+      goodReward:'REVEAL_ADJ', badEffect:'DAMAGE_2',
+      goodLabel:'The pull reverses. Hidden paths glow.', badLabel:'The vortex drags you under. -2 HP.', },
+    { id:'floodgate', type:'roll', name:'Flood Gate', biome:'water',
+      flavor:'A rusted lever. Pulling it could change everything around you.',
+      goodReward:'SPREAD_WATER', badEffect:'DAMAGE_3',
+      goodLabel:'Water floods adjacent rooms, revealing paths.', badLabel:'The gate explodes. -3 HP.', },
+  ],
+  rot: [
+    { id:'sporecloud', type:'roll', name:'Spore Cloud', biome:'rot',
+      flavor:'A pulsing fungal mass. Inhaling its spores is either enlightenment or death.',
+      goodReward:'STAT_BUFF', badEffect:'DAMAGE_3',
+      goodLabel:'The spores mutate your body. Permanent buff.', badLabel:'Toxic spores. -3 HP.', },
+    { id:'mushroom', type:'roll', name:'Mushroom Circle', biome:'rot',
+      flavor:'Nine mushrooms in a perfect circle. One is safe. Maybe.',
+      goodReward:'FULL_HEAL', badEffect:'DAMAGE_2',
+      goodLabel:'A warm numbness spreads. Fully healed.', badLabel:'Poison. -2 HP.', },
+    { id:'fungalbloom', type:'roll', name:'Fungal Bloom', biome:'rot',
+      flavor:'Spores drift from a massive bloom. The rot wants to spread.',
+      goodReward:'SPREAD_ROT', badEffect:'WEAPON_DAMAGE',
+      goodLabel:'Rot spreads to adjacent tiles.', badLabel:'Spores corrode your weapon.', },
+  ],
+  hell: [
+    { id:'demonpact', type:'roll', name:'Demon Pact', biome:'hell',
+      flavor:'A sigil burns on the floor. Sign it and something will answer.',
+      goodReward:'NORMAL_TRINKET', badEffect:'DAMAGE_4',
+      goodLabel:'Power flows into you. A relic is yours.', badLabel:'The demon takes its tithe. -4 HP.', },
+    { id:'fireshrine', type:'roll', name:'Fire Shrine', biome:'hell',
+      flavor:'A shrine of living flame. Weapons bathed here burn forever.',
+      goodReward:'FIRE_WEAPON', badEffect:'WEAPON_DAMAGE',
+      goodLabel:'Your weapon glows. Fire damage added permanently.', badLabel:'The flame rejects you. Weapon damaged.', },
+    { id:'rift', type:'roll', name:'Hell Rift', biome:'hell',
+      flavor:'A tear in reality bleeds fire. The dungeon around it is changing.',
+      goodReward:'SPREAD_HELL', badEffect:'DAMAGE_3',
+      goodLabel:'Hell bleeds into adjacent rooms.', badLabel:'The rift lashes out. -3 HP.', },
+  ],
+};
+
+const generateBiomeGrid = (w, h, floor) => {
+  const biomeMap = Array.from({length:h},()=>Array.from({length:w},()=>'dungeon'));
+  if(floor===1) return biomeMap;
+  const weights = FLOOR_BIOME_WEIGHTS[Math.min(floor,8)]||FLOOR_BIOME_WEIGHTS[8];
+  const nonDungeonChance = (100-weights[0])/100;
+  const numSeeds = Math.floor(Math.random()*3)+1;
+  for(let s=0;s<numSeeds;s++){
+    const biome = rollBiome(floor);
+    if(biome==='dungeon') continue;
+    const sx = rng(w), sy = rng(h);
+    const radius = rng(3)+2; 
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+      const dist = Math.abs(x-sx)+Math.abs(y-sy);
+      if(dist<=radius){
+        const prob = (1-(dist/radius))*nonDungeonChance*1.5;
+        if(Math.random()<prob) biomeMap[y][x]=biome;
+      }
+    }
+  }
+  return biomeMap;
+};
+
+const spreadBiome = (grid, cx, cy, biome, w, h) => {
+  const radius = rng(3)+2; 
+  const newGrid = grid.map(r=>[...r]);
+  for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+    const dist = Math.abs(x-cx)+Math.abs(y-cy);
+    if(dist>0&&dist<=radius&&Math.random()<0.7){
+      newGrid[y][x] = {...newGrid[y][x], biome};
+    }
+  }
+  return newGrid;
+};
+
+const rng = n => Math.floor(Math.random()*n);
+const getLevel = xp => {
+  if(xp>=194)return 15; if(xp>=168)return 14; if(xp>=144)return 13;
+  if(xp>=122)return 12; if(xp>=102)return 11; if(xp>=84)return 10;
+  if(xp>=68)return 9;  if(xp>=54)return 8;  if(xp>=42)return 7;
+  if(xp>=32)return 6;  if(xp>=24)return 5;  if(xp>=18)return 4;
+  if(xp>=12)return 3;  if(xp>=6)return 2;   return 1;
+};
+const getDiceCount = lvl => 1 + (lvl>=5?1:0) + (lvl>=10?1:0) + (lvl>=15?1:0);
+
+const rollBarrel = () => {
+  const r = rng(6)+1;
+  if (r<=3) return { roll:r, gold:0, food:1, trinket:null, label:'Food' };
+  if (r<=5) return { roll:r, gold:2, food:0, trinket:null, label:'Gold' };
+  return { roll:r, gold:1, food:1, trinket:null, label:'Gold & Food' };
+};
+const rollWoodChest = () => {
+  const r = rng(6)+1;
+  if (r<=2) return { roll:r, gold:0, food:2, trinket:null, label:'Food' };
+  if (r<=4) return { roll:r, gold:3, food:0, trinket:null, label:'Gold' };
+  if (r<=5) return { roll:r, gold:2, food:1, trinket:null, label:'Gold & Food' };
+  return { roll:r, gold:0, food:0, trinket:generateTrinket('Normal'), label:'Relic' };
+};
+const rollGoldChest = () => {
+  const r = rng(6)+1;
+  if (r<=2) return { roll:r, gold:4, food:0, trinket:null, label:'Gold' };
+  if (r<=4) return { roll:r, gold:5, food:0, trinket:null, label:'Gold' };
+  if (r<=5) return { roll:r, gold:4, food:0, trinket:generateTrinket('Normal'), label:'Gold & Relic' };
+  return { roll:r, gold:0, food:0, trinket:generateTrinket('Rare'), label:'Rare Relic' };
+};
+
+const generateTrinket = (rarity='Normal') => {
+  const types=['armor','maxHp','damage','focusMax'];
+  const stats={armor:0,maxHp:0,damage:0,focusMax:0};
+  const picks=rarity==='Rare'?2:1, val=rarity==='Rare'?2:1;
+  for(let i=0;i<picks;i++){const s=types[rng(types.length)];stats[s]+=s==='maxHp'?val*2:val;}
+  const names={Normal:['Worn Talisman','Stone Charm','Ashen Ring','Cracked Seal','Dust Relic'],Rare:['Gilded Rune','Shard of Fate','Blood Opal','Voidstone','Warden Mark']};
+  return { id:Math.random().toString(36).slice(2), type:'trinket', rarity, name:names[rarity][rng(names[rarity].length)], stats,
+    desc:Object.entries(stats).filter(([,v])=>v>0).map(([k,v])=>'+'+v+' '+k).join(' / ') };
+};
+
+const REVEAL_CONFIGS = {
+  MONSTER:        { label:'Enemy Ahead',        sub:'Steel yourself.',          icon:ISkull,  accent:'#5a2020', textAccent:'#b06060' },
+  AMBUSH:         { label:'Ambush!',            sub:'No time to react.',        icon:ISwords, accent:'#6a1010', textAccent:'#d05050' },
+  TRAP:           { label:'Hidden Trap',        sub:'The floor shifts.',        icon:ITrap,   accent:'#4a3010', textAccent:'#c08040' },
+  TREASURE_barrel:{ label:'Barrel Found',       sub:'Provisions cached here.',  icon:IBarrel, accent:'#1e3a1e', textAccent:'#508050' },
+  TREASURE_wood:  { label:'Wooden Chest',       sub:'Modest spoils within.',    icon:IChest,  accent:'#2a2a1a', textAccent:'#888860' },
+  TREASURE_gold:  { label:'Gold Chest',         sub:'Something rare awaits.',   icon:IGold,   accent:'#3a2a08', textAccent:'#b09030' },
+  MERCHANT:       { label:'Wandering Merchant', sub:'Trade what you must.',     icon:IShop,   accent:'#1a2a3a', textAccent:'#507090' },
+  EXIT:           { label:'Passage Below',      sub:'Deeper still.',            icon:IExit,   accent:'#1a1a1a', textAccent:'#666'    },
+  POI:            { label:'Point of Interest',   sub:'Something stirs here.',    icon:IStar,   accent:'#2a1a3a', textAccent:'#806090' },
+  GHOST:          { label:'Your Previous Body',  sub:'Something recognizes you.', icon:ISkull,  accent:'#2a2a4a', textAccent:'#8080c0' },
+  BOSS:           { label:'Boss Chamber',       sub:'Something powerful stirs.',icon:ISkull,  accent:'#5a2008', textAccent:'#c06020' },
+};
+
+const StatRow = ({player,derived}) => (
+  <div style={{display:'grid',gridTemplateColumns:'repeat(5,1fr)',borderBottom:'1px solid #0e0e0e',background:'#050505',flexShrink:0}}>
+    {[[<IHeart/>,player.hp+'/'+derived.maxHp,'hp'],[<IDrum/>,player.food,'food'],[<ICoins/>,player.gold,'gold'],
+      [<IShield/>,Math.max(0,derived.armor-player.armorDebuff),player.armorDebuff>0?'debuffed':'armor'],
+      [<IZap/>,player.focus+'/'+derived.maxFocus,'focus']].map(([icon,val,key])=>(
+      <div key={key} style={{padding:'8px 4px',display:'flex',flexDirection:'column',alignItems:'center',gap:3,borderRight:'1px solid #0c0c0c'}}>
+        <span style={{color:key==='debuffed'?'#b05050':'#2e2e2e',display:'flex'}}>{icon}</span>
+        <span style={{fontSize:10,letterSpacing:'0.1em',color:'#777'}}>{val}</span>
+      </div>
+    ))}
+  </div>
+);
+
+const EqBar = ({weapons,trinkets,level}) => {
+  const aw=weapons?.[0];
+  return (
+    <div style={{padding:'4px 12px',display:'flex',justifyContent:'space-between',alignItems:'center',borderBottom:'1px solid #0c0c0c',background:'#050505',flexShrink:0}}>
+      <span style={{fontSize:8,letterSpacing:'0.1em',color:aw&&aw.dur<=0?'#5a2020':'#333',textTransform:'uppercase'}}>
+        LV{level} / {aw?aw.name+' W'+getWeaponLevel(aw.wXp||0)+' '+aw.dur+'/'+aw.maxDur+(aw.dur<=0?' [BRK]':''):'no weapon'}
+      </span>
+      <span style={{fontSize:8,letterSpacing:'0.1em',color:'#252525',textTransform:'uppercase'}}>
+        {trinkets.filter(Boolean).length?trinkets.filter(Boolean).map(t=>t.name).join(' / '):'no relics'}
+      </span>
+    </div>
+  );
+};
+
+const Chronicle = ({logs}) => {
+  const ref=useRef(null);
+  useEffect(()=>{if(ref.current)ref.current.scrollTop=ref.current.scrollHeight;},[logs]);
+  return (
+    <div style={{flexShrink:0,height:84,borderTop:'1px solid #0e0e0e',background:'#040404',display:'flex',flexDirection:'column',overflow:'hidden'}}>
+      <div style={{padding:'3px 12px',fontSize:7,letterSpacing:'0.25em',color:'#1c1c1c',textTransform:'uppercase',borderBottom:'1px solid #0c0c0c',flexShrink:0}}>Chronicle</div>
+      <div ref={ref} style={{flex:1,overflowY:'auto',padding:'5px 12px',display:'flex',flexDirection:'column',gap:2}}>
+        {logs.map((l,i)=>(<div key={i} style={{fontSize:9,letterSpacing:'0.1em',textTransform:'uppercase',color:l.urgent?'#907040':l.bad?'#904040':'#282828',display:'flex',gap:6}}><span style={{color:'#181818',flexShrink:0}}>&gt;</span>{l.text}</div>))}
+      </div>
+    </div>
+  );
+};
+
+const DiceTray = ({diceRoll, weapon, abilityTag, resolvedDice}) => (
+  <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:6,minHeight:64,flexShrink:0,flexWrap:'wrap',flexDirection:'column'}}>
+    <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:6,flexWrap:'wrap'}}>
+    {diceRoll ? diceRoll.dice.map((d,i)=>{
+      const rolling=diceRoll.status==='rolling'&&i===diceRoll.currentIndex;
+      const settled= d.result!==null && !rolling;
+      const val=rolling?diceRoll.animVal:(settled?d.result:'·');
+      const tag = abilityTag || weapon?.dmgTags?.[i] || weapon?.dmgTags?.[0] || 'slashing';
+      const tagColor = DMG_TYPE_COLORS[tag]||'#444';
+      const tagLabel = DMG_TYPE_LABELS[tag]||'';
+      const hasAdv = (d.result!==null&&!rolling) && d._advDie1 !== undefined;
+      const advDie1 = d._advDie1; const advDie2 = d._advDie2; const advChosen = d._advChosen;
+      const isResisted = d._resistApplied;
+      const rd = resolvedDice?.[i]; 
+      return (
+        <div key={d.id} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:2}}>
+          {hasAdv && (
+            <div style={{display:'flex',gap:3,alignItems:'center',marginBottom:2}}>
+              {[advDie1, advDie2].map((v,ai)=>{
+                const isWinner = v===advChosen;
+                const isLoser  = !isWinner && advChosen!==undefined;
+                return (
+                  <div key={ai} className={isLoser?'knocked':''} style={{
+                    width:28,height:32,border:'1px solid '+(isWinner?'#608060':'#1a1a1a'),
+                    display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+                    fontSize:13,fontWeight:'bold',
+                    color:isWinner?'#80c080':isLoser?'#2a2a2a':'#333',
+                    background:isWinner?'rgba(80,120,80,0.08)':'transparent',
+                    position:'relative',
+                  }}>
+                    {v}
+                    {isWinner&&<span style={{fontSize:4,color:'#608060',letterSpacing:'0.05em'}}>WIN</span>}
+                    {isLoser&&<span style={{fontSize:4,color:'#3a2a2a',letterSpacing:'0.05em',textDecoration:'line-through'}}>OUT</span>}
+                  </div>
+                );
+              })}
+              <span style={{fontSize:7,color:'#3a5a3a',letterSpacing:'0.1em'}}>ADV</span>
+            </div>
+          )}
+          <div className={rolling?'anim-dice':''} style={{
+            width:38,height:50,border:'1px solid '+(rolling?'#777':hasAdv?'#3a5a3a':'#1a1a1a'),
+            display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+            fontSize:16,fontWeight:'bold',color:rolling?'#ccc':d.result===1?'#5a2a2a':hasAdv?'#60a060':'#555',
+            transform:rolling?'scale(1.1)':'scale(1)',gap:1,
+          }}>
+            <span>{val}</span>
+            {d.result!==null&&!rolling && <span style={{fontSize:6,letterSpacing:'0.1em',color:tagColor,textTransform:'uppercase'}}>{tagLabel}</span>}
+            {d.faces!==6 && <span style={{fontSize:5,color:'#1e1e1e',marginTop:-1}}>d{d.faces}</span>}
+            {hasAdv && <span style={{fontSize:4,color:'#3a5a3a'}}>ADV</span>}
+          </div>
+        </div>
+      );
+    }) : (<div style={{fontSize:9,letterSpacing:'0.2em',color:'#181818',textTransform:'uppercase',border:'1px solid #0f0f0f',padding:'8px 16px'}}>Awaiting roll</div>)}
+    </div>
+  </div>
+);
+
+const TrinketOverlay = ({trinket,onTake,onSkip}) => (
+  <div style={{position:'absolute',inset:0,zIndex:60,background:'rgba(0,0,0,0.88)',display:'flex',alignItems:'center',justifyContent:'center',padding:28}}>
+    <div className="anim-overlay" style={{width:'100%',maxWidth:300,border:'1px solid #252525',background:'#0a0a0a'}}>
+      <div style={{padding:'6px 14px 4px',borderBottom:'1px solid #141414',display:'flex',alignItems:'center',gap:8}}>
+        <span style={{color:trinket.rarity==='Rare'?'#a08030':'#505050'}}><ISparkle size={13}/></span>
+        <span style={{fontSize:8,letterSpacing:'0.2em',textTransform:'uppercase',color:trinket.rarity==='Rare'?'#a08030':'#404040'}}>{trinket.rarity} Relic Found</span>
+      </div>
+      <div style={{padding:'16px 14px',display:'flex',flexDirection:'column',gap:10}}>
+        <div style={{fontSize:14,letterSpacing:'0.06em',color:trinket.rarity==='Rare'?'#c0a040':'#888'}}>{trinket.name}</div>
+        <div style={{background:'#0d0d0d',border:'1px solid #161616',padding:'8px 10px',fontSize:8,letterSpacing:'0.12em',color:'#2a2a2a',textTransform:'uppercase',lineHeight:1.9}}>
+          {Object.entries(trinket.stats).filter(([,v])=>v>0).map(([k,v])=>(<div key={k} style={{display:'flex',justifyContent:'space-between'}}><span>{k}</span><span style={{color:'#555'}}>+{v}</span></div>))}
+        </div>
+        <div style={{display:'flex',gap:6}}>
+          <button className="btn btn-primary" onClick={onTake} style={{flex:1,gap:6,padding:'10px'}}><ICheck size={12}/> Take</button>
+          <button className="btn" onClick={onSkip} style={{flex:1,padding:'10px'}}>Leave</button>
+        </div>
+      </div>
+    </div>
+  </div>
+);
+
+const SwapOverlay = ({newItem,currentItems,onSwap,onSkip}) => (
+  <div style={{position:'absolute',inset:0,zIndex:65,background:'rgba(0,0,0,0.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:20}}>
+    <div className="anim-overlay" style={{width:'100%',maxWidth:320,border:'1px solid #2a2a18',background:'#0a0a0a'}}>
+      <div style={{padding:'6px 14px 4px',borderBottom:'1px solid #141414',display:'flex',alignItems:'center',gap:8}}>
+        <span style={{color:'#666'}}><ISwap size={13}/></span>
+        <span style={{fontSize:8,letterSpacing:'0.2em',textTransform:'uppercase',color:'#444'}}>Slots Full — Replace?</span>
+      </div>
+      <div style={{padding:'14px',display:'flex',flexDirection:'column',gap:10}}>
+        <div style={{border:'1px solid #2a2a10',padding:'10px 12px',background:'#0d0d08'}}>
+          <div style={{fontSize:7,letterSpacing:'0.2em',color:'#4a4a20',textTransform:'uppercase',marginBottom:4}}>New</div>
+          <div style={{fontSize:12,color:newItem.rarity==='Rare'?'#c0a040':newItem.type==='weapon'?'#888':'#888'}}>{newItem.name}</div>
+          <div style={{fontSize:8,color:'#2a2a2a',textTransform:'uppercase',letterSpacing:'0.1em',marginTop:3}}>{newItem.desc}</div>
+        </div>
+        <div style={{fontSize:7,letterSpacing:'0.2em',color:'#333',textTransform:'uppercase',marginBottom:2}}>Replace which?</div>
+        {currentItems.map((item,i)=>(
+          <button key={i} className="btn" onClick={()=>onSwap(i)} style={{justifyContent:'space-between',padding:'10px 12px'}}>
+            <span style={{fontSize:9}}>{item?item.name:'Empty slot'}</span>
+            <span style={{fontSize:7,color:'#333'}}>{item?item.desc:''}</span>
+          </button>
+        ))}
+        <button className="btn" onClick={onSkip} style={{padding:'9px',marginTop:2}}>Leave it</button>
+      </div>
+    </div>
+  </div>
+);
+
+const WeaponLvUpOverlay = ({data, onDismiss}) => {
+  const isTransform = data?.transformed;
+  const isLvUp = data?.leveledUp;
+  const w = data?.newWeapon;
+  return (
+    <div style={{position:'absolute',inset:0,zIndex:72,background:'rgba(0,0,0,0.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:28}}>
+      <div className="anim-overlay" style={{width:'100%',maxWidth:300,border:'1px solid '+(isTransform?'#5a3a08':'#2a3a20'),background:'#0a0a0a'}}>
+        <div style={{height:2,background:isTransform?'#8a5a10':'#2a5a20'}}/>
+        <div style={{padding:'20px 18px',display:'flex',flexDirection:'column',gap:12}}>
+          <div style={{display:'flex',alignItems:'center',gap:12}}>
+            <span style={{color:isTransform?'#c08030':'#40a060'}} className="anim-glow">
+              <ISword size={22}/>
+            </span>
+            <div>
+              <div className="cinzel" style={{fontSize:14,color:isTransform?'#c08030':'#60c080',letterSpacing:'0.04em'}}>
+                {isTransform?'Weapon Transformed!':(isLvUp?'Weapon Leveled Up!':'Weapon Mastered!')}
+              </div>
+              <div style={{fontSize:8,color:'#2a2a2a',textTransform:'uppercase',letterSpacing:'0.15em',marginTop:2}}>
+                {isTransform?data.oldName+' → '+w?.name:(w?.name||'')}
+              </div>
+            </div>
+          </div>
+          {w&&(
+            <div style={{border:'1px solid #1e1e1e',padding:'10px 12px',display:'flex',flexDirection:'column',gap:5,background:'#070707'}}>
+              <div style={{fontSize:12,color:'#888',letterSpacing:'0.06em'}}>{w.name}</div>
+              <div style={{fontSize:8,color:'#333',textTransform:'uppercase',letterSpacing:'0.1em'}}>{w.desc}</div>
+              <div style={{display:'flex',gap:6,flexWrap:'wrap',marginTop:2}}>
+                <span style={{fontSize:7,color:'#3a5a3a',textTransform:'uppercase'}}>DUR {w.maxDur}</span>
+                <span style={{fontSize:7,color:'#3a3a5a',textTransform:'uppercase'}}>{w.diceCount}d{w.diceType}</span>
+                {w.dmgBonus>0&&<span style={{fontSize:7,color:'#5a3a3a',textTransform:'uppercase'}}>+{w.dmgBonus} dmg</span>}
+                {w.armor>0&&<span style={{fontSize:7,color:'#3a5a5a',textTransform:'uppercase'}}>+{w.armor} armor</span>}
+              </div>
+            </div>
+          )}
+          <button className="btn btn-primary" onClick={onDismiss}
+            style={{width:'100%',padding:'10px',borderColor:isTransform?'#5a3a08':'#2a5a20',color:isTransform?'#c08030':'#60c080'}}>
+            <IArrow size={12}/> Continue
+          </button>
+        </div>
+      </div>
+    </div>
+  );
+};
+
+const LevelUpOverlay = ({level,unlockedAbility,onDismiss}) => (
+  <div style={{position:'absolute',inset:0,zIndex:70,background:'rgba(0,0,0,0.92)',display:'flex',alignItems:'center',justifyContent:'center',padding:28}}>
+    <div className="anim-overlay" style={{width:'100%',maxWidth:300,border:'1px solid #3a3a20',background:'#0a0a0a'}}>
+      <div style={{height:2,background:'#4a4a18'}}/>
+      <div style={{padding:'22px 20px',display:'flex',flexDirection:'column',gap:14}}>
+        <div style={{display:'flex',alignItems:'center',gap:12}}>
+          <span style={{color:'#a0a030'}} className="anim-glow"><IStar size={22}/></span>
+          <div>
+            <div className="cinzel" style={{fontSize:15,color:'#c0c040',letterSpacing:'0.04em'}}>Level {level}</div>
+            <div style={{fontSize:8,letterSpacing:'0.18em',color:'#2e2e2e',textTransform:'uppercase',marginTop:3}}>You grow stronger.</div>
+          </div>
+        </div>
+        {unlockedAbility && (
+          <div style={{border:'1px solid #2a2a10',background:'#0d0d06',padding:'10px 12px',display:'flex',flexDirection:'column',gap:5}}>
+            <div style={{fontSize:7,letterSpacing:'0.2em',color:'#4a4a20',textTransform:'uppercase'}}>Spell Unlocked</div>
+            <div style={{fontSize:12,letterSpacing:'0.08em',color:'#a0a040'}}>{unlockedAbility.name}</div>
+            <div style={{fontSize:8,letterSpacing:'0.1em',color:'#333',textTransform:'uppercase'}}>{unlockedAbility.desc}</div>
+            <div style={{fontSize:7,color:'#2a2a2a',textTransform:'uppercase'}}>{unlockedAbility.cost} focus to cast</div>
+          </div>
+        )}
+        <button className="btn btn-primary" onClick={onDismiss} style={{width:'100%',padding:'11px',borderColor:'#3a3a18',color:'#a0a030'}}>
+          <IArrow size={12}/> Continue
+        </button>
+      </div>
+    </div>
+  </div>
+);
+
+const ChestResultScreen = ({result,chestType,onContinue}) => {
+  const chestColor = chestType==='gold'?'#b09030':chestType==='barrel'?'#508050':'#707050';
+  const ChestIco   = chestType==='gold'?IGold:chestType==='barrel'?IBarrel:IChest;
+  return (
+    <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:28,gap:20}} className="anim-fade">
+      <div style={{fontSize:8,letterSpacing:'0.25em',color:'#222',textTransform:'uppercase'}}>
+        {chestType==='barrel'?'Barrel':'Chest'} Opened
+      </div>
+      <div style={{display:'flex',alignItems:'center',gap:20}}>
+        <div style={{width:56,height:56,border:'1px solid '+chestColor,display:'flex',alignItems:'center',justifyContent:'center',fontSize:26,fontWeight:'bold',color:chestColor}}>
+          {result.roll}
+        </div>
+        <div style={{display:'flex',flexDirection:'column',gap:4}}>
+          <div style={{fontSize:7,letterSpacing:'0.2em',color:'#2a2a2a',textTransform:'uppercase'}}>d6 result</div>
+          <div style={{fontSize:13,letterSpacing:'0.06em',color:chestColor}}>{result.label}</div>
+        </div>
+      </div>
+      <div style={{width:'100%',border:'1px solid #141414',background:'#0a0a0a',padding:'14px 16px',display:'flex',flexDirection:'column',gap:8}}>
+        {result.gold>0&&<div style={{display:'flex',justifyContent:'space-between',fontSize:9,letterSpacing:'0.12em',textTransform:'uppercase',color:'#555'}}><span style={{display:'flex',alignItems:'center',gap:6}}><ICoins size={12}/> Gold</span><span style={{color:'#a08030'}}>+{result.gold}</span></div>}
+        {result.food>0&&<div style={{display:'flex',justifyContent:'space-between',fontSize:9,letterSpacing:'0.12em',textTransform:'uppercase',color:'#555'}}><span style={{display:'flex',alignItems:'center',gap:6}}><IDrum size={12}/> Food</span><span style={{color:'#508050'}}>+{result.food}</span></div>}
+        {result.trinket&&<div style={{display:'flex',justifyContent:'space-between',fontSize:9,letterSpacing:'0.12em',textTransform:'uppercase',color:'#555'}}><span style={{display:'flex',alignItems:'center',gap:6}}><ISparkle size={12}/> {result.trinket.rarity} Relic</span><span style={{color:result.trinket.rarity==='Rare'?'#a08030':'#606040'}}>{result.trinket.name}</span></div>}
+        {!result.gold&&!result.food&&!result.trinket&&<div style={{fontSize:9,color:'#2a2a2a',textTransform:'uppercase',letterSpacing:'0.1em'}}>Nothing of value.</div>}
+      </div>
+      <button className="btn btn-primary" onClick={onContinue} style={{width:'100%',gap:8,padding:'12px'}}><IArrow size={12}/> Continue</button>
+    </div>
+  );
+};
+
+const CampScreen = ({camp,maxHp,onRest,onLeave}) => {
+  const turnsLeft = camp ? camp.turnsLeft : 0;
+  return (
+    <div style={{flex:1,display:'flex',flexDirection:'column',padding:20,gap:14,overflowY:'auto'}} className="anim-fade">
+      <div style={{display:'flex',alignItems:'center',gap:12,paddingBottom:14,borderBottom:'1px solid #0e0e0e'}}>
+        <span style={{color:'#505070'}}><ICamp size={20}/></span>
+        <div>
+          <div style={{fontSize:11,letterSpacing:'0.1em',color:'#666',textTransform:'uppercase'}}>Camp</div>
+          <div style={{fontSize:8,color:'#1e1e1e',letterSpacing:'0.1em',marginTop:2,textTransform:'uppercase'}}>{turnsLeft} rest {turnsLeft===1?'turn':'turns'} remaining</div>
+        </div>
+      </div>
+      <div style={{display:'flex',flexDirection:'column',gap:5}}>
+        <button className="btn btn-green" onClick={onRest} disabled={turnsLeft<=0} style={{justifyContent:'space-between',padding:'13px 14px'}}>
+          <span>Rest</span><span style={{fontSize:8,color:'#2a4a2a'}}>+5 HP / +2 Focus</span>
+        </button>
+        <div style={{fontSize:8,letterSpacing:'0.12em',color:'#1e1e1e',textTransform:'uppercase',padding:'4px 2px'}}>
+          {turnsLeft<=0 ? 'Camp exhausted. Break it down.' : 'Each rest restores 5 HP and 2 Focus.'}
+        </div>
+        <button className="btn" onClick={onLeave} style={{padding:'10px',marginTop:4}}>Break camp</button>
+      </div>
+    </div>
+  );
+};
+
+// ── Main App ──────────────────────────────────────────────────────────────────
+function App() {
+  const [gs,setGs]               = useState('menu');
+  const [player,setPlayer]       = useState(null);
+  const [dungeon,setDungeon]     = useState({floor:1,area:1,pos:{x:0,y:0},grid:[],w:3,h:3});
+  const [encounter,setEncounter] = useState(null);
+  const [logs,setLogs]           = useState([]);
+  const [isPlayerTurn,setIsPlayerTurn] = useState(true);
+  const [diceRoll,setDiceRoll]   = useState(null);
+  const [pendingAttack,setPendingAttack] = useState(null); 
+  const [lootQueue,setLootQueue] = useState([]);
+  const [postLoot,setPostLoot]   = useState('exploring');
+  const [screenAnim,setScreenAnim] = useState(false);
+
+  const [roomReveal,setRoomReveal]     = useState(null);
+  const [swapOverlay,setSwapOverlay]   = useState(null); 
+  const [levelUpPopup,setLevelUpPopup]     = useState(null);
+  const [weaponLvUp,setWeaponLvUp]         = useState(null); 
+  const [trapRoll,setTrapRoll]         = useState(null);
+  const [advRoll,setAdvRoll]           = useState(null); 
+  const [resolvedDice,setResolvedDice] = useState(null); 
+  const [chestResult,setChestResult]   = useState(null); 
+  const [campMode,setCampMode]         = useState(false);
+  const [campRestRoll,setCampRestRoll] = useState(null); 
+  const [poiState,setPoiState]         = useState(null); 
+
+  const pendingRoom  = useRef(null);
+  const rollTimer    = useRef(null);
+  const deathRecord  = useRef(null); 
+  const [ghostLootPick,setGhostLootPick] = useState(null); 
+
+  const log = useCallback((text,opts={})=>setLogs(p=>[...p,{text,...opts}].slice(-40)),[]);
+
+  const derived = useMemo(()=>{
+    if(!player) return {maxHp:0,armor:0,damageBonus:0,maxFocus:3};
+    const activeWeapon = player.weapons?.[0] || STARTING_WEAPON;
+    const ts = player.trinkets.filter(Boolean).reduce((a,t)=>{
+      a.armor+=t.stats.armor||0; a.maxHp+=t.stats.maxHp||0;
+      a.damage+=t.stats.damage||0; a.focusMax+=t.stats.focusMax||0;
+      return a;
+    },{armor:0,maxHp:0,damage:0,focusMax:0});
+    const lvl = getLevel(player.xp || 0);
+    return {
+      maxHp:         player.baseMaxHp+ts.maxHp,
+      armor:         player.baseArmor+activeWeapon.armor+ts.armor,
+      damageBonus:   activeWeapon.dmgBonus+ts.damage,
+      maxFocus:      2 + lvl + ts.focusMax,
+      activeWeapon,
+    };
+  },[player]);
+
+  const transition = useCallback((state)=>{
+    setScreenAnim(true);
+    setTimeout(()=>{setGs(state);setScreenAnim(false);},120);
+  },[]);
+
+  const showReveal = (key,cb) => setRoomReveal({cfg:REVEAL_CONFIGS[key]||REVEAL_CONFIGS.MONSTER,onConfirm:cb});
+  const dismissReveal = () => { const cb=roomReveal?.onConfirm; setRoomReveal(null); if(cb)cb(); };
+
+  const checkLevelUp = (prevXp,newXp,classId) => {
+    const prev=getLevel(prevXp), nxt=getLevel(newXp);
+    if(nxt<=prev) return;
+    const cls=CLASSES.find(c=>c.id===classId);
+    let unlocked=null;
+    if(prev<2&&nxt>=2) unlocked=cls.ability1;
+    else if(prev<4&&nxt>=4) unlocked=cls.ability2;
+    setLevelUpPopup({level:nxt,ability:unlocked,onDismiss:()=>setLevelUpPopup(null)});
+  };
+
+  const acquireItem = (item, afterFn) => {
+    if(item.type==='weapon') {
+      const slots = player.weapons || [STARTING_WEAPON,null];
+      const emptyIdx = slots.findIndex(w=>!w);
+      if(emptyIdx>0) {
+        setPlayer(p=>{const w=[...p.weapons];w[emptyIdx]=makeWeapon(item);return{...p,weapons:w};});
+        log('Stored '+item.name+'.',{urgent:true});
+        if(afterFn) afterFn();
+      } else {
+        setSwapOverlay({
+          newItem: item,
+          currentItems: [...slots],
+          onSwap: (idx) => {
+            setPlayer(p=>{const w=[...p.weapons];w[idx]=makeWeapon(item);return{...p,weapons:w};});
+            log('Replaced with '+item.name+'.',{urgent:true});
+            setSwapOverlay(null);
+            if(afterFn) afterFn();
+          },
+          onSkip: () => { setSwapOverlay(null); if(afterFn) afterFn(); }
+        });
+      }
+      return;
+    }
+    if(item.type==='trinket') {
+      const slots = player.trinkets; 
+      const emptyIdx = slots.findIndex(t=>!t);
+      if(emptyIdx>=0) {
+        setPlayer(p=>{const t=[...p.trinkets];t[emptyIdx]=item;return{...p,trinkets:t};});
+        log('Gained '+item.name+'.',{urgent:true});
+        if(afterFn) afterFn();
+      } else {
+        setSwapOverlay({
+          newItem: item,
+          currentItems: [...slots],
+          onSwap: (idx) => {
+            setPlayer(p=>{const t=[...p.trinkets];t[idx]=item;return{...p,trinkets:t};});
+            log('Replaced with '+item.name+'.',{urgent:true});
+            setSwapOverlay(null);
+            if(afterFn) afterFn();
+          },
+          onSkip: () => { setSwapOverlay(null); if(afterFn) afterFn(); }
+        });
+      }
+    }
+  };
+
+  const makeGrid = (floor,area,w,h) => {
+    const biomeMap = generateBiomeGrid(w,h,floor);
+    const nonSpecial = [];
+    for(let y=0;y<h;y++) for(let x=0;x<w;x++){
+      if(!(x===0&&y===0)&&!(x===w-1&&y===h-1)) nonSpecial.push({x,y});
+    }
+    const shuffled=[...nonSpecial].sort(()=>Math.random()-0.5);
+    const merchantCell=shuffled[0];
+    const poiCells=[];
+    for(let i=1;i<shuffled.length&&poiCells.length<2;i++){
+      if(Math.random()<0.18) poiCells.push(shuffled[i]);
+    }
+    const dr = deathRecord.current;
+    let ghostCell = null;
+    if(dr && dr.floor===floor) {
+      let gx=dr.pos.x, gy=dr.pos.y;
+      if(dr.isBossRoom) {
+        const adj=[[gx-1,gy],[gx+1,gy],[gx,gy-1],[gx,gy+1]].filter(([x,y])=>x>=0&&y>=0&&x<w&&y<h&&!(x===0&&y===0));
+        if(adj.length){[gx,gy]=adj[rng(adj.length)];}
+      }
+      if(!(gx===0&&gy===0)&&!(gx===w-1&&gy===h-1)) ghostCell={x:gx,y:gy};
+    }
+
+    const poiIds=poiCells.map(p=>{
+      if(ghostCell&&p.x===ghostCell.x&&p.y===ghostCell.y) return POI_POOL[rng(POI_POOL.length)];
+      const cellBiome=biomeMap[p.y][p.x];
+      const biomePois=BIOME_POIS[cellBiome]||[];
+      if(biomePois.length&&Math.random()<0.6) return biomePois[rng(biomePois.length)];
+      return POI_POOL[rng(POI_POOL.length)];
+    });
+
+    const grid=Array.from({length:h},(_,y)=>Array.from({length:w},(_,x)=>{
+      const isStart=x===0&&y===0, isExit=x===w-1&&y===h-1;
+      const isMerchant=merchantCell&&merchantCell.x===x&&merchantCell.y===y;
+      const poiIdx=poiCells.findIndex(p=>p.x===x&&p.y===y);
+      const isGhost = ghostCell&&ghostCell.x===x&&ghostCell.y===y;
+      let type=isStart?'ENTRANCE':isExit?'EXIT':isMerchant?'MERCHANT':isGhost?'POI':poiIdx>=0?'POI':ROOM_TYPES.filter(t=>t!=='MERCHANT')[rng(ROOM_TYPES.filter(t=>t!=='MERCHANT').length)];
+      let hasThreat=null, treasureType=null;
+      if(!isStart&&!isExit&&type!=='POI'&&Math.random()<0.10) hasThreat=Math.random()<0.5?'TRAP':'AMBUSH';
+      if(type==='TREASURE') treasureType=rollChestType();
+      const isGhostCell = ghostCell&&ghostCell.x===x&&ghostCell.y===y;
+      const ghostPoiDef = isGhostCell && dr ? {
+        id:'corpse', type:'body', name:dr.className+"'s Remains",
+        flavor:'You recognize the gear strewn across the floor. You recognize the face. This was you.',
+        goodReward:'GHOST_LOOT', badEffect:'GHOST_FIGHT',
+        goodLabel:'You salvage what you can from the remains.',
+        badLabel:'The body stirs. It remembers.',
+        _deathRecord: dr,
+      } : null;
+      const poiDef=isGhostCell?ghostPoiDef:(poiIdx>=0?poiIds[poiIdx]:null);
+      const biome=biomeMap[y][x]||'dungeon';
+      return {x,y,type,visited:isStart,completed:isStart,hasThreat,treasureType,
+        offeredTrinket:type==='MERCHANT'?generateTrinket('Normal'):null,
+        poiDef,campTurns:0,biome};
+    }));
+    setDungeon({floor,area,pos:{x:0,y:0},grid,w,h});
+  };
+
+  const startGame = (cls) => {
+    setPlayer({...cls,baseArmor:cls.armor,baseMaxHp:cls.hp,focus:Math.max(3, 2 + getLevel(0)),
+      weapons:[STARTING_WEAPON,null], 
+      trinkets:[null,null],
+      armorDebuff:0,hasBlock:false,hasEvade:false});
+    setLogs([{text:cls.name+' descended into the dungeon.'}]);
+    makeGrid(1,1,3,3);
+    transition('exploring');
+  };
+
+  const markDone = () => {
+    setDungeon(prev=>{
+      const g=prev.grid.map(r=>[...r]);
+      g[prev.pos.y][prev.pos.x]={...g[prev.pos.y][prev.pos.x],completed:true};
+      return {...prev,grid:g};
+    });
+  };
+
+  const updateCampTurns = (turns) => {
+    setDungeon(prev=>{
+      const g=prev.grid.map(r=>[...r]);
+      g[prev.pos.y][prev.pos.x]={...g[prev.pos.y][prev.pos.x],campTurns:turns};
+      return {...prev,grid:g};
+    });
+  };
+
+  const triggerRoom = (room) => {
+    if(room.type==='EXIT'){
+      dungeon.area===2?setupEncounter(dungeon.floor,true):transition('area_transition');
+    } else if(room.type==='MONSTER') {
+      setupEncounter(dungeon.floor,false,false);
+    } else if(room.type==='POI') {
+      setEncounter({type:'POI', poiDef:room.poiDef, phase:'intro'});
+      transition('event');
+    } else {
+      setEncounter({type:room.type,offeredTrinket:room.offeredTrinket,treasureType:room.treasureType,merchantMood:'idle'});
+      transition('event');
+    }
+  };
+
+  const move = (tx,ty) => {
+    if(gs!=='exploring') return;
+    const g=dungeon.grid.map(r=>[...r]);
+    const room=g[ty][tx];
+    room.visited=true;
+    setDungeon(p=>({...p,pos:{x:tx,y:ty},grid:g}));
+    if(room.completed){
+      if(room.campTurns>0){
+        setCampMode(true);setGs('event');setEncounter({type:'CAMP'});return;
+      }
+      if(room.type==='MERCHANT'){
+        setEncounter({type:'MERCHANT',offeredTrinket:room.offeredTrinket,treasureType:null,merchantMood:'idle'});
+        transition('event');return;
+      }
+      setGs('exploring');return;
+    }
+
+    let rk;
+    if(room.hasThreat==='AMBUSH') rk='AMBUSH';
+    else if(room.hasThreat==='TRAP') rk='TRAP';
+    else if(room.type==='TREASURE') rk='TREASURE_'+(room.treasureType||'barrel');
+    else if(room.type==='EXIT'&&dungeon.area===2) rk='BOSS';
+    else if(room.type==='POI'&&room.poiDef?.id==='corpse') rk='GHOST';
+    else rk=room.type;
+
+    showReveal(rk,()=>{
+      if(room.hasThreat){
+        pendingRoom.current=room;
+        const threat=room.hasThreat; room.hasThreat=null;
+        if(threat==='AMBUSH') setupEncounter(dungeon.floor,false,true);
+        else {setEncounter({type:'TRAP'});log('A trap triggers!',{bad:true});transition('event');}
+      } else {
+        triggerRoom(room);
+      }
+    });
+  };
+
+  const descend = () => {
+    let np={...player};
+    if(np.food>0){np.food-=1;log('-1 food.');}
+    else{np.hp-=3;log('Starving! -3 HP.',{bad:true,urgent:true});}
+    if(np.hp<=0){setPlayer(np);transition('game_over');return;}
+    let nArea=dungeon.area+1,nFloor=dungeon.floor,nW=dungeon.w,nH=dungeon.h;
+    if(nArea>2){nArea=1;nFloor++;Math.random()>0.5?nW++:nH++;}
+    setPlayer(np);
+    if(nFloor>8){transition('victory');return;}
+    makeGrid(nFloor,nArea,nW,nH);
+    transition('exploring');
+  };
+
+  const executeRoll = (diceConfig,onDone,rollCtx={}) => {
+    setDiceRoll({
+      dice:diceConfig.map((d,i)=>({id:i,...d,result:null})),
+      currentIndex:0,animVal:1,status:'rolling',onDone,
+      ctx:rollCtx,
+    });
+  };
+
+  useEffect(()=>{
+    if(!diceRoll) return;
+    const {status, currentIndex, dice} = diceRoll;
+
+    if(status==='rolling'&&currentIndex<dice.length){
+      let ticks=0;
+      rollTimer.current=setInterval(()=>{
+        ticks++;
+        setDiceRoll(p=>p.status==='rolling'?{...p,animVal:rng(p.dice[p.currentIndex]?.faces||6)+1}:p);
+        if(ticks>9){
+          clearInterval(rollTimer.current);
+          setDiceRoll(p=>{
+            if(p.status!=='rolling') return p;
+            const newDice=[...p.dice];
+            const cur={...newDice[p.currentIndex]};
+            cur.result=rng(cur.faces||6)+1;
+            const activeW=player?.weapons?.[0];
+            const explodeOn=(activeW?.special==='explode5')?5:6;
+            if((activeW?.id==='legsword'||activeW?.id==='runeblade'||activeW?.special==='explode5')&&cur.type==='char'&&cur.result>=explodeOn)
+              newDice.push({id:Math.random(),type:'crit',faces:activeW?.diceType||6,result:null});
+            const ctx=p.ctx||{};
+            const dieTag=ctx.abilityTag||ctx.weapon?.dmgTags?.[p.currentIndex]||ctx.weapon?.dmgTags?.[0]||'slashing';
+            const aff=ctx.enemyId?(ENEMY_AFFINITIES[ctx.enemyId]||{weak:[],resist:[]}):{weak:[],resist:[]};
+            if(cur.type==='char'&&aff.weak.includes(dieTag)&&cur.result!==1){
+              const advRoll=rng(cur.faces||6)+1;
+              cur._advDie1=cur.result;
+              cur._advDie2=advRoll;
+              cur._advChosen=Math.max(cur.result,advRoll);
+              cur.result=cur._advChosen;
+            }
+            if(aff.resist.includes(dieTag)&&cur.result!==1){
+              cur._resistApplied=true;
+            }
+            newDice[p.currentIndex]=cur;
+            return{...p,dice:newDice,status:'pausing',animVal:cur.result};
+          });
+        }
+      },60);
+      return()=>clearInterval(rollTimer.current);
+
+    } else if(status==='pausing'){
+      const t=setTimeout(()=>{
+        setDiceRoll(p=>{
+          if(p.status!=='pausing') return p;
+          const next=p.currentIndex+1;
+          if(next>=p.dice.length){
+            return{...p,status:'done',currentIndex:next};
+          }
+          return{...p,status:'rolling',currentIndex:next,animVal:1};
+        });
+      },300);
+      return()=>clearTimeout(t);
+
+    } else if(status==='done'){
+      const done=diceRoll.onDone;
+      const finalDice=diceRoll.dice;
+      setDiceRoll(p=>({...p,status:'resolving'}));
+      setTimeout(()=>{setDiceRoll(null);done(finalDice);},350);
+    }
+  },[diceRoll?.currentIndex,diceRoll?.status,diceRoll?.dice?.length]);
+
+  const setupEncounter = (floor,isBoss,isAmbush=false,forceBiome=null) => {
+    let e;
+    if(isBoss){
+      const bossDef=FLOOR_BOSSES[Math.min(floor,8)]||FLOOR_BOSSES[8];
+      e={...bossDef,maxHp:bossDef.hp,isBoss:true};
+    } else {
+      const curBiome=forceBiome||(dungeon.grid[dungeon.pos?.y]?.[dungeon.pos?.x]?.biome)||'dungeon';
+      const allPools=[...((BIOME_MONSTERS[curBiome]||[]))];
+      const pool=allPools.filter(m=>m.minFloor<=floor);
+      const t=pool.length?pool[rng(pool.length)]:(DUNGEON_MONSTERS.filter(m=>m.minFloor<=floor)[0]);
+      const hp=t.hpBase+floor*3+rng(3);
+      e={...t,hp,maxHp:hp,damage:t.dmgBase+floor,isBoss:false};
+    }
+    setEncounter(e);setIsPlayerTurn(!isAmbush);setGs('combat');setResolvedDice(null);
+    if(isAmbush){log('Ambushed by '+e.name+'!',{bad:true,urgent:true});setTimeout(()=>doMonsterAttack(e),900);}
+    else log(isBoss?'Boss: '+e.name:'Encountered '+e.name+'.',isBoss?{urgent:true}:{});
+  };
+
+  const doPlayerRoll = (ability=null) => {
+    if(!isPlayerTurn||diceRoll||pendingAttack) return;
+    const lvl=getLevel(player.xp);
+    if(ability&&ability.unlockLv&&lvl<ability.unlockLv) return;
+    setIsPlayerTurn(false);
+    
+    if(ability&&['HEAL_3','PURIFY','BLOCK','EVADE'].includes(ability.effectType)){
+      setPlayer(p=>{const np={...p,focus:p.focus-ability.cost};
+        if(ability.effectType==='HEAL_3'){np.hp=Math.min(derived.maxHp,np.hp+3);log('Restored 3 HP.',{urgent:true});}
+        if(ability.effectType==='PURIFY'){np.armorDebuff=0;log('Armor restored.');}
+        if(ability.effectType==='BLOCK'){np.hasBlock=true;log('Bracing for impact.');}
+        if(ability.effectType==='EVADE'){np.hasEvade=true;log('Vanishing.');}
+        return np;});
+      setTimeout(()=>setEncounter(e=>{doMonsterAttack(e);return e;}),800);return;
+    }
+    if(ability) setPlayer(p=>({...p,focus:p.focus-ability.cost}));
+    
+    const aw = player.weapons?.[0]||STARTING_WEAPON;
+    const lvlDice=getDiceCount(lvl);
+    const weapDice = aw.diceCount||1;
+    const extraDice = Math.max(0,lvlDice-1);
+    const faces=aw.diceType||6;
+    let cfg=Array.from({length:weapDice+extraDice},()=>({type:'char',faces}));
+    
+    let abilityTag = null;
+    if(ability?.name==='Holy Strike') abilityTag='fire';
+    if(ability?.name==='Fireball')    abilityTag='fire';
+    const encId = encounter?.id;
+    
+    executeRoll(cfg,(rolled)=>{
+      let dice=rolled.map(d=>({...d}));
+      if(aw.id==='mace') dice=dice.map(d=>d.result%2===0?{...d,result:Math.max(0,d.result-3)}:d);
+      if(aw.special==='critmax') dice=dice.map(d=>d.result===aw.diceType?{...d,result:d.result*2}:d);
+      if(ability?.effectType==='MODIFIER'){
+        if(ability.name==='Fireball')    dice=dice.map(d=>({...d,result:5,_advDie1:undefined,_advDie2:undefined,_advChosen:undefined}));
+        if(ability.name==='Holy Strike') dice=dice.map(d=>({...d,result:d._advChosen?d._advChosen+2:d.result+2,_advChosen:d._advChosen?d._advChosen+2:undefined}));
+        if(ability.name==='Backstab')    dice=dice.map(d=>d.result%2===0?{...d,result:d.result*2}:d);
+      }
+      setPendingAttack({ dice, ability, aw2:aw, abilityTag });
+    },{abilityTag, weapon:aw, enemyId:encId});
+  };
+
+  const adjustDie = (index, delta) => {
+    if ((player?.focus||0) < 1) return;
+    setPendingAttack(pa => {
+      const newDice = [...pa.dice];
+      const d = newDice[index];
+      const newVal = d.result + delta;
+      if (newVal < 1) return pa;
+      if (delta > 0 && d.result >= (d.faces||6)) return pa;
+      newDice[index] = { ...d, result: newVal };
+      return { ...pa, dice: newDice };
+    });
+    setPlayer(p => ({ ...p, focus: p.focus - 1 }));
+  };
+
+  const confirmAttack = () => {
+    if(!pendingAttack) return;
+    const { dice, ability, aw2, abilityTag } = pendingAttack;
+    setPendingAttack(null);
+    const enc = encounter;
+    const {totalDmg, diceResults} = resolveDamage(dice, aw2, abilityTag, enc?.id, derived.damageBonus);
+    const halfDmg = aw2.dur<=0;
+    const dmg = halfDmg ? Math.floor(totalDmg*0.5) : totalDmg;
+    
+    const diceStr = diceResults.map(r=>{
+      const tag = DMG_TYPE_LABELS[r.tag]||'';
+      const mod = r.modified==='weak'?'!':r.modified==='resist'?'~':'';
+      return r.finalResult+'['+tag+mod+']';
+    }).join(',');
+    const modNote = diceResults.some(r=>r.modified==='weak')?' WEAK!':diceResults.some(r=>r.modified==='resist')?' resisted':'';
+    log('Rolled ['+diceStr+'] -> '+dmg+' dmg.'+modNote+(halfDmg?' (broken)':''),{urgent:dmg>0});
+    
+    setEncounter(e=>{
+      const ne={...e,hp:e.hp-dmg};
+      if(ne.hp<=0){handleMonsterDeath(ne);return ne;}
+      if(ability?.effectType==='SKIP_ENEMY'){log('Enemy turn skipped.');setIsPlayerTurn(true);}
+      else setTimeout(()=>doMonsterAttack(ne),700);
+      return ne;
+    });
+  };
+
+  const doMonsterAttack = (enc) => {
+    executeRoll([{type:'enemy',faces:enc.diceType||6}],(rolled)=>{
+      const r=rolled[0].result;
+      setPlayer(p=>{
+        const np={...p,weapons:[...(p.weapons||[STARTING_WEAPON,null,null])]};
+        if(np.hasEvade){np.hasEvade=false;log('Enemy rolled '+r+'. Evaded!');setIsPlayerTurn(true);return np;}
+        if(np.hasBlock){np.hasBlock=false;log('Enemy rolled '+r+'. Blocked!');setIsPlayerTurn(true);return np;}
+        if(r===1){log('Enemy rolled 1. Miss!');setIsPlayerTurn(true);return np;}
+        let effArmor=Math.max(0,derived.armor-p.armorDebuff);
+        const crit=enc.diceType||6;
+        if(enc.id==='slime'&&r>=3)effArmor=0;
+        if(enc.id==='slime'&&r===crit){np.armorDebuff+=1;log('Acid melted 1 armor!',{bad:true});}
+        if(r===crit)effArmor=0;
+        if(enc.isGhost&&enc.ghostArmor>0) effArmor=Math.max(effArmor,enc.ghostArmor);
+        const rawDmg=Math.max(0,enc.damage-effArmor);
+        if(rawDmg>0){
+          const aw=np.weapons[0]||STARTING_WEAPON;
+          const wCopy={...aw};
+          if(aw.weaponType==='defensive'){
+            if(aw.dur<=0){
+              np.hp-=rawDmg;
+              log('Enemy rolled '+r+'. Broken shield! Hit for '+rawDmg+'.',{bad:true});
+            } else {
+              wCopy.dur=Math.max(0,aw.dur-rawDmg);
+              if(wCopy.dur===0&&aw.dur>0)log('Your '+aw.name+' is broken!',{bad:true,urgent:true});
+              else log('Enemy rolled '+r+'. '+aw.name+' absorbed '+rawDmg+'.',{bad:true});
+            }
+          } else {
+            if(aw.dur<=0){
+              np.hp-=rawDmg;
+              log('Enemy rolled '+r+'. Broken weapon! Full '+rawDmg+' dmg.',{bad:true});
+            } else {
+              const playerDmg=Math.ceil(rawDmg/2);
+              const weapDmg=Math.floor(rawDmg/2);
+              np.hp-=playerDmg;
+              wCopy.dur=Math.max(0,aw.dur-weapDmg);
+              if(wCopy.dur===0&&aw.dur>0)log('Your '+aw.name+' is broken!',{bad:true,urgent:true});
+              log('Enemy rolled '+r+'. Hit for '+playerDmg+' (weapon -'+weapDmg+').',{bad:true});
+            }
+          }
+          np.weapons[0]=wCopy;
+        } else {
+          log('Enemy rolled '+r+'. Armor absorbs it.',{});
+        }
+        if(np.hp<=0){
+        deathRecord.current = {
+          floor: dungeon.floor,
+          pos: {...dungeon.pos},
+          isBossRoom: dungeon.grid[dungeon.pos?.y]?.[dungeon.pos?.x]?.type==='EXIT',
+          className: p.name||'Unknown',
+          classId: p.id,
+          weapons: (p.weapons||[]).filter(Boolean).map(w=>({...w})),
+          trinkets: (p.trinkets||[]).filter(Boolean).map(t=>({...t})),
+          baseArmor: p.baseArmor||0,
+          xp: p.xp||0,
+          hp: p.hp,
+        };
+        setTimeout(()=>transition('game_over'),500);
+      } else setIsPlayerTurn(true);
+        return np;
+      });
+    });
+  };
+
+  const handleMonsterDeath = (e) => {
+    const xpGain=e.isBoss?3:1,goldGain=e.isBoss?3:1;
+    setPlayer(p=>{
+      const np={...p,xp:p.xp+xpGain,gold:p.gold+goldGain};
+      log(e.name+' defeated. +'+goldGain+'g +'+xpGain+'xp.');
+      checkLevelUp(p.xp,np.xp,p.id);
+      if(np.weapons&&np.weapons[0]){
+        const ws=[...np.weapons];
+        const aw={...ws[0]};
+        aw.wXp=(aw.wXp||0)+1;
+        const prevLv=getWeaponLevel((aw.wXp||1)-1);
+        const newLv=getWeaponLevel(aw.wXp);
+        if(newLv>prevLv) {
+          if(newLv>=(aw.wMaxLv||3)) {
+            const upgrades=WEAPON_UPGRADES[aw.baseId||aw.id];
+            const usedTransforms=aw._transformCount||0;
+            if(upgrades&&upgrades.transforms&&upgrades.transforms[usedTransforms]){
+              const nextId=upgrades.transforms[usedTransforms];
+              const nextBase=WEAPON_POOL.find(w=>w.id===nextId)||aw;
+              const newW=makeWeapon({...nextBase,baseId:aw.baseId||aw.id,_transformCount:usedTransforms+1});
+              ws[0]=newW;
+              setTimeout(()=>setWeaponLvUp({transformed:true,oldName:aw.name,newWeapon:newW}),400);
+            } else {
+              aw.dmgBonus=(aw.dmgBonus||0)+1;
+              aw.maxDur=Math.ceil(aw.maxDur*1.5);
+              aw.dur=aw.maxDur;
+              aw.wXp=0; aw.wLv=1;
+              ws[0]=aw;
+              setTimeout(()=>setWeaponLvUp({transformed:false,oldName:aw.name,newWeapon:aw}),400);
+            }
+          } else {
+            aw.wLv=newLv;
+            aw.dmgBonus=(aw.dmgBonus||0)+1;
+            aw.maxDur=Math.ceil((aw.maxDur||9)*1.1);
+            aw.dur=Math.min(aw.dur+3,aw.maxDur);
+            ws[0]=aw;
+            setTimeout(()=>setWeaponLvUp({transformed:false,oldName:aw.name,newWeapon:aw,leveledUp:true}),400);
+          }
+        } else {
+          ws[0]=aw;
+        }
+        np.weapons=ws;
+      }
+      return np;
+    });
+    if(e.isBoss){
+      markDone();
+      const bossWeapon={...BASE_WEAPON_POOL[rng(BASE_WEAPON_POOL.length)],type:'weapon'};
+      setLootQueue([bossWeapon]);
+      setPostLoot(dungeon.floor>=4?'victory':'floor_transition');
+      transition('loot');
+    } else {
+      if(e.poiWin==='GHOST_LOOT'){
+        const dr3=e._deathRecord||deathRecord.current;
+        if(dr3){
+          const items=[
+            ...((dr3.weapons||[]).filter(Boolean).slice(0,2).map(w=>({...w,type:'weapon'}))),
+            ...((dr3.trinkets||[]).filter(Boolean).slice(0,2)),
+          ].filter(Boolean);
+          markDone();
+          deathRecord.current=null; 
+          if(items.length>0){
+            setGhostLootPick({items,onPick:(item)=>{
+              acquireItem(item,()=>{ setGhostLootPick(null); transition('exploring'); });
+            }});
+            setGs('ghost_loot');
+          } else transition('exploring');
+        } else { markDone(); transition('exploring'); }
+        return;
+      } else if(e.poiWin==='BODY_LOOT'){
+        const drop={...BASE_WEAPON_POOL[rng(BASE_WEAPON_POOL.length)],type:'weapon'};
+        markDone();setLootQueue([drop]);setPostLoot('exploring');transition('loot');
+      } else if(Math.random()<0.40){
+        const drop={...BASE_WEAPON_POOL[rng(BASE_WEAPON_POOL.length)],type:'weapon'};
+        if(pendingRoom.current){const r=pendingRoom.current;pendingRoom.current=null;
+          setLootQueue([drop]);setPostLoot('trigger_pending');transition('loot');}
+        else{setLootQueue([drop]);setPostLoot('exploring');markDone();transition('loot');}
+      } else {
+        if(pendingRoom.current){const r=pendingRoom.current;pendingRoom.current=null;triggerRoom(r);}
+        else{markDone();transition('exploring');}
+      }
+    }
+  };
+
+  const resolveEvent = (action) => {
+    const type=encounter?.type;
+    if(action==='leave'){transition('exploring');return;}
+
+    if(type==='CAMP'||campMode){
+      if(action==='rest'){
+        const healAmount = 5; 
+        setPlayer(p=>({...p,hp:Math.min(derived.maxHp,p.hp+healAmount), focus: Math.min(derived.maxFocus, (p.focus||0)+2)}));
+        const newTurns=Math.max(0,(dungeon.grid[dungeon.pos.y]?.[dungeon.pos.x]?.campTurns||0)-1);
+        updateCampTurns(newTurns);
+        log(`Rested. +${healAmount} HP, +2 Focus.`,{urgent:true});
+        setCampRestRoll(healAmount);
+        if(newTurns<=0){
+          setCampMode(false);setCampRestRoll(null);
+          log('Camp exhausted.');
+          transition('exploring');
+        }
+      } else if(action==='break'){
+        setCampMode(false);setCampRestRoll(null);
+        transition('exploring');
+      }
+      return;
+    }
+
+    if(type==='TRAP'){
+      if(action==='endure'){setPlayer(p=>({...p,hp:Math.max(1,p.hp-2)}));log('Endured trap. -2 HP.',{bad:true});markDone();transition('exploring');}
+      else if(action==='roll'){const roll=rng(6)+1;const dmg=roll>=4?0:1;const msg=roll>=4?'Rolled '+roll+'. Trap avoided!':'Rolled '+roll+'. Clipped. -1 HP.';setTrapRoll({roll,dmg,msg});}
+      else if(action==='confirm_trap_roll'){const tr=trapRoll;setTrapRoll(null);if(tr.dmg>0)setPlayer(p=>({...p,hp:Math.max(1,p.hp-tr.dmg)}));log(tr.msg,tr.dmg>0?{bad:true}:{urgent:true});markDone();transition('exploring');}
+      return;
+    }
+
+    if(type==='TREASURE'){
+      if(action==='loot'){
+        const tt=encounter.treasureType;
+        const result=tt==='barrel'?rollBarrel():tt==='wood'?rollWoodChest():rollGoldChest();
+        setPlayer(p=>({...p,gold:p.gold+(result.gold||0),food:p.food+(result.food||0)}));
+        markDone();
+        setChestResult({result,chestType:tt});
+        setGs('chest_result');
+      }
+      return;
+    }
+
+    if(type==='MERCHANT'){
+      if(action==='food'&&player.gold>=2){
+        setPlayer(p=>({...p,gold:p.gold-2,food:p.food+1}));
+        log('Bought food.');
+        setEncounter(e=>({...e,merchantMood:'bought'}));
+        setTimeout(()=>setEncounter(e=>({...e,merchantMood:'idle'})),1000);
+        return;
+      }
+      if(action==='trinket'&&player.gold>=5&&encounter.offeredTrinket){
+        setPlayer(p=>({...p,gold:p.gold-5}));
+        log('Bought '+encounter.offeredTrinket.name+'.',{urgent:true});
+        setEncounter(e=>({...e,merchantMood:'bought',offeredTrinket:null}));
+        acquireItem(encounter.offeredTrinket,()=>{
+          setGs('event');
+          setTimeout(()=>setEncounter(e=>({...e,merchantMood:'idle'})),800);
+        });
+        return;
+      }
+      if(action==='merchant_leave'){
+        markDone();
+        setEncounter(e=>({...e,merchantMood:'left'}));
+        setTimeout(()=>transition('exploring'),700);
+        return;
+      }
+      return;
+    }
+  };
+
+  const dismissChestResult = () => {
+    const {result} = chestResult;
+    setChestResult(null);
+    if(result.trinket){
+      acquireItem(result.trinket,()=>transition('exploring'));
+    } else {
+      transition('exploring');
+    }
+  };
+
+  const setupCamp = () => {
+    if((player?.food||0)<2){log('Need 2 food to make camp.',{bad:true});return;}
+    setPlayer(p=>({...p,food:p.food-2}));
+    updateCampTurns(3);
+    setCampMode(true);
+    setEncounter({type:'CAMP'});
+    log('Made camp. 3 rest turns.',{urgent:true});
+    setGs('event');
+  };
+
+  const processNextLoot = () => {
+    const rest=lootQueue.slice(1);
+    setLootQueue(rest);
+    if(rest.length===0){
+      if(postLoot==='floor_transition')transition('floor_transition');
+      else if(postLoot==='victory')transition('victory');
+      else if(postLoot==='trigger_pending'){
+        const r=pendingRoom.current;pendingRoom.current=null;
+        if(r)triggerRoom(r);else transition('exploring');
+      }
+      else transition('exploring');
+    }
+  };
+
+  const takeLoot = (item) => { acquireItem(item,processNextLoot); };
+  const skipLoot = () => { processNextLoot(); };
+
+  const shell = (content,withBars=false) => {
+    const lvl=player?getLevel(player.xp):1;
+    const curRoom=dungeon.grid[dungeon.pos?.y]?.[dungeon.pos?.x];
+    const hasCampTurns=curRoom?.campTurns>0;
+    const canMakeCamp=withBars&&gs==='exploring'&&curRoom?.completed&&!hasCampTurns&&player?.food>0;
+    return (
+      <div style={{position:'fixed',inset:0,display:'flex',flexDirection:'column',background:'#080808',overflow:'hidden',opacity:screenAnim?0:1,transition:'opacity 0.12s ease',maxWidth:480,margin:'0 auto'}}>
+        {withBars&&player&&(<><StatRow player={player} derived={derived}/><EqBar weapons={player.weapons} trinkets={player.trinkets} level={lvl}/></>)}
+        <div style={{flex:1,display:'flex',flexDirection:'column',overflow:'hidden',position:'relative'}}>
+          {content}
+          {canMakeCamp&&(
+            <button className="btn btn-green" onClick={setupCamp} disabled={(player?.food||0)<2} style={{position:'absolute',bottom:96,right:12,padding:'8px 12px',gap:6,fontSize:8}}>
+              <ICamp size={12}/> Make Camp (-2 food)
+            </button>
+          )}
+          {withBars&&gs==='exploring'&&hasCampTurns&&(
+            <button className="btn btn-green" onClick={()=>{setCampMode(true);setEncounter({type:'CAMP'});setGs('event');}} style={{position:'absolute',bottom:96,right:12,padding:'8px 12px',gap:6,fontSize:8}}>
+              <ICamp size={12}/> Camp ({curRoom.campTurns})
+            </button>
+          )}
+          {roomReveal&&(
+            <div onClick={dismissReveal} style={{position:'absolute',inset:0,zIndex:50,background:'rgba(0,0,0,0.88)',display:'flex',alignItems:'center',justifyContent:'center',padding:32}}>
+              <div className="anim-overlay" onClick={e=>e.stopPropagation()} style={{width:'100%',maxWidth:300,border:'1px solid '+roomReveal.cfg.accent,background:'#0a0a0a'}}>
+                <div style={{height:2,background:roomReveal.cfg.accent}}/>
+                <div style={{padding:'24px 20px',display:'flex',flexDirection:'column',gap:14}}>
+                  <div style={{display:'flex',alignItems:'center',gap:12}}>
+                    <span style={{color:roomReveal.cfg.textAccent}}><roomReveal.cfg.icon size={22}/></span>
+                    <div>
+                      <div className="cinzel" style={{fontSize:15,color:roomReveal.cfg.textAccent,letterSpacing:'0.04em'}}>{roomReveal.cfg.label}</div>
+                      <div style={{fontSize:8,letterSpacing:'0.18em',color:'#2e2e2e',textTransform:'uppercase',marginTop:3}}>{roomReveal.cfg.sub}</div>
+                    </div>
+                  </div>
+                  <button className="btn btn-primary" onClick={dismissReveal} style={{width:'100%',padding:'11px',gap:8,borderColor:roomReveal.cfg.accent,color:roomReveal.cfg.textAccent}}><IArrow size={12}/> Continue</button>
+                </div>
+              </div>
+            </div>
+          )}
+          {swapOverlay&&<SwapOverlay newItem={swapOverlay.newItem} currentItems={swapOverlay.currentItems} onSwap={swapOverlay.onSwap} onSkip={swapOverlay.onSkip}/>}
+          {levelUpPopup&&<LevelUpOverlay level={levelUpPopup.level} unlockedAbility={levelUpPopup.ability} onDismiss={levelUpPopup.onDismiss}/>}
+          {weaponLvUp&&<WeaponLvUpOverlay data={weaponLvUp} onDismiss={()=>setWeaponLvUp(null)}/>}
+        </div>
+        {withBars&&<Chronicle logs={logs}/>}
+      </div>
+    );
+  };
+
+  if(gs==='menu') return shell(
+    <div style={{flex:1,display:'flex',flexDirection:'column',padding:'28px 20px',overflowY:'auto'}}>
+      <div style={{marginBottom:28}}>
+        <div className="cinzel" style={{fontSize:24,letterSpacing:'0.08em',color:'#777',fontWeight:600,marginBottom:5}}>Mini Rogue</div>
+        <div style={{fontSize:8,letterSpacing:'0.25em',color:'#1e1e1e',textTransform:'uppercase'}}>Choose your class to descend</div>
+      </div>
+      {CLASSES.map((cls,i)=>{const Ic=cls.icon;return(
+        <div key={cls.id} className="anim-fade" style={{animationDelay:i*0.06+'s',animationFillMode:'both',opacity:0}}>
+          <button className="btn btn-primary" onClick={()=>startGame(cls)} style={{width:'100%',justifyContent:'flex-start',gap:14,padding:'14px',marginBottom:7,textAlign:'left'}}>
+            <span style={{color:'#2e2e2e',flexShrink:0}}><Ic size={17}/></span>
+            <span style={{display:'flex',flexDirection:'column',gap:3,alignItems:'flex-start'}}>
+              <span style={{fontSize:11,color:'#888',letterSpacing:'0.1em'}}>{cls.name}</span>
+              <span style={{fontSize:8,color:'#2e2e2e',letterSpacing:'0.08em'}}>{cls.desc}</span>
+              <span style={{fontSize:7,color:'#1e1e1e',letterSpacing:'0.08em'}}>HP{cls.hp} / ARM{cls.armor} / FOOD{cls.food} / GOLD{cls.gold} / Spells at LV2 & LV4</span>
+            </span>
+          </button>
+        </div>
+      );})}
+      <div style={{marginTop:20,fontSize:8,letterSpacing:'0.15em',color:'#181818',textTransform:'uppercase',lineHeight:2.2}}>Descend 4 floors. Defeat the warden. Return with glory.</div>
+    </div>
+  );
+
+  if(gs==='exploring'||gs==='revealing'){
+    const{grid,pos,w,h,floor,area}=dungeon;
+    const reachable=(x,y)=>(x!==pos.x||y!==pos.y)&&((Math.abs(x-pos.x)===1&&y===pos.y)||(Math.abs(y-pos.y)===1&&x===pos.x));
+    const roomIcon=(type,tt)=>type==='TREASURE'?(tt==='barrel'?IBarrel:tt==='gold'?IGold:IChest):{MONSTER:ISkull,MERCHANT:IShop,EXIT:IExit,ENTRANCE:null,TRAP:ITrap,POI:IEye}[type]||null;
+    const cellSz=Math.min(68,320/Math.max(w,h));
+    return shell(
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:16,gap:12}}>
+        <div style={{fontSize:8,letterSpacing:'0.2em',textTransform:'uppercase',display:'flex',gap:8,alignItems:'center'}}>
+          <span style={{color:'#222'}}>Floor {floor} / Area {area}</span>
+          {(()=>{const biomes=[...new Set(grid.flat().map(c=>c.biome).filter(b=>b&&b!=='dungeon'))];
+            return biomes.map(b=><span key={b} style={{color:BIOMES[b]?.textColor||'#333',fontSize:7}}>{b.toUpperCase()}</span>);})()}
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'repeat('+w+','+cellSz+'px)',gap:4}}>
+          {grid.map(row=>row.map(cell=>{
+            const isCur=cell.x===pos.x&&cell.y===pos.y,isReach=reachable(cell.x,cell.y);
+            const Ic=cell.visited?roomIcon(cell.type,cell.treasureType):null;
+            const chestColor=cell.treasureType==='gold'?'#7a6020':cell.treasureType==='barrel'?'#3a5a2a':'#4a4a30';
+            const isMerchant=cell.type==='MERCHANT', hasCamp=cell.campTurns>0;
+            const isRevisitable=cell.completed&&(isMerchant||hasCamp);
+            return(
+              <div key={cell.x+'-'+cell.y} onClick={()=>isReach&&move(cell.x,cell.y)}
+                style={{width:cellSz,height:cellSz,border:'1px solid '+(isCur?'#555':isReach?'#2a2a2a':cell.visited?'#161616':'#0e0e0e'),display:'flex',alignItems:'center',justifyContent:'center',cursor:isReach?'pointer':'default',background:isCur?'rgba(255,255,255,0.025)':isReach?'rgba(255,255,255,0.01)':'transparent',opacity:cell.visited?1:0.2,transition:'border-color 0.15s',position:'relative',flexDirection:'column',gap:2}}>
+                {isCur&&<div style={{width:5,height:5,borderRadius:'50%',background:'#666'}}/>}
+                {!isCur&&cell.visited&&Ic&&<span style={{color:cell.completed&&!isRevisitable?'#1a1a1a':cell.type==='EXIT'?'#555':cell.type==='TREASURE'?chestColor:isMerchant?'#3a4a5a':hasCamp?'#3a5a3a':'#303030',display:'flex'}}><Ic size={13}/></span>}
+                {hasCamp&&!isCur&&<span style={{color:'#3a5a3a',position:'absolute',top:3,right:3,display:'flex'}}><ICamp size={8}/></span>}
+                {isReach&&<div style={{fontSize:6,letterSpacing:'0.08em',textTransform:'uppercase',marginTop:cell.visited?2:0,color:BIOMES[cell.biome]?.textColor||'#1e1e1e'}}>{cell.visited&&!cell.completed?cell.type.slice(0,3):cell.visited?'...':'???'}</div>}
+                {cell.visited&&cell.biome!=='dungeon'&&!isCur&&<div style={{fontSize:5,color:BIOMES[cell.biome]?.textColor||'#1e1e1e',letterSpacing:'0.06em',textTransform:'uppercase',position:'absolute',top:2,left:2}}>{cell.biome.slice(0,3).toUpperCase()}</div>}
+                {cell.completed&&!isCur&&!isRevisitable&&<div style={{position:'absolute',inset:0,background:'rgba(0,0,0,0.35)'}}/>}
+              </div>
+            );
+          }))}
+        </div>
+        {grid[pos.y]?.[pos.x]?.type==='EXIT'&&<button className="btn btn-primary" onClick={descend} style={{gap:8,padding:'11px 22px',marginTop:6}}><IArrow size={13}/> Descend</button>}
+      </div>
+    ,true);
+  }
+
+  if(gs==='chest_result'&&chestResult){
+    return shell(
+      <ChestResultScreen result={chestResult.result} chestType={chestResult.chestType} onContinue={dismissChestResult}/>
+    ,true);
+  }
+
+  if(gs==='combat'&&encounter){
+    const lvl=getLevel(player?.xp||0);
+    const cls=CLASSES.find(c=>c.id===player?.id)||CLASSES[0];
+    const hpPct=Math.max(0,encounter.hp/encounter.maxHp);
+    const a1Unlocked=lvl>=cls.ability1.unlockLv,a2Unlocked=lvl>=cls.ability2.unlockLv;
+    const canA1=a1Unlocked&&(player?.focus||0)>=cls.ability1.cost;
+    const canA2=a2Unlocked&&(player?.focus||0)>=cls.ability2.cost;
+    return shell(
+      <div style={{flex:1,display:'flex',flexDirection:'column',padding:16,gap:0,overflowY:'auto'}}>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:8,marginBottom:10,flexShrink:0}}>
+          <div style={{border:'1px solid #1a1a1a',padding:'6px',display:'flex',flexDirection:'column',gap:4,background:'#060606'}}>
+            <div style={{fontSize:7,letterSpacing:'0.2em',color:'#2a2a2a',textTransform:'uppercase'}}>
+              {player?.name||'Hero'}
+            </div>
+            <div style={{height:72,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
+              {(()=>{const P=PLAYER_PORTRAITS[player?.id]||PortraitCrusader;return <P hit={!isPlayerTurn&&!!diceRoll}/>;})()}
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{fontSize:8,color:'#555'}}>HP {player?.hp}/{derived.maxHp} / {derived.activeWeapon?.name||'—'}</div>
+              <div className="hp-bar-track" style={{width:'50%'}}><div className="hp-bar-fill" style={{width:Math.max(0,(player?.hp/derived.maxHp)*100)+'%',background:player?.hp/derived.maxHp<0.35?'#7a3333':'#445544'}}/></div>
+            </div>
+          </div>
+          <div style={{border:'1px solid '+(encounter.isGhost?'#2a2a4a':encounter.isBoss?'#2a1a08':'#1a1a1a'),padding:'6px',display:'flex',flexDirection:'column',gap:4,background:'#060606'}}>
+            <div style={{fontSize:7,letterSpacing:'0.2em',color:encounter.isGhost?'#6060a0':encounter.isBoss?'#4a2a08':'#2a2a2a',textTransform:'uppercase',lineHeight:2}}>
+              {encounter.name}
+              {(()=>{const aff=ENEMY_AFFINITIES[encounter.id];if(!aff)return null;return(
+                <span style={{display:'flex',gap:4,flexWrap:'wrap',marginTop:1}}>
+                  {aff.weak.map(w=><span key={w} style={{fontSize:6,color:DMG_TYPE_COLORS[w]||'#555',letterSpacing:'0.08em'}}>WK:{DMG_TYPE_LABELS[w]}</span>)}
+                  {aff.resist.map(r=><span key={r} style={{fontSize:6,color:'#3a2a2a',letterSpacing:'0.08em'}}>RS:{DMG_TYPE_LABELS[r]}</span>)}
+                </span>
+              );})()}
+            </div>
+            <div style={{height:72,display:'flex',alignItems:'center',justifyContent:'center',overflow:'hidden'}}>
+              {(()=>{
+                let E;
+                if(encounter.isGhost&&encounter._deathRecord?.classId){
+                  E=PLAYER_PORTRAITS[encounter._deathRecord.classId]||PortraitCrusader;
+                } else {
+                  E=ALL_ENEMY_PORTRAITS[encounter.id]||PortraitGoblin;
+                }
+                return <E hit={isPlayerTurn&&!!diceRoll}/>;
+              })()}
+            </div>
+            <div style={{display:'flex',justifyContent:'space-between',alignItems:'center'}}>
+              <div style={{fontSize:8,color:'#555'}}>HP {Math.max(0,encounter.hp)}/{encounter.maxHp}</div>
+              {encounter.biome&&encounter.biome!=='dungeon'&&(
+                <div style={{fontSize:6,letterSpacing:'0.1em',textTransform:'uppercase',color:BIOMES[encounter.biome]?.textColor||'#333'}}>{encounter.biome.toUpperCase()}</div>
+              )}
+              <div className="hp-bar-track" style={{width:'50%'}}><div className={'hp-bar-fill'+(hpPct<0.35?' low':'')+(encounter.isBoss?' boss':'')} style={{width:hpPct*100+'%'}}/></div>
+            </div>
+          </div>
+        </div>
+
+        {pendingAttack ? (
+          <div style={{display:'flex',flexDirection:'column',gap:8,alignItems:'center',minHeight:64,flexShrink:0,background:'rgba(255,255,255,0.02)',padding:'8px 0',borderRadius:4,border:'1px solid #1a1a1a'}}>
+            <div style={{fontSize:7,letterSpacing:'0.15em',color:'#a0a030',textTransform:'uppercase'}}>Spend focus to alter dice</div>
+            <div style={{display:'flex',gap:12,flexWrap:'wrap'}}>
+              {pendingAttack.dice.map((d,i)=>(
+                <div key={i} style={{display:'flex',flexDirection:'column',alignItems:'center',gap:4}}>
+                  <button className="btn" style={{padding:'2px 10px',minHeight:20,fontSize:14,border:'1px solid #333',color:(player?.focus||0)>0&&d.result<(d.faces||6)?'#ccc':'#444'}} disabled={(player?.focus||0)<1||d.result>=(d.faces||6)} onClick={()=>adjustDie(i,1)}>+</button>
+                  <div style={{
+                    width:38,height:50,border:'1px solid #a0a030',
+                    display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',
+                    fontSize:16,fontWeight:'bold',color:'#e0e080',gap:1,background:'rgba(160,160,48,0.05)'
+                  }}>
+                    <span>{d.result}</span>
+                    {d.faces!==6 && <span style={{fontSize:5,color:'#1e1e1e',marginTop:-1}}>d{d.faces}</span>}
+                  </div>
+                  <button className="btn" style={{padding:'2px 10px',minHeight:20,fontSize:14,border:'1px solid #333',color:(player?.focus||0)>0&&d.result>1?'#ccc':'#444'}} disabled={(player?.focus||0)<1||d.result<=1} onClick={()=>adjustDie(i,-1)}>-</button>
+                </div>
+              ))}
+            </div>
+            <button className="btn btn-primary" onClick={confirmAttack} style={{padding:'8px 24px',gap:8,borderColor:'#a0a030',color:'#c0c060'}}><ISword size={12}/> Strike</button>
+          </div>
+        ) : (
+          <DiceTray diceRoll={diceRoll} weapon={derived.activeWeapon} abilityTag={null} resolvedDice={resolvedDice}/>
+        )}
+
+        <div style={{textAlign:'center',marginBottom:10,fontSize:8,letterSpacing:'0.2em',textTransform:'uppercase',color:isPlayerTurn&&!diceRoll?'#555':'#1e1e1e'}}>
+          {diceRoll?(diceRoll.dice[0]?.type==='enemy'?'Enemy rolling...':'Your roll...'):(pendingAttack?'Modify your roll':(isPlayerTurn?'Your turn':'Enemy turn'))}
+        </div>
+        <div style={{display:'grid',gridTemplateColumns:'1fr 1fr',gap:5,marginBottom:5}}>
+          <button className="btn btn-primary" disabled={!isPlayerTurn||!!diceRoll||!!pendingAttack} onClick={()=>doPlayerRoll(null)} style={{padding:'13px 8px',flexDirection:'column',gap:4}}>
+            <IZap size={13}/><span style={{fontSize:8}}>Attack</span><span style={{fontSize:7,color:'#333'}}>{getDiceCount(lvl)}d{player?.weapon?.diceType||6}</span>
+          </button>
+          <button className="btn" disabled={!isPlayerTurn||!canA1||!!diceRoll||!!pendingAttack} onClick={()=>doPlayerRoll(cls.ability1)} style={{padding:'13px 8px',flexDirection:'column',gap:4}}>
+            {a1Unlocked?<IStar size={13}/>:<ILock size={13}/>}
+            <span style={{fontSize:8}}>{cls.ability1.name}</span>
+            <span style={{fontSize:7,color:'#333'}}>{a1Unlocked?cls.ability1.cost+' focus':'LV2'}</span>
+          </button>
+        </div>
+        <button className="btn" disabled={!isPlayerTurn||!canA2||!!diceRoll||!!pendingAttack} onClick={()=>doPlayerRoll(cls.ability2)} style={{width:'100%',padding:'10px',gap:8,marginBottom:5}}>
+          {a2Unlocked?<IFlame size={13}/>:<ILock size={13}/>}
+          <span style={{fontSize:8}}>{a2Unlocked?cls.ability2.name+' / '+cls.ability2.cost+' focus / '+cls.ability2.desc:cls.ability2.name+' / Unlocks at LV4'}</span>
+        </button>
+        <div style={{borderTop:'1px solid #0e0e0e',paddingTop:8,marginTop:2,display:'flex',flexDirection:'column',gap:4}}>
+          <div style={{fontSize:7,letterSpacing:'0.2em',color:'#1e1e1e',textTransform:'uppercase',marginBottom:2}}>Weapons</div>
+          <div style={{display:'grid',gridTemplateColumns:'repeat(2,1fr)',gap:4}}>
+            {(player?.weapons||[null,null]).map((w,i)=>{
+              const isActive=i===0;
+              const broken=w&&w.dur<=0;
+              const durPct=w?w.dur/w.maxDur:0;
+              return (
+                <div key={i} onClick={()=>{
+                  if(!isPlayerTurn||!!diceRoll||!!pendingAttack||!w||isActive)return;
+                  setPlayer(p=>{const ws=[...(p.weapons||[STARTING_WEAPON,null])];const tmp=ws[0];ws[0]=ws[i];ws[i]=tmp;return{...p,weapons:ws};});
+                  setIsPlayerTurn(false);
+                  log('Swapped to '+w.name+'.');
+                  setTimeout(()=>setEncounter(e=>{doMonsterAttack(e);return e;}),600);
+                }}
+                style={{
+                  border:'1px solid '+(isActive?'#444':'#1a1a1a'),
+                  padding:'5px 4px',
+                  background:isActive?'rgba(255,255,255,0.02)':'transparent',
+                  cursor:(!isActive&&w&&isPlayerTurn&&!diceRoll&&!pendingAttack)?'pointer':'default',
+                  opacity:w?1:0.2,
+                  display:'flex',flexDirection:'column',gap:3,
+                }}>
+                  <div style={{fontSize:7,letterSpacing:'0.08em',color:isActive?'#666':broken?'#5a2a2a':'#333',textTransform:'uppercase',lineHeight:1.2}}>
+                    {w?w.name:'empty'}
+                  </div>
+                  {w&&<div style={{fontSize:6,color:'#282828',textTransform:'uppercase'}}>{w.weaponType==='defensive'?'DEF':'AGG'} / {w.diceCount}d{w.diceType}</div>}
+                  {w&&<div style={{fontSize:6,textTransform:'uppercase',display:'flex',gap:3,flexWrap:'wrap'}}>
+                    {[...new Set(w.dmgTags||[])].map(t=>(
+                      <span key={t} style={{color:DMG_TYPE_COLORS[t]||'#333'}}>{DMG_TYPE_LABELS[t]||t}</span>
+                    ))}
+                    {w.dur<=0&&<span style={{color:'#6a2020'}}>BRK</span>}
+                  </div>}
+                  {w&&<div style={{background:'#111',height:2,width:'100%'}}>
+                    <div style={{background:broken?'#5a2020':durPct>0.5?'#3a5a3a':'#6a4020',height:2,width:(durPct*100)+'%',transition:'width 0.3s'}}/>
+                  </div>}
+                  {w&&<div style={{fontSize:6,color:broken?'#5a2020':'#222',textTransform:'uppercase'}}>{w.dur}/{w.maxDur}{broken?' BRK':''}</div>}
+                  {w&&!broken&&(()=>{
+                    const wlv=getWeaponLevel(w.wXp||0);
+                    const toNext=xpToNextWLv(w.wXp||0,w.wMaxLv||3);
+                    const prevThresh=WEAPON_LV_XP[wlv-1]||0;
+                    const nextThresh=toNext!=null?WEAPON_LV_XP[wlv]||prevThresh:prevThresh;
+                    const pct=toNext!=null?(((w.wXp||0)-prevThresh)/(nextThresh-prevThresh))*100:100;
+                    return (
+                      <div style={{display:'flex',flexDirection:'column',gap:1,marginTop:1}}>
+                        <div style={{background:'#0a0a0a',height:2,width:'100%'}}>
+                          <div style={{background:toNext===null?'#6a4020':'#1a3a5a',height:2,width:pct+'%',transition:'width 0.3s'}}/>
+                        </div>
+                        <div style={{fontSize:5,color:'#1e1e1e',textTransform:'uppercase',letterSpacing:'0.05em'}}>
+                          WLV{wlv}{toNext!=null?' +'+toNext+'kill'+(toNext===1?'':'s'):' MAX'}
+                        </div>
+                      </div>
+                    );
+                  })()}
+                  {!isActive&&w&&isPlayerTurn&&!diceRoll&&!pendingAttack&&<div style={{fontSize:6,color:'#2a3a2a',textTransform:'uppercase'}}>tap swap</div>}
+                </div>
+              );
+            })}
+          </div>
+        </div>
+        <button className="btn btn-green" disabled={!isPlayerTurn||!!diceRoll||!!pendingAttack||(player?.food||0)<=0}
+          onClick={()=>{
+            if(!isPlayerTurn||diceRoll||pendingAttack) return;
+            setIsPlayerTurn(false);
+            const roll=rng(4)+1;
+            setPlayer(p=>({...p,hp:Math.min(derived.maxHp,p.hp+roll),food:p.food-1, focus: Math.min(derived.maxFocus, (p.focus||0)+2)}));
+            log(`Ate food. +${roll} HP, +2 Focus.`,{urgent:true});
+            setTimeout(()=>setEncounter(e=>{doMonsterAttack(e);return e;}),600);
+          }}
+          style={{width:'100%',padding:'8px',gap:8,marginTop:4,fontSize:9}}>
+          <IDrum size={12}/> Eat Food (1d4 HP, 2 Focus) — {player?.food||0} left
+        </button>
+      </div>
+    ,true);
+  }
+
+  if(gs==='event'&&encounter){
+    const type=encounter.type;
+    const tt=encounter.treasureType;
+    const chestLabel=tt==='gold'?'Gold Chest':tt==='barrel'?'Barrel':'Wooden Chest';
+    const chestColor=tt==='gold'?'#b09030':tt==='barrel'?'#508050':'#707050';
+    const ChestIco=tt==='gold'?IGold:tt==='barrel'?IBarrel:IChest;
+
+    if(type==='CAMP'||campMode){
+      const curRoom=dungeon.grid[dungeon.pos?.y]?.[dungeon.pos?.x];
+      return shell(<CampScreen camp={curRoom} maxHp={derived.maxHp} onRest={()=>resolveEvent('rest')} onLeave={()=>resolveEvent('break')}/>,true);
+    }
+
+    const Cfg={TREASURE:{icon:ChestIco,title:chestLabel,color:chestColor},MERCHANT:{icon:IShop,title:'Wandering Merchant',color:'#507090'},TRAP:{icon:ITrap,title:'Hidden Trap',color:'#b05050'},POI:{icon:IEye,title:encounter?.poiDef?.name||'Point of Interest',color:'#806090'}}[type]||{icon:ISkull,title:type,color:'#555'};
+    const Ic=Cfg.icon;
+    return shell(
+      <div style={{flex:1,display:'flex',flexDirection:'column',padding:20,gap:14,overflowY:'auto'}} className="anim-fade">
+        <div style={{display:'flex',alignItems:'center',gap:12,paddingBottom:14,borderBottom:'1px solid #0e0e0e'}}>
+          <span style={{color:Cfg.color}}><Ic size={20}/></span>
+          <div>
+            <div style={{fontSize:11,letterSpacing:'0.1em',color:'#666',textTransform:'uppercase'}}>{Cfg.title}</div>
+            <div style={{fontSize:8,color:'#1e1e1e',letterSpacing:'0.1em',marginTop:2,textTransform:'uppercase'}}>
+              {type==='TREASURE'&&'Roll d6 to discover contents.'}
+              {type==='MERCHANT'&&'Trade what you must. You may return.'}
+              {type==='TRAP'&&'The floor gives way.'}
+              {type==='POI'&&''}
+            </div>
+          </div>
+        </div>
+
+        {type==='TREASURE'&&<div style={{display:'flex',flexDirection:'column',gap:5}}>
+          <div style={{border:'1px solid #141414',padding:'10px 12px',fontSize:8,letterSpacing:'0.1em',color:'#252525',textTransform:'uppercase',lineHeight:2}}>
+            {tt==='barrel'&&<><div>1-3: food</div><div>4-5: gold</div><div>6: gold + food</div></>}
+            {tt==='wood'&&<><div>1-2: food</div><div>3-4: gold</div><div>5: gold + food</div><div>6: relic</div></>}
+            {tt==='gold'&&<><div>1-2: gold</div><div>3-4: more gold</div><div>5: gold + relic</div><div>6: rare relic</div></>}
+          </div>
+          <button className="btn btn-primary" onClick={()=>resolveEvent('loot')} style={{justifyContent:'space-between',padding:'13px 14px',borderColor:chestColor,color:chestColor}}><span>Open & Roll</span><ChestIco size={13}/></button>
+          <button className="btn" onClick={()=>resolveEvent('leave')} style={{padding:'10px'}}>Leave it</button>
+        </div>}
+
+        {type==='MERCHANT'&&<div style={{display:'flex',flexDirection:'column',gap:5}}>
+          <div style={{marginBottom:4}}>
+            <PortraitMerchant mood={encounter.merchantMood||'idle'}/>
+          </div>
+          {[
+            {action:'food',   label:'Buy Food',   cost:2, right:'+1 food'},
+            {action:'trinket',label:encounter.offeredTrinket?.name||'Relic',cost:5,right:encounter.offeredTrinket?.desc||''},
+          ].map(opt=>(
+            <button key={opt.action} className="btn" disabled={(player?.gold||0)<opt.cost}
+              onClick={()=>resolveEvent(opt.action)}
+              style={{justifyContent:'space-between',padding:'13px 14px'}}
+              onMouseEnter={()=>setEncounter(e=>({...e,merchantMood:'browsing'}))}
+              onMouseLeave={()=>setEncounter(e=>({...e,merchantMood:'idle'}))}>
+              <span>{opt.label}</span><span style={{display:'flex',gap:8}}><span style={{color:'#444'}}>{opt.right}</span><span style={{color:'#333'}}>{opt.cost}g</span></span>
+            </button>
+          ))}
+          {(player?.weapons||[]).map((w,i)=>{
+            if(!w) return null;
+            const broken=w.dur<=0;const needsRepair=w.dur<w.maxDur;
+            if(!needsRepair)return null;
+            return (
+              <button key={'repair'+i} className="btn btn-amber"
+                disabled={(player?.gold||0)<5}
+                onClick={()=>{
+                  setEncounter(e=>({...e,merchantMood:'bought'}));
+                  setPlayer(p=>{const ws=[...p.weapons];ws[i]={...ws[i],dur:ws[i].maxDur};return{...p,gold:p.gold-5,weapons:ws};});
+                  log('Repaired '+w.name+'.',{urgent:true});
+                  setTimeout(()=>setEncounter(e=>({...e,merchantMood:'idle'})),800);
+                }}
+                style={{justifyContent:'space-between',padding:'13px 14px'}}>
+                <span>Repair {w.name}{broken?' [BROKEN]':' ('+w.dur+'/'+w.maxDur+')'}</span>
+                <span style={{color:'#333'}}>5g</span>
+              </button>
+            );
+          })}
+          <button className="btn" onClick={()=>resolveEvent('merchant_leave')} style={{padding:'10px',marginTop:2}}>Leave shop</button>
+        </div>}
+
+        {type==='TRAP'&&!trapRoll&&<div style={{display:'flex',flexDirection:'column',gap:5}}>
+          <div style={{border:'1px solid #2a1a0a',padding:'10px 12px',fontSize:8,letterSpacing:'0.1em',color:'#333',textTransform:'uppercase',lineHeight:2}}>
+            <div>Endure: -2 HP</div><div>Dodge: roll d6 / 4+ avoids / 1-3 takes 1</div>
+          </div>
+          <button className="btn btn-danger" onClick={()=>resolveEvent('endure')} style={{justifyContent:'space-between',padding:'13px 14px'}}><span>Endure</span><span>-2 HP</span></button>
+          <button className="btn btn-amber" onClick={()=>resolveEvent('roll')} style={{justifyContent:'space-between',padding:'13px 14px'}}><span>Attempt to dodge</span><span>Roll d6</span></button>
+        </div>}
+
+        {type==='POI'&&(()=>{
+          const poi = encounter?.poiDef;
+          if(!poi) return null;
+          const phase = encounter?.phase||'intro';
+          const isBody = poi.id==='corpse';
+          const accentColor = isBody?'#5a2a2a':'#3a2a5a';
+          const textAccent  = isBody?'#c06060':'#9060c0';
+
+          if(phase==='intro') return (
+            <div style={{display:'flex',flexDirection:'column',gap:12}} className="anim-fade">
+              <div style={{border:'1px solid '+accentColor,padding:'12px 14px',background:'#080808'}}>
+                <div style={{fontSize:7,letterSpacing:'0.2em',color:accentColor,textTransform:'uppercase',marginBottom:6}}>
+                  {poi.type==='abc'?'Trial':'Point of Interest'}
+                  {isBody&&<span style={{marginLeft:8,color:'#6a2020'}}>⚠ Danger</span>}
+                </div>
+                <div style={{fontSize:11,color:textAccent,letterSpacing:'0.06em',marginBottom:8}}>{poi.name}</div>
+                <div style={{fontSize:8,color:'#2a2a2a',letterSpacing:'0.1em',lineHeight:1.8,textTransform:'uppercase'}}>{poi.flavor}</div>
+              </div>
+
+              {poi.type==='roll'&&(
+                <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                  <div style={{fontSize:7,color:'#222',letterSpacing:'0.12em',textTransform:'uppercase',padding:'4px 0'}}>
+                    Roll d6: 1-3 bad · 4-6 good
+                  </div>
+                  <button className="btn btn-primary" style={{padding:'12px',gap:8,borderColor:accentColor,color:textAccent}}
+                    onClick={()=>{
+                      const roll=rng(6)+1;
+                      const success=roll>=4;
+                      setEncounter(e=>({...e,phase:'result',roll,success}));
+                    }}>
+                    Roll the dice
+                  </button>
+                  <button className="btn" style={{padding:'10px'}} onClick={()=>{markDone();transition('exploring');}}>
+                    Leave it alone
+                  </button>
+                </div>
+              )}
+
+              {poi.type==='abc'&&(
+                <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                  <div style={{fontSize:9,color:'#555',letterSpacing:'0.1em',textTransform:'uppercase',padding:'4px 0'}}>{poi.question}</div>
+                  {poi.options.map((opt,oi)=>(
+                    <button key={oi} className="btn" style={{padding:'12px 14px',justifyContent:'flex-start',gap:8}}
+                      onClick={()=>{
+                        const correct=oi===poi.answer;
+                        setEncounter(e=>({...e,phase:'result',roll:correct?6:1,success:correct,chosenIdx:oi}));
+                      }}>
+                      <span style={{color:'#3a2a5a',minWidth:14}}>{opt.slice(0,1)}.</span>
+                      <span>{opt.slice(3)}</span>
+                    </button>
+                  ))}
+                  <button className="btn" style={{padding:'10px'}} onClick={()=>{markDone();transition('exploring');}}>
+                    Walk away
+                  </button>
+                </div>
+              )}
+
+              {poi.type==='body'&&(
+                <div style={{display:'flex',flexDirection:'column',gap:5}}>
+                  <div style={{fontSize:7,color:'#333',letterSpacing:'0.12em',textTransform:'uppercase',padding:'4px 0'}}>
+                    Roll d6 to loot: 4+ success · 1-3 the body rises
+                  </div>
+                  <button className="btn btn-danger" style={{padding:'12px',gap:8}}
+                    onClick={()=>{
+                      const roll=rng(6)+1;
+                      const success=roll>=4;
+                      setEncounter(e=>({...e,phase:'result',roll,success}));
+                    }}>
+                    Attempt to loot the body
+                  </button>
+                  <button className="btn" style={{padding:'10px'}} onClick={()=>{markDone();transition('exploring');}}>
+                    Leave it
+                  </button>
+                </div>
+              )}
+            </div>
+          );
+
+          if(phase==='result') {
+            const roll = encounter.roll;
+            const success = encounter.success;
+            const reward = poi.goodReward;
+            const badEff = poi.badEffect;
+
+            const handleContinue = () => {
+              if(success){
+                if(reward==='WATER_AMBUSH'||reward==='SKELETON_FIGHT') {
+                  markDone(); transition('exploring');
+                } else if(reward==='SPREAD_WATER'||reward==='SPREAD_ROT'||reward==='SPREAD_HELL') {
+                  const biomeKey=reward==='SPREAD_WATER'?'water':reward==='SPREAD_ROT'?'rot':'hell';
+                  setDungeon(prev=>{
+                    const g=spreadBiome(prev.grid,prev.pos.x,prev.pos.y,biomeKey,prev.w,prev.h);
+                    return {...prev,grid:g};
+                  });
+                  log('POI: '+biomeKey+' spreads to adjacent tiles.',{urgent:true});
+                  markDone(); transition('exploring');
+                } else if(reward==='STAT_BUFF') {
+                  const stats=['armor','maxHp','damage','focusMax'];
+                  const s=stats[rng(stats.length)];
+                  const buffTrinket={id:Math.random().toString(36).slice(2),type:'trinket',rarity:'Normal',
+                    name:'Spore Mutation',stats:{armor:0,maxHp:0,damage:0,focusMax:0,[s]:s==='maxHp'?2:1},
+                    desc:'+1 '+s};
+                  acquireItem(buffTrinket,()=>{ log('Mutation: +1 '+s+' permanently.',{urgent:true}); transition('exploring'); });
+                  markDone(); return;
+                } else if(reward==='FIRE_WEAPON') {
+                  setPlayer(p=>{
+                    const ws=[...p.weapons];
+                    if(ws[0]) ws[0]={...ws[0],dmgTags:ws[0].dmgTags.map(()=>'fire')};
+                    return{...p,weapons:ws};
+                  });
+                  log('POI: Weapon imbued with fire.',{urgent:true});
+                  markDone(); transition('exploring');
+                } else if(reward==='FULL_HEAL') {
+                  setPlayer(p=>({...p,hp:derived.maxHp}));
+                  log('POI: Fully healed.',{urgent:true});
+                  markDone(); transition('exploring');
+                } else if(reward==='REPAIR_ALL') {
+                  setPlayer(p=>({...p,weapons:p.weapons.map(w=>w?{...w,dur:w.maxDur}:w)}));
+                  log('POI: All weapons repaired.',{urgent:true});
+                  markDone(); transition('exploring');
+                } else if(reward==='REVEAL_ADJ') {
+                  setDungeon(prev=>{
+                    const g=prev.grid.map(r=>[...r]);
+                    const {x,y}=prev.pos;
+                    [[x-1,y],[x+1,y],[x,y-1],[x,y+1]].forEach(([nx,ny])=>{
+                      if(g[ny]&&g[ny][nx]) g[ny][nx]={...g[ny][nx],visited:true};
+                    });
+                    return {...prev,grid:g};
+                  });
+                  log('POI: Adjacent rooms revealed.',{urgent:true});
+                  markDone(); transition('exploring');
+                } else if(reward==='GHOST_LOOT') {
+                  const dr3 = poi._deathRecord || deathRecord.current;
+                  if(dr3){
+                    const items=[
+                      ...((dr3.weapons||[]).filter(Boolean).slice(0,2).map(w=>({...w,type:'weapon'}))),
+                      ...((dr3.trinkets||[]).filter(Boolean).slice(0,2)),
+                    ].filter(Boolean);
+                    markDone();
+                    deathRecord.current=null; 
+                    if(items.length>0){
+                      setGhostLootPick({items,onPick:(item)=>{
+                        acquireItem(item,()=>{ setGhostLootPick(null); transition('exploring'); });
+                      }});
+                      setGs('ghost_loot');
+                    } else transition('exploring');
+                  } else { markDone(); transition('exploring'); }
+                  return;
+                } else if(reward==='WEAPON_DROP'||reward==='BODY_LOOT') {
+                  const drop={...BASE_WEAPON_POOL[rng(BASE_WEAPON_POOL.length)],type:'weapon'};
+                  markDone();
+                  setLootQueue([drop]); setPostLoot('exploring'); transition('loot');
+                } else if(reward==='NORMAL_TRINKET') {
+                  const trinket=generateTrinket('Normal');
+                  markDone();
+                  setLootQueue([trinket]); setPostLoot('exploring'); transition('loot');
+                }
+              } else {
+                if(badEff==='DAMAGE_3') {
+                  setPlayer(p=>({...p,hp:Math.max(1,p.hp-3)}));
+                  log('POI: Took 3 damage.',{bad:true});
+                } else if(badEff==='DAMAGE_2') {
+                  setPlayer(p=>({...p,hp:Math.max(1,p.hp-2)}));
+                  log('POI: Took 2 damage.',{bad:true});
+                } else if(badEff==='WEAPON_DAMAGE') {
+                  setPlayer(p=>{const ws=[...p.weapons];if(ws[0])ws[0]={...ws[0],dur:Math.max(0,ws[0].dur-3)};return{...p,weapons:ws};});
+                  log('POI: Active weapon damaged.',{bad:true});
+                } else if(badEff==='ARMORDOWN') {
+                  setPlayer(p=>({...p,armorDebuff:p.armorDebuff+1}));
+                  log('POI: Armor reduced.',{bad:true});
+                } else if(badEff==='DAMAGE_4') {
+                  setPlayer(p=>({...p,hp:Math.max(1,p.hp-4)}));
+                  log('POI: Took 4 damage.',{bad:true});
+                } else if(badEff==='SKELETON_FIGHT') {
+                  const skele=DUNGEON_MONSTERS.find(m=>m.id==='skeleton');
+                  const hp=skele.hpBase+dungeon.floor*3+rng(3);
+                  setEncounter({...skele,hp,maxHp:hp,damage:skele.dmgBase+dungeon.floor,isBoss:false,poiWin:'BODY_LOOT'});
+                  setIsPlayerTurn(true);
+                  setGs('combat');
+                  log('The body rises! Fight!',{bad:true,urgent:true});
+                  return;
+                } else if(badEff==='GHOST_FIGHT') {
+                  const dr2 = poi._deathRecord || deathRecord.current;
+                  if(dr2) {
+                    const ghostWeapon = dr2.weapons[0] || STARTING_WEAPON;
+                    const ghostArmor  = Math.floor((dr2.baseArmor||0)/2);
+                    const ghostHp     = Math.max(8, dr2.hp + dungeon.floor*2);
+                    const ghostDmg    = Math.max(2, (ghostWeapon.dmgBonus||0) + Math.ceil(getLevel(dr2.xp||0)/2));
+                    const ghostEnc = {
+                      id:'ghost',
+                      name:'Echo of '+dr2.className,
+                      hp:ghostHp, maxHp:ghostHp,
+                      damage:ghostDmg,
+                      diceType: ghostWeapon.diceType||6,
+                      isBoss:false,
+                      isGhost:true,
+                      ghostArmor,
+                      ghostWeapon,
+                      _deathRecord: dr2,
+                      poiWin:'GHOST_LOOT',
+                      weak:[], resist:[],
+                    };
+                    ENEMY_AFFINITIES['ghost'] = {weak:[],resist:[]};
+                    setEncounter(ghostEnc);
+                    setIsPlayerTurn(true);
+                    setGs('combat');
+                    log('The echo of '+dr2.className+' rises!',{bad:true,urgent:true});
+                  } else {
+                    markDone(); transition('exploring');
+                  }
+                  return;
+                } else if(badEff==='WATER_AMBUSH') {
+                  const waterPool=WATER_MONSTERS.filter(m=>m.minFloor<=dungeon.floor);
+                  const wm=waterPool[rng(waterPool.length)]||WATER_MONSTERS[0];
+                  const whp=wm.hpBase+dungeon.floor*3+rng(3);
+                  setEncounter({...wm,hp:whp,maxHp:whp,damage:wm.dmgBase+dungeon.floor,isBoss:false});
+                  setIsPlayerTurn(false);
+                  setGs('combat');
+                  log('Something surfaces! Ambush!',{bad:true,urgent:true});
+                  setTimeout(()=>setEncounter(e=>{doMonsterAttack(e);return e;}),900);
+                  return;
+                }
+                markDone(); transition('exploring');
+              }
+            };
+
+            return (
+              <div style={{display:'flex',flexDirection:'column',gap:14}} className="anim-fade">
+                <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:16,padding:'16px 0'}}>
+                  <div style={{
+                    width:52,height:52,
+                    border:'1px solid '+(success?'#3a5a3a':'#5a2020'),
+                    display:'flex',alignItems:'center',justifyContent:'center',
+                    fontSize:24,fontWeight:'bold',
+                    color:success?'#60a060':'#c05050',
+                  }}>{roll}</div>
+                  <div style={{display:'flex',flexDirection:'column',gap:4}}>
+                    <div style={{fontSize:11,letterSpacing:'0.08em',color:success?'#60a060':'#c05050',textTransform:'uppercase'}}>
+                      {success?'Success':'Failed'}
+                    </div>
+                    <div style={{fontSize:8,color:'#2a2a2a',textTransform:'uppercase',letterSpacing:'0.1em',maxWidth:160,lineHeight:1.7}}>
+                      {success?poi.goodLabel:poi.badLabel}
+                    </div>
+                  </div>
+                </div>
+                <button className="btn btn-primary" onClick={handleContinue} style={{padding:'13px',gap:8}}>
+                  <IArrow size={12}/> Continue
+                </button>
+              </div>
+            );
+          }
+          return null;
+        })()}
+
+        {type==='TRAP'&&trapRoll&&<div style={{display:'flex',flexDirection:'column',gap:12}}>
+          <div style={{display:'flex',alignItems:'center',justifyContent:'center',gap:16,padding:'20px 0'}}>
+            <div style={{width:52,height:52,border:'1px solid '+(trapRoll.roll>=4?'#3a5a3a':'#5a3a2a'),display:'flex',alignItems:'center',justifyContent:'center',fontSize:24,fontWeight:'bold',color:trapRoll.roll>=4?'#609060':'#b06040'}}>{trapRoll.roll}</div>
+            <div style={{display:'flex',flexDirection:'column',gap:4}}>
+              <div style={{fontSize:10,letterSpacing:'0.12em',color:trapRoll.roll>=4?'#608060':'#b06040',textTransform:'uppercase'}}>{trapRoll.roll>=4?'Success':'Partial'}</div>
+              <div style={{fontSize:8,letterSpacing:'0.1em',color:'#2a2a2a',textTransform:'uppercase'}}>{trapRoll.roll>=4?'Trap avoided.':'-1 HP'}</div>
+            </div>
+          </div>
+          <button className="btn btn-primary" onClick={()=>resolveEvent('confirm_trap_roll')} style={{padding:'13px'}}><IArrow size={12}/> Continue</button>
+        </div>}
+      </div>
+    ,true);
+  }
+
+  if(gs==='loot'&&lootQueue.length>0){
+    const item=lootQueue[0];const isWeapon=item.type==='weapon';
+    return shell(
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:28,gap:18}} className="anim-fade">
+        <div style={{fontSize:8,letterSpacing:'0.25em',color:'#222',textTransform:'uppercase'}}>{isWeapon?'Weapon found':'Relic found'}</div>
+        <div style={{border:'1px solid '+(isWeapon?'#252525':'#3a2a08'),padding:20,width:'100%',display:'flex',flexDirection:'column',gap:8}}>
+          <div style={{fontSize:13,letterSpacing:'0.08em',color:isWeapon?'#777':'#b09030'}}>{item.name}</div>
+          <div style={{fontSize:8,color:'#252525',letterSpacing:'0.1em',textTransform:'uppercase'}}>{item.desc}</div>
+          {item.type==='trinket'&&<div style={{marginTop:6,paddingTop:8,borderTop:'1px solid #141414',display:'flex',flexDirection:'column',gap:4}}>
+            {Object.entries(item.stats).filter(([,v])=>v>0).map(([k,v])=>(<div key={k} style={{display:'flex',justifyContent:'space-between',fontSize:8,letterSpacing:'0.1em',color:'#333',textTransform:'uppercase'}}><span>{k}</span><span style={{color:'#555'}}>+{v}</span></div>))}
+          </div>}
+        </div>
+        <div style={{display:'flex',gap:6,width:'100%'}}>
+          <button className="btn btn-primary" onClick={()=>takeLoot(item)} style={{flex:1,gap:6,padding:'12px'}}><ICheck size={12}/> Take</button>
+          <button className="btn" onClick={skipLoot} style={{flex:1,padding:'12px'}}>Leave</button>
+        </div>
+        {lootQueue.length>1&&<div style={{fontSize:7,color:'#1a1a1a',letterSpacing:'0.1em',textTransform:'uppercase'}}>{lootQueue.length-1} more...</div>}
+      </div>
+    ,true);
+  }
+
+  // ── GHOST LOOT ────────────────────────────────────────────────────────────
+  if(gs==='ghost_loot'&&ghostLootPick){
+    return shell(
+      <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',padding:28,gap:16}} className="anim-fade">
+        <div style={{fontSize:8,letterSpacing:'0.25em',color:'#5a2020',textTransform:'uppercase'}}>Reclaim your past</div>
+        <div className="cinzel" style={{fontSize:16,color:'#c06060',textAlign:'center'}}>Choose one item to salvage</div>
+        <div style={{display:'flex',flexDirection:'column',gap:8,width:'100%',marginTop:10}}>
+          {ghostLootPick.items.map((item,i)=>(
+            <button key={i} className="btn" onClick={()=>ghostLootPick.onPick(item)} style={{flexDirection:'column',alignItems:'flex-start',padding:'12px',gap:4}}>
+              <div style={{fontSize:12,color:item.type==='weapon'?'#888':'#a08030'}}>{item.name}</div>
+              <div style={{fontSize:8,color:'#555',textTransform:'uppercase'}}>{item.desc}</div>
+            </button>
+          ))}
+          <button className="btn" onClick={()=>{setGhostLootPick(null); transition('exploring');}} style={{padding:'12px',marginTop:8}}>Leave it all</button>
+        </div>
+      </div>
+    ,true);
+  }
+
+  // ── TRANSITIONS ───────────────────────────────────────────────────────────
+  if(gs==='area_transition')return shell(
+    <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:18,padding:28}} className="anim-fade">
+      <div style={{fontSize:8,letterSpacing:'0.25em',color:'#2a2a2a',textTransform:'uppercase'}}>Area cleared</div>
+      <div className="cinzel" style={{fontSize:20,color:'#555',letterSpacing:'0.06em'}}>Deeper still</div>
+      <button className="btn btn-primary" onClick={()=>{const d=dungeon;makeGrid(d.floor,2,d.w,d.h);transition('exploring');}} style={{gap:8,padding:'12px 22px',marginTop:8}}><IArrow size={13}/> Continue</button>
+    </div>
+  ,true);
+
+  if(gs==='floor_transition')return shell(
+    <div style={{flex:1,display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:18,padding:28}} className="anim-fade">
+      <div style={{fontSize:8,color:'#1e1e1e',letterSpacing:'0.25em',textTransform:'uppercase'}}>Floor cleared</div>
+      <div className="cinzel" style={{fontSize:22,color:'#666',letterSpacing:'0.06em'}}>Floor {dungeon.floor+1}</div>
+      <div style={{fontSize:8,color:'#181818',letterSpacing:'0.15em',textTransform:'uppercase',textAlign:'center',lineHeight:2.2}}>The dungeon grows darker.<br/>Enemies grow stronger.</div>
+      <button className="btn btn-primary" onClick={descend} style={{gap:8,padding:'12px 22px',marginTop:8}}><IArrow size={13}/> Descend</button>
+    </div>
+  ,true);
+
+  if(gs==='game_over')return(
+    <div style={{position:'fixed',inset:0,background:'#080808',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,padding:28,maxWidth:480,margin:'0 auto'}} className="anim-fade">
+      <div style={{fontSize:8,letterSpacing:'0.25em',color:'#3a1a1a',textTransform:'uppercase'}}>You have fallen</div>
+      <div className="cinzel" style={{fontSize:28,color:'#5a2a2a',letterSpacing:'0.06em'}}>Defeated</div>
+      <div style={{fontSize:9,color:'#252525',letterSpacing:'0.12em',textTransform:'uppercase',textAlign:'center',lineHeight:2.4,marginTop:6}}>Floor {dungeon.floor} / Level {getLevel(player?.xp||0)}<br/>{player?.gold||0} gold / {player?.xp||0} xp</div>
+      <div style={{width:'100%',borderTop:'1px solid #141414',marginTop:6,marginBottom:6}}/>
+      <div style={{fontSize:8,color:'#181818',letterSpacing:'0.1em',textTransform:'uppercase',width:'100%',textAlign:'center',lineHeight:2}}>{logs.slice(-5).map((l,i)=><div key={i}>{l.text}</div>)}</div>
+      <button className="btn btn-primary" onClick={()=>{setGs('menu');setPlayer(null);setLogs([]);setCampMode(false);setChestResult(null);setSwapOverlay(null);setPendingAttack(null);setLootQueue([]);setGhostLootPick(null);}} style={{gap:8,padding:'12px 22px',marginTop:6}}>Try again</button>
+    </div>
+  );
+
+  if(gs==='victory')return(
+    <div style={{position:'fixed',inset:0,background:'#080808',display:'flex',flexDirection:'column',alignItems:'center',justifyContent:'center',gap:14,padding:28,maxWidth:480,margin:'0 auto'}} className="anim-fade">
+      <div style={{fontSize:8,letterSpacing:'0.25em',color:'#2a3a2a',textTransform:'uppercase'}}>The dungeon is cleared</div>
+      <div className="cinzel" style={{fontSize:28,color:'#5a7a4a',letterSpacing:'0.06em'}}>Victory</div>
+      <div style={{fontSize:9,color:'#222',letterSpacing:'0.12em',textTransform:'uppercase',textAlign:'center',lineHeight:2.4,marginTop:6}}>{player?.gold||0} gold recovered<br/>Level {getLevel(player?.xp||0)} / {player?.xp||0} xp</div>
+      <button className="btn btn-primary" onClick={()=>{setGs('menu');setPlayer(null);setLogs([]);setCampMode(false);setChestResult(null);setSwapOverlay(null);setPendingAttack(null);setLootQueue([]);setGhostLootPick(null);}} style={{gap:8,padding:'12px 22px',marginTop:14}}>Descend again</button>
+    </div>
+  );
+
+  return shell(<div style={{flex:1,display:'flex',alignItems:'center',justifyContent:'center',fontSize:9,color:'#181818',letterSpacing:'0.15em',textTransform:'uppercase'}}>Loading...</div>);
+}
+
+ReactDOM.createRoot(document.getElementById('root')).render(<App/>);
+</script>
+</body>
+</html>

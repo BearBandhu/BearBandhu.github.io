@@ -1,0 +1,956 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Caravan Defense Mobile</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        body, html { margin: 0; padding: 0; width: 100%; height: 100%; overflow: hidden; background-color: #1a1a1a; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; touch-action: none; -webkit-user-select: none; user-select: none; }
+        #gameCanvas { display: block; width: 100%; height: 100%; }
+        .ui-panel { background: rgba(20, 30, 40, 0.85); backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px); border: 1px solid rgba(255, 255, 255, 0.1); }
+        ::-webkit-scrollbar { width: 6px; }
+        ::-webkit-scrollbar-track { background: rgba(0, 0, 0, 0.2); border-radius: 4px; }
+        ::-webkit-scrollbar-thumb { background: rgba(255, 255, 255, 0.3); border-radius: 4px; }
+        .btn-upgrade { transition: all 0.1s; }
+        .btn-upgrade:active:not(:disabled) { transform: scale(0.97); background: rgba(255, 255, 255, 0.15); }
+        .btn-upgrade:disabled { opacity: 0.5; cursor: not-allowed; filter: grayscale(100%); }
+        kbd { display: inline-block; border: 1px solid #555; box-shadow: 0 2px 0 #555; }
+        #joystick-zone { background: rgba(255, 255, 255, 0.05); border: 2px solid rgba(255, 255, 255, 0.15); box-shadow: inset 0 0 20px rgba(0,0,0,0.5); }
+        #joystick-knob { box-shadow: 0 4px 10px rgba(0,0,0,0.5); }
+        .wizard-card { transition: all 0.2s; box-shadow: 0 4px 20px rgba(0,0,0,0.5); border: 2px solid rgba(59, 130, 246, 0.3); }
+        .wizard-card:hover { transform: translateY(-5px) scale(1.02); box-shadow: 0 10px 30px rgba(255, 255, 255, 0.1); }
+    </style>
+</head>
+<body class="text-white">
+
+    <canvas id="gameCanvas"></canvas>
+
+    <!-- UI Overlay (Responsive) -->
+    <div class="absolute inset-0 pointer-events-none flex flex-col justify-between p-2 sm:p-4 z-10">
+        
+        <!-- Top HUD -->
+        <div class="flex flex-col md:flex-row gap-2 md:gap-4 items-start w-full">
+            <div class="flex w-full md:w-auto gap-2 justify-between flex-wrap">
+                <!-- Resources & Bag -->
+                <div class="ui-panel p-2 sm:p-3 rounded-xl shadow-lg flex-1 flex flex-col md:flex-row justify-around md:justify-start md:gap-4 pointer-events-auto">
+                    <div class="flex items-center gap-1 sm:gap-2" title="Wood">
+                        <div class="w-3 h-3 sm:w-4 sm:h-4 bg-yellow-700 rounded-sm"></div>
+                        <span id="wood-display" class="text-base sm:text-xl font-bold font-mono">0</span>
+                        <span id="wood-carried" class="text-xs sm:text-sm text-yellow-500 font-mono ml-[-2px]">(0)</span>
+                    </div>
+                    <div class="flex items-center gap-1 sm:gap-2" title="Stone">
+                        <div class="w-3 h-3 sm:w-4 sm:h-4 bg-gray-400 rounded-sm"></div>
+                        <span id="stone-display" class="text-base sm:text-xl font-bold font-mono">0</span>
+                        <span id="stone-carried" class="text-xs sm:text-sm text-gray-400 font-mono ml-[-2px]">(0)</span>
+                    </div>
+                    <div class="flex items-center gap-1 sm:gap-2" title="Mithril">
+                        <div class="w-3 h-3 sm:w-4 sm:h-4 bg-cyan-400 rounded-sm shadow-[0_0_8px_cyan]"></div>
+                        <span id="mithril-display" class="text-base sm:text-xl font-bold font-mono text-cyan-300">0</span>
+                        <span id="mithril-carried" class="text-xs sm:text-sm text-cyan-500 font-mono ml-[-2px]">(0)</span>
+                    </div>
+                    
+                    <!-- Bag Limit Bar -->
+                    <div class="flex flex-col justify-center min-w-[80px] w-full md:w-24 mt-1 md:mt-0">
+                        <div class="flex justify-between text-[10px] sm:text-xs text-gray-400 mb-[2px] font-bold">
+                            <span>Bag</span><span id="bag-count">0/30</span>
+                        </div>
+                        <div class="w-full h-1.5 sm:h-2 bg-gray-700 rounded-full overflow-hidden">
+                            <div id="bag-bar" class="h-full bg-blue-500 transition-all duration-200" style="width: 0%;"></div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Wave Info -->
+                <div class="ui-panel p-2 sm:p-3 rounded-xl shadow-lg flex-1 flex flex-col items-center justify-center pointer-events-auto min-w-[90px]">
+                    <div class="text-xs sm:text-sm text-gray-300">Time: <span id="time-display" class="text-white font-bold">0s</span></div>
+                    <div class="text-[10px] sm:text-xs text-gray-400">Wave: <span id="wave-size-display" class="text-white font-bold">1</span></div>
+                </div>
+            </div>
+
+            <!-- Health Bar -->
+            <div class="ui-panel p-2 sm:p-3 rounded-xl shadow-lg w-full md:min-w-[200px] pointer-events-auto">
+                <div class="flex justify-between text-xs sm:text-sm mb-1">
+                    <span class="font-bold">Caravan HP</span>
+                    <span id="hp-text" class="font-mono">100/100</span>
+                </div>
+                <div class="w-full h-2 sm:h-3 bg-gray-700 rounded-full overflow-hidden">
+                    <div id="hp-bar" class="h-full bg-red-500 transition-all duration-300" style="width: 100%;"></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Upgrades Modal with Tabs -->
+        <div id="upgrades-modal" class="hidden absolute top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 ui-panel rounded-xl shadow-2xl w-[90%] max-w-md max-h-[60vh] md:max-h-[70vh] overflow-y-auto pointer-events-auto z-30 flex flex-col">
+            <div class="sticky top-0 bg-[#141e28] z-10 pt-4 px-4 pb-2 border-b border-gray-700 shadow-md">
+                <div class="flex justify-between items-center mb-3">
+                    <h2 class="text-xl font-bold">Upgrades</h2>
+                    <button onclick="toggleUpgrades()" class="text-gray-400 hover:text-white text-3xl leading-none">&times;</button>
+                </div>
+                <div class="flex">
+                    <button id="tab-caravan" onclick="switchTab('caravan')" class="flex-1 py-2 font-bold text-blue-400 border-b-2 border-blue-400 transition-colors">Engineering</button>
+                    <button id="tab-magic" onclick="switchTab('magic')" class="flex-1 py-2 font-bold text-gray-500 border-b-2 border-transparent hover:text-gray-300 transition-colors">Magic Academy</button>
+                </div>
+            </div>
+            <div id="upgrades-container" class="grid grid-cols-1 gap-2 sm:gap-3 p-4 overflow-y-auto"></div>
+        </div>
+
+        <!-- Bottom Controls Row -->
+        <div class="w-full flex justify-between items-end mt-auto pointer-events-none" style="margin-bottom: 10vh;">
+            <!-- Joystick -->
+            <div id="joystick-zone" class="relative w-28 h-28 sm:w-36 sm:h-36 rounded-full pointer-events-auto mb-2 ml-2 sm:mb-4 sm:ml-4 flex-shrink-0">
+                <div id="joystick-knob" class="absolute w-10 h-10 sm:w-14 sm:h-14 bg-white/40 rounded-full top-1/2 left-1/2 transform -translate-x-1/2 -translate-y-1/2 pointer-events-none transition-transform duration-75"></div>
+            </div>
+
+            <!-- Right: Actions -->
+            <div class="flex flex-col items-end gap-3 sm:gap-4 pointer-events-none mr-2 sm:mr-4 mb-2 sm:mb-4">
+                <button onclick="toggleUpgrades()" class="pointer-events-auto px-4 py-3 sm:px-6 sm:py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl shadow-lg border border-blue-400 transition-transform hover:scale-105 active:scale-95 flex items-center gap-2 text-sm sm:text-base">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M3 17a1 1 0 011-1h12a1 1 0 110 2H4a1 1 0 01-1-1zm3.293-7.707a1 1 0 011.414 0L9 10.586V3a1 1 0 112 0v7.586l1.293-1.293a1 1 0 111.414 1.414l-3 3a1 1 0 01-1.414 0l-3-3a1 1 0 010-1.414z" clip-rule="evenodd" /></svg>
+                    Upgrades
+                </button>
+                <button id="steer-btn" class="pointer-events-auto w-20 h-20 sm:w-24 sm:h-24 bg-green-600 rounded-full flex flex-col items-center justify-center shadow-lg border-2 border-green-400 active:scale-95 transition-transform" title="Hold to Steer">
+                    <span class="text-2xl sm:text-3xl">🧭</span>
+                    <span class="text-[10px] sm:text-xs font-bold mt-1">STEER</span>
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Cannon Select Modal -->
+    <div id="cannon-select-modal" class="hidden absolute inset-0 bg-black/95 z-[60] flex flex-col items-center justify-center pointer-events-auto p-4 sm:p-8 backdrop-blur-sm">
+        <h1 class="text-3xl sm:text-5xl text-cyan-400 font-bold mb-2 text-center drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">SELECT CANNON</h1>
+        <p class="text-gray-300 mb-8 text-center text-sm sm:text-base max-w-lg">Choose a cannon to enchant. <br><span class="text-yellow-400 text-xs">Maximum 2 enchantments per cannon.</span></p>
+        <div id="cannon-list" class="grid grid-cols-1 sm:grid-cols-2 gap-4 max-w-2xl w-full"></div>
+        <button onclick="closeCannonSelect()" class="mt-8 px-6 py-2 bg-gray-700 hover:bg-gray-600 rounded-lg text-white font-bold">Cancel</button>
+    </div>
+
+    <!-- Wizard Modal -->
+    <div id="wizard-modal" class="hidden absolute inset-0 bg-black/95 z-[60] flex flex-col items-center justify-center pointer-events-auto p-4 sm:p-8 backdrop-blur-sm">
+        <h1 class="text-3xl sm:text-5xl text-cyan-400 font-bold mb-2 text-center drop-shadow-[0_0_15px_rgba(34,211,238,0.8)]">WIZARD'S CHOICE</h1>
+        <p class="text-gray-300 mb-8 text-center text-sm sm:text-base max-w-lg">Choose an elemental magic to infuse into the selected cannon permanently.</p>
+        <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6 w-full max-w-5xl" id="wizard-cards-container"></div>
+    </div>
+
+    <!-- Game Over Screen -->
+    <div id="game-over" class="absolute inset-0 bg-black/85 hidden flex-col items-center justify-center pointer-events-auto z-50 p-4 text-center">
+        <h1 class="text-4xl sm:text-6xl font-bold text-red-500 mb-2 sm:mb-4">DESTROYED</h1>
+        <p class="text-xl sm:text-2xl mb-6 sm:mb-8">Survived for <span id="final-time" class="text-yellow-400 font-bold">0</span> seconds</p>
+        <button onclick="resetGame()" class="w-full max-w-xs py-4 bg-blue-600 hover:bg-blue-500 text-white font-bold rounded-xl text-xl sm:text-2xl transition-transform hover:scale-105 active:scale-95">Restart</button>
+    </div>
+
+    <!-- Start Screen -->
+    <div id="start-screen" class="absolute inset-0 bg-black/90 flex flex-col items-center justify-center pointer-events-auto z-50 p-4">
+        <h1 class="text-4xl sm:text-6xl font-bold text-green-400 mb-4 sm:mb-6 text-center">CARAVAN DEFENSE</h1>
+        <div class="max-w-md w-full text-center text-gray-300 mb-6 sm:mb-8 space-y-3 bg-gray-800/60 p-4 sm:p-6 rounded-xl border border-gray-700 text-sm sm:text-base">
+            <p>🚚 Defend your Caravan.</p>
+            <p>🕹️ Use the <strong>Joystick</strong> (or WASD) to move.</p>
+            <p>🧭 Hold the <strong>Steer Button</strong> to steer the Caravan toward you.</p>
+            <p>⛰️ <strong>Avoid dark mesas!</strong> The Caravan will take massive damage.</p>
+            <p>👹 Beware new <strong>Fast (W6)</strong>, <strong>Heavy (W15)</strong>, and <strong>Boss (W8)</strong> enemies.</p>
+            <p>🪓 Gather resources to upgrade in the <strong>Magic Tab</strong>.</p>
+        </div>
+        <button onclick="startGame()" class="w-full max-w-xs py-4 bg-green-600 hover:bg-green-500 text-white font-bold rounded-xl text-xl sm:text-2xl transition-transform hover:scale-105 active:scale-95 shadow-[0_0_20px_rgba(34,197,94,0.4)]">Start Journey</button>
+    </div>
+
+    <script>
+        const canvas = document.getElementById('gameCanvas'); const ctx = canvas.getContext('2d');
+        
+        // UI Elements
+        const woodDisp = document.getElementById('wood-display'); const stoneDisp = document.getElementById('stone-display'); const mithrilDisp = document.getElementById('mithril-display');
+        const woodCarriedDisp = document.getElementById('wood-carried'); const stoneCarriedDisp = document.getElementById('stone-carried'); const mithrilCarriedDisp = document.getElementById('mithril-carried');
+        const bagCountDisp = document.getElementById('bag-count'); const bagBarDisp = document.getElementById('bag-bar');
+        const hpText = document.getElementById('hp-text'); const hpBar = document.getElementById('hp-bar');
+        const timeDisp = document.getElementById('time-display'); const waveDisp = document.getElementById('wave-size-display');
+        
+        const upgradesContainer = document.getElementById('upgrades-container'); const upgradesModal = document.getElementById('upgrades-modal');
+        const cannonSelectModal = document.getElementById('cannon-select-modal'); const wizardModal = document.getElementById('wizard-modal');
+        const wizardCardsContainer = document.getElementById('wizard-cards-container');
+        
+        const gameOverScreen = document.getElementById('game-over'); const startScreen = document.getElementById('start-screen');
+        const joyZone = document.getElementById('joystick-zone'); const joyKnob = document.getElementById('joystick-knob');
+        const steerBtn = document.getElementById('steer-btn');
+
+        const cameraZoom = 0.6; 
+        let width, height, worldWidth, worldHeight; 
+        
+        let isPlaying = false; let isPaused = false; let isSteering = false;
+        let lastTime = 0; let gameTime = 0; let currentWave = 1;
+        
+        let wood = 0; let stone = 0; let mithril = 0;
+        let playerWood = 0; let playerStone = 0; let playerMithril = 0;
+        
+        let scrollSpeed = 17.5; 
+        let currentTab = 'caravan'; 
+
+        const keys = {}; let joyData = { active: false, nx: 0, ny: 0 }; 
+
+        let caravan = {}; let cannons = []; let player = {};
+        let enemies = []; let resources = []; let obstacles = []; let bullets = [];
+        let particles = []; let floatingTexts = []; let bgElements = []; let shards = [];
+        
+        let enemyIdCounter = 0; let enemySpawnTimer = 0; let resourceSpawnTimer = 0; let obstacleSpawnTimer = 0;
+        let suppressEnemiesTimer = 0; let bossSpawnedWave8 = false;
+
+        let pendingCannonId = -1;
+
+        // Visual Mapping for Modifiers
+        const modColors = {
+            pierce: { name: 'Piercing Strike', text: 'text-blue-400', border: 'border-blue-500/50', bg: 'bg-blue-900', icon: '🏹', hex: '#3b82f6', shadow: 'shadow-[0_0_15px_blue]' },
+            aoe: { name: 'Explosive Magic', text: 'text-orange-400', border: 'border-orange-500/50', bg: 'bg-orange-900', icon: '💥', hex: '#f97316', shadow: 'shadow-[0_0_15px_orange]' },
+            chain: { name: 'Chain Lightning', text: 'text-purple-400', border: 'border-purple-500/50', bg: 'bg-purple-900', icon: '⚡', hex: '#a855f7', shadow: 'shadow-[0_0_15px_purple]' },
+            frost: { name: 'Frost Nova', text: 'text-teal-400', border: 'border-teal-500/50', bg: 'bg-teal-900', icon: '❄️', hex: '#2dd4bf', shadow: 'shadow-[0_0_15px_teal]' },
+            venom: { name: 'Toxic Venom', text: 'text-green-400', border: 'border-green-500/50', bg: 'bg-green-900', icon: '🧪', hex: '#4ade80', shadow: 'shadow-[0_0_15px_green]' },
+            knockback: { name: 'Forceful Gale', text: 'text-gray-300', border: 'border-gray-400/50', bg: 'bg-gray-800', icon: '💨', hex: '#d1d5db', shadow: 'shadow-[0_0_15px_gray]' },
+            vampiric: { name: 'Vampiric Drain', text: 'text-red-400', border: 'border-red-500/50', bg: 'bg-red-900', icon: '🦇', hex: '#f87171', shadow: 'shadow-[0_0_15px_red]' },
+            shrapnel: { name: 'Shrapnel Burst', text: 'text-yellow-400', border: 'border-yellow-500/50', bg: 'bg-yellow-900', icon: '✨', hex: '#facc15', shadow: 'shadow-[0_0_15px_yellow]' },
+            critical: { name: 'Critical Strike', text: 'text-pink-400', border: 'border-pink-500/50', bg: 'bg-pink-900', icon: '🎯', hex: '#f472b6', shadow: 'shadow-[0_0_15px_pink]' }
+        };
+
+        const upgradeTypes = {
+            damage: { tab: 'caravan', id: 'damage', name: 'Bullet Damage', baseCostW: 10, baseCostS: 10, baseCostM: 0, costMult: 1.5, valName: 'Dmg', valAdd: 5, currentVal: 15, currentLevel: 1, desc: 'Increases bullet damage.' },
+            fireRate: { tab: 'caravan', id: 'fireRate', name: 'Attack Speed', baseCostW: 15, baseCostS: 5, baseCostM: 0, costMult: 1.5, valName: 'Shots/s', valAdd: 0.5, currentVal: 1.0, currentLevel: 1, desc: 'Fires bullets faster.' },
+            range: { tab: 'caravan', id: 'range', name: 'Attack Range', baseCostW: 5, baseCostS: 15, baseCostM: 0, costMult: 1.4, valName: 'Range', valAdd: 35, currentVal: 200, currentLevel: 1, desc: 'Increases targeting radius.' },
+            buildCannon: { tab: 'caravan', id: 'buildCannon', name: 'Build Cannon', baseCostW: 100, baseCostS: 100, baseCostM: 0, costMult: 2.2, valName: 'Cannons', valAdd: 1, currentVal: 1, currentLevel: 1, desc: 'Adds a new cannon to a corner slot.' },
+            gather: { tab: 'caravan', id: 'gather', name: 'Gather Efficiency', baseCostW: 20, baseCostS: 20, baseCostM: 0, costMult: 1.6, valName: 'Speed', valAdd: 1, currentVal: 0, currentLevel: 1, desc: 'Reduces gather time by 1%.' },
+            capacity: { tab: 'caravan', id: 'capacity', name: 'Bag Size', baseCostW: 15, baseCostS: 15, baseCostM: 0, costMult: 1.5, valName: 'Cap', valAdd: 15, currentVal: 30, currentLevel: 1, desc: 'Increases inventory limit.' },
+            health: { tab: 'caravan', id: 'health', name: 'Heal & Max HP', baseCostW: 30, baseCostS: 30, baseCostM: 0, costMult: 1.4, valName: 'Max HP', valAdd: 50, currentVal: 100, currentLevel: 1, desc: 'Heals to full, increases max HP.' },
+            
+            wizard: { tab: 'magic', id: 'wizard', name: 'Enchant Cannon', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Enchants', valAdd: 1, currentVal: 0, currentLevel: 1, desc: 'Rolls 3 random magics to put on a cannon.' },
+            magicPierce: { tab: 'magic', id: 'magicPierce', name: 'Enhance Pierce', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Hits', valAdd: 1, currentVal: 2, currentLevel: 1, desc: 'Bullets pierce +1 additional target.' },
+            magicAoe: { tab: 'magic', id: 'magicAoe', name: 'Enhance Explosion', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Radius', valAdd: 15, currentVal: 45, currentLevel: 1, desc: 'Explosion radius +15px.' },
+            magicChain: { tab: 'magic', id: 'magicChain', name: 'Enhance Chain', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Bounces', valAdd: 1, currentVal: 1, currentLevel: 1, desc: 'Bullets bounce +1 additional time.' },
+            magicFrost: { tab: 'magic', id: 'magicFrost', name: 'Enhance Frost', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Slow %', valAdd: 15, currentVal: 15, currentLevel: 1, desc: 'Increases freezing slow by +15%.' },
+            magicVenom: { tab: 'magic', id: 'magicVenom', name: 'Enhance Venom', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'DPS', valAdd: 5, currentVal: 5, currentLevel: 1, desc: 'Poison deals +5 more Damage/sec.' },
+            magicKnockback: { tab: 'magic', id: 'magicKnockback', name: 'Enhance Force', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Push', valAdd: 15, currentVal: 15, currentLevel: 1, desc: 'Gale pushes enemies +15px further.' },
+            magicVampiric: { tab: 'magic', id: 'magicVampiric', name: 'Enhance Vampirism', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Heal', valAdd: 1, currentVal: 1, currentLevel: 1, desc: 'Heals Caravan +1 extra HP on hit.' },
+            magicShrapnel: { tab: 'magic', id: 'magicShrapnel', name: 'Enhance Shrapnel', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Frags', valAdd: 2, currentVal: 2, currentLevel: 1, desc: 'Splits into +2 additional fragments.' },
+            magicCritical: { tab: 'magic', id: 'magicCritical', name: 'Enhance Critical', baseCostW: 0, baseCostS: 0, baseCostM: 1, costMult: 1.0, valName: 'Crit %', valAdd: 10, currentVal: 10, currentLevel: 1, desc: 'Crit Chance increases by +10%.' }
+        };
+
+        function resize() {
+            width = window.innerWidth; height = window.innerHeight; canvas.width = width; canvas.height = height;
+            worldWidth = width / cameraZoom; worldHeight = height / cameraZoom;
+            if(isPlaying) { caravan.x = worldWidth / 2; caravan.y = worldHeight / 2; }
+        }
+        window.addEventListener('resize', resize);
+
+        window.addEventListener('keydown', e => keys[e.code] = true); window.addEventListener('keyup', e => keys[e.code] = false);
+        
+        function updateJoystick(e) {
+            let clientX = e.touches ? e.touches[0].clientX : e.clientX; let clientY = e.touches ? e.touches[0].clientY : e.clientY;
+            let rect = joyZone.getBoundingClientRect(); let centerX = rect.left + rect.width / 2; let centerY = rect.top + rect.height / 2;
+            let dx = clientX - centerX; let dy = clientY - centerY; let maxDist = rect.width / 2.5; let dist = Math.hypot(dx, dy);
+            if (dist > maxDist) { dx = (dx / dist) * maxDist; dy = (dy / dist) * maxDist; }
+            joyData.nx = dx / maxDist; joyData.ny = dy / maxDist; joyKnob.style.transform = `translate(calc(-50% + ${dx}px), calc(-50% + ${dy}px))`;
+        }
+        function handleJoyStart(e) { joyData.active = true; updateJoystick(e); }
+        function handleJoyMove(e) { if(joyData.active) { if(e.cancelable) e.preventDefault(); updateJoystick(e); } }
+        function handleJoyEnd(e) { joyData.active = false; joyData.nx = 0; joyData.ny = 0; joyKnob.style.transform = `translate(-50%, -50%)`; }
+        joyZone.addEventListener('mousedown', handleJoyStart); window.addEventListener('mousemove', handleJoyMove); window.addEventListener('mouseup', handleJoyEnd);
+        joyZone.addEventListener('touchstart', handleJoyStart, {passive: false}); window.addEventListener('touchmove', handleJoyMove, {passive: false}); window.addEventListener('touchend', handleJoyEnd, {passive: false});
+
+        steerBtn.addEventListener('mousedown', (e) => { if(e.cancelable) e.preventDefault(); isSteering = true; });
+        steerBtn.addEventListener('mouseup', (e) => { if(e.cancelable) e.preventDefault(); isSteering = false; });
+        steerBtn.addEventListener('mouseleave', () => isSteering = false);
+        steerBtn.addEventListener('touchstart', (e) => { if(e.cancelable) e.preventDefault(); isSteering = true; }, {passive:false});
+        steerBtn.addEventListener('touchend', (e) => { if(e.cancelable) e.preventDefault(); isSteering = false; }, {passive:false});
+
+        function toggleUpgrades() { upgradesModal.classList.toggle('hidden'); }
+        
+        function switchTab(tabName) {
+            currentTab = tabName;
+            document.getElementById('tab-caravan').className = `flex-1 py-2 font-bold transition-colors ${tabName === 'caravan' ? 'text-blue-400 border-b-2 border-blue-400' : 'text-gray-500 border-b-2 border-transparent hover:text-gray-300'}`;
+            document.getElementById('tab-magic').className = `flex-1 py-2 font-bold transition-colors ${tabName === 'magic' ? 'text-cyan-400 border-b-2 border-cyan-400' : 'text-gray-500 border-b-2 border-transparent hover:text-gray-300'}`;
+            renderUpgrades();
+        }
+
+        function resetGame() {
+            gameTime = 0; currentWave = 1; wood = 0; stone = 0; mithril = 0; playerWood = 0; playerStone = 0; playerMithril = 0;
+            enemySpawnTimer = 5; resourceSpawnTimer = 0; obstacleSpawnTimer = 2; baseEnemies = 2; enemyIdCounter = 0;
+            suppressEnemiesTimer = 0; bossSpawnedWave8 = false;
+            
+            enemies = []; resources = []; obstacles = []; bullets = []; particles = []; floatingTexts = []; bgElements = []; shards = [];
+            upgradesModal.classList.add('hidden'); cannonSelectModal.classList.add('hidden'); wizardModal.classList.add('hidden');
+            isPaused = false; isSteering = false; currentTab = 'caravan'; switchTab('caravan');
+            
+            Object.values(upgradeTypes).forEach(u => {
+                u.currentLevel = 1;
+                if(u.id === 'damage') u.currentVal = 15; if(u.id === 'fireRate') u.currentVal = 1.0; if(u.id === 'range') u.currentVal = 200; 
+                if(u.id === 'buildCannon') u.currentVal = 1; if(u.id === 'wizard') u.currentVal = 0; if(u.id === 'gather') u.currentVal = 0; 
+                if(u.id === 'capacity') u.currentVal = 30; if(u.id === 'health') u.currentVal = 100;
+                if(u.id === 'magicPierce') u.currentVal = 2; if(u.id === 'magicAoe') u.currentVal = 45; if(u.id === 'magicChain') u.currentVal = 1; 
+                if(u.id === 'magicFrost') u.currentVal = 15; if(u.id === 'magicVenom') u.currentVal = 5; if(u.id === 'magicKnockback') u.currentVal = 15; 
+                if(u.id === 'magicVampiric') u.currentVal = 1; if(u.id === 'magicShrapnel') u.currentVal = 2; if(u.id === 'magicCritical') u.currentVal = 10; 
+            });
+
+            caravan = { x: worldWidth / 2, y: worldHeight / 2, radius: 36, hp: upgradeTypes.health.currentVal, maxHp: upgradeTypes.health.currentVal, fireCooldown: 0, angle: Math.PI };
+            
+            cannons = [
+                { id: 0, name: "Central Turret", offsetX: 0, offsetY: 0, mods: [], built: true, angle: 0 },
+                { id: 1, name: "Top-Left Gun", offsetX: -20, offsetY: -20, mods: [], built: false, angle: 0 },
+                { id: 2, name: "Top-Right Gun", offsetX: 20, offsetY: -20, mods: [], built: false, angle: 0 },
+                { id: 3, name: "Bot-Left Gun", offsetX: -20, offsetY: 20, mods: [], built: false, angle: 0 },
+                { id: 4, name: "Bot-Right Gun", offsetX: 20, offsetY: 20, mods: [], built: false, angle: 0 }
+            ];
+
+            player = { x: worldWidth / 2 + 100, y: worldHeight / 2 + 100, radius: 17, speed: 180, gatherPower: 30 };
+
+            for(let i=0; i<80; i++) bgElements.push({ x: Math.random() * worldWidth, y: Math.random() * worldHeight, size: Math.random() * 4 + 1, speedMult: Math.random() * 0.5 + 0.5, color: Math.random() > 0.5 ? '#2d5a27' : '#3a7233' });
+
+            gameOverScreen.classList.add('hidden'); renderUpgrades(); updateUI();
+            isPlaying = true; lastTime = performance.now(); requestAnimationFrame(gameLoop);
+        }
+
+        function startGame() { startScreen.classList.add('hidden'); resize(); resetGame(); }
+
+        function getCost(upgrade) {
+            const mult = Math.pow(upgrade.costMult, upgrade.currentLevel - 1);
+            return { w: Math.floor((upgrade.baseCostW || 0) * mult), s: Math.floor((upgrade.baseCostS || 0) * mult), m: Math.floor((upgrade.baseCostM || 0) * mult) };
+        }
+
+        function buyUpgrade(id) {
+            const upg = upgradeTypes[id];
+            if (id === 'buildCannon' && upg.currentLevel >= 5) return;
+
+            const cost = getCost(upg);
+            if (wood >= cost.w && stone >= cost.s && mithril >= cost.m) {
+                if (id === 'wizard') { toggleUpgrades(); openCannonSelect(); return; }
+
+                wood -= cost.w; stone -= cost.s; mithril -= cost.m;
+                upg.currentLevel++; upg.currentVal += upg.valAdd;
+                
+                if (id === 'health') { caravan.maxHp = upg.currentVal; caravan.hp = caravan.maxHp; spawnFloatingText(caravan.x, caravan.y - 40, "HEALED!", "#4ade80"); }
+                if (id === 'buildCannon') { let slot = cannons.find(c => !c.built); if(slot) slot.built = true; }
+
+                renderUpgrades(); updateUI();
+            }
+        }
+
+        function openCannonSelect() {
+            isPaused = true; cannonSelectModal.classList.remove('hidden');
+            const list = document.getElementById('cannon-list'); list.innerHTML = '';
+            
+            cannons.forEach(c => {
+                if (!c.built) return;
+                const isFull = c.mods.length >= 2;
+                const btn = document.createElement('button');
+                btn.className = `p-4 rounded-xl border-2 text-left flex flex-col transition-all ${isFull ? 'bg-gray-800 border-gray-700 opacity-50 cursor-not-allowed' : 'bg-gray-800 border-cyan-700 hover:border-cyan-400 hover:bg-gray-700 hover:scale-105'}`;
+                btn.disabled = isFull;
+                
+                btn.onclick = () => { pendingCannonId = c.id; cannonSelectModal.classList.add('hidden'); openWizardMenu(); };
+
+                let modHtml = c.mods.length > 0 
+                    ? c.mods.map(m => {
+                        let styling = modColors[m] || modColors.pierce;
+                        return `<span class="px-2 py-1 bg-black/50 border ${styling.border} rounded text-xs ${styling.text} uppercase tracking-wider">${m}</span>`;
+                    }).join('')
+                    : `<span class="text-xs text-gray-500 italic">No magic applied</span>`;
+
+                btn.innerHTML = `<div class="font-bold text-lg text-white mb-1">${c.name}</div><div class="text-sm text-gray-400 mb-2">Magic Slots: ${c.mods.length}/2</div><div class="flex gap-2 flex-wrap">${modHtml}</div>`;
+                list.appendChild(btn);
+            });
+        }
+
+        function closeCannonSelect() { cannonSelectModal.classList.add('hidden'); isPaused = false; lastTime = performance.now(); requestAnimationFrame(gameLoop); }
+
+        function openWizardMenu() {
+            wizardModal.classList.remove('hidden');
+            
+            const allModOptions = [
+                { id: 'pierce', name: 'Piercing Strike', desc: `Passes through <strong class="text-blue-400">${upgradeTypes.magicPierce.currentVal}</strong> enemies.` },
+                { id: 'aoe', name: 'Explosive Magic', desc: `Explodes dealing 50% DMG (<strong class="text-orange-400">${upgradeTypes.magicAoe.currentVal}px</strong> radius).` },
+                { id: 'chain', name: 'Chain Lightning', desc: `Bounces to <strong class="text-purple-400">${upgradeTypes.magicChain.currentVal}</strong> additional target(s).` },
+                { id: 'frost', name: 'Frost Nova', desc: `Slows enemies by <strong class="text-teal-400">${upgradeTypes.magicFrost.currentVal}%</strong> for 2s.` },
+                { id: 'venom', name: 'Toxic Venom', desc: `Deals <strong class="text-green-400">${upgradeTypes.magicVenom.currentVal}</strong> DPS for 3s.` },
+                { id: 'knockback', name: 'Forceful Gale', desc: `Pushes enemies back by <strong class="text-gray-300">${upgradeTypes.magicKnockback.currentVal}px</strong>.` },
+                { id: 'vampiric', name: 'Vampiric Drain', desc: `Heals Caravan for <strong class="text-red-400">${upgradeTypes.magicVampiric.currentVal} HP</strong> on hit.` },
+                { id: 'shrapnel', name: 'Shrapnel Burst', desc: `Splits into <strong class="text-yellow-400">${upgradeTypes.magicShrapnel.currentVal}</strong> mini-bullets on hit.` },
+                { id: 'critical', name: 'Critical Strike', desc: `<strong class="text-pink-400">${upgradeTypes.magicCritical.currentVal}%</strong> chance to deal 300% DMG.` }
+            ];
+
+            for (let i = allModOptions.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [allModOptions[i], allModOptions[j]] = [allModOptions[j], allModOptions[i]];
+            }
+            const selectedThree = allModOptions.slice(0, 3);
+
+            wizardCardsContainer.innerHTML = selectedThree.map(mod => {
+                const styling = modColors[mod.id];
+                return `
+                <div onclick="applyWizardMod('${mod.id}')" class="wizard-card flex-1 bg-gray-800 rounded-xl p-6 cursor-pointer flex flex-col items-center text-center border-2 border-gray-600 hover:border-${styling.hex}">
+                    <div class="w-16 h-16 rounded-full ${styling.bg} flex items-center justify-center text-3xl mb-4 border ${styling.border} ${styling.shadow}">${styling.icon}</div>
+                    <h2 class="text-xl font-bold ${styling.text} mb-1">${mod.name}</h2>
+                    <p class="text-gray-400 text-sm mt-2">${mod.desc}</p>
+                </div>
+                `;
+            }).join('');
+        }
+
+        function applyWizardMod(type) {
+            const upg = upgradeTypes.wizard; const cost = getCost(upg);
+            wood -= cost.w; stone -= cost.s; mithril -= cost.m;
+            upg.currentLevel++; upg.currentVal++;
+
+            cannons[pendingCannonId].mods.push(type);
+            
+            wizardModal.classList.add('hidden'); renderUpgrades(); updateUI();
+            isPaused = false; lastTime = performance.now(); requestAnimationFrame(gameLoop);
+        }
+
+        function renderUpgrades() {
+            upgradesContainer.innerHTML = '';
+            let builtGuns = cannons.filter(c => c.built); let canEnchant = builtGuns.some(c => c.mods.length < 2);
+
+            Object.values(upgradeTypes).forEach(upg => {
+                if (upg.tab !== currentTab) return;
+
+                const cost = getCost(upg);
+                let canAfford = wood >= cost.w && stone >= cost.s && mithril >= cost.m;
+                
+                let btnText = "Upgrade";
+                if (upg.id === 'buildCannon' && upg.currentLevel >= 5) { canAfford = false; btnText = "MAXED"; }
+                if (upg.id === 'wizard' && !canEnchant) { canAfford = false; btnText = "ALL GUNS FULL"; }
+
+                const btn = document.createElement('button');
+                btn.className = `btn-upgrade w-full p-2 sm:p-3 rounded-lg text-left border ${canAfford ? 'bg-gray-800 border-gray-500 cursor-pointer' : 'bg-gray-900 border-gray-700 cursor-not-allowed opacity-60'}`;
+                btn.onclick = () => buyUpgrade(upg.id);
+                btn.disabled = !canAfford;
+
+                let valSuffix = upg.id === 'fireRate' ? '/s' : (upg.id === 'gather' ? '%' : (['magicAoe', 'magicKnockback'].includes(upg.id) ? 'px' : (['magicFrost', 'magicCritical'].includes(upg.id) ? '%' : '')));
+                let wCostUI = cost.w > 0 ? `<span class="${wood >= cost.w ? 'text-white' : 'text-red-400'} flex items-center gap-1"><div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-yellow-700"></div>${cost.w}</span>` : '';
+                let sCostUI = cost.s > 0 ? `<span class="${stone >= cost.s ? 'text-white' : 'text-red-400'} flex items-center gap-1"><div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-gray-400"></div>${cost.s}</span>` : '';
+                let mCostUI = cost.m > 0 ? `<span class="${mithril >= cost.m ? 'text-cyan-300' : 'text-red-400'} flex items-center gap-1"><div class="w-1.5 h-1.5 sm:w-2 sm:h-2 bg-cyan-400 shadow-[0_0_4px_cyan]"></div>${cost.m}</span>` : '';
+
+                let statPreview = upg.id === 'buildCannon' && btnText === "MAXED" ? 'MAX' : `${upg.currentVal}${valSuffix} &rarr; ${upg.currentVal + upg.valAdd}${valSuffix}`;
+                if(upg.id === 'wizard') statPreview = btnText !== "Upgrade" ? btnText : 'Select Target';
+
+                btn.innerHTML = `
+                    <div class="flex justify-between items-center mb-1">
+                        <span class="font-bold ${upg.tab === 'magic' ? 'text-cyan-400' : 'text-blue-300'} text-xs sm:text-sm">${upg.name} <span class="text-[10px] sm:text-xs text-gray-400">Lv.${upg.currentLevel}</span></span>
+                        <span class="text-[10px] sm:text-xs font-mono text-green-300">${statPreview}</span>
+                    </div>
+                    <div class="text-[10px] sm:text-xs text-gray-400 mb-1.5 line-clamp-1">${upg.desc}</div>
+                    ${btnText !== "MAXED" ? `<div class="flex gap-2 sm:gap-3 text-[10px] sm:text-xs font-mono bg-black/40 p-1 rounded justify-center">${wCostUI} ${sCostUI} ${mCostUI}</div>` : ''}
+                `;
+                upgradesContainer.appendChild(btn);
+            });
+        }
+
+        function updateUI() {
+            woodDisp.innerText = Math.floor(wood); stoneDisp.innerText = Math.floor(stone); mithrilDisp.innerText = Math.floor(mithril);
+            woodCarriedDisp.innerText = `(+${Math.floor(playerWood)})`; stoneCarriedDisp.innerText = `(+${Math.floor(playerStone)})`; mithrilCarriedDisp.innerText = `(+${Math.floor(playerMithril)})`;
+            let invTotal = playerWood + playerStone + playerMithril; let invMax = upgradeTypes.capacity.currentVal;
+            bagCountDisp.innerText = `${Math.floor(invTotal)}/${invMax}`; bagBarDisp.style.width = `${Math.min(100, (invTotal / invMax) * 100)}%`;
+            if (invTotal >= invMax) bagBarDisp.classList.replace('bg-blue-500', 'bg-red-500'); else bagBarDisp.classList.replace('bg-red-500', 'bg-blue-500');
+            timeDisp.innerText = Math.floor(gameTime) + 's'; 
+            waveDisp.innerText = currentWave;
+            hpText.innerText = `${Math.ceil(Math.max(0, caravan.hp))} / ${caravan.maxHp}`; hpBar.style.width = `${Math.max(0, (caravan.hp / caravan.maxHp) * 100)}%`;
+            renderUpgrades();
+        }
+
+        function spawnEnemy() {
+            let spawnAngle = Math.random() * Math.PI * 2;
+            let dist = Math.max(worldWidth, worldHeight) / 2 + 150;
+            let ex = caravan.x + Math.cos(spawnAngle) * dist; let ey = caravan.y + Math.sin(spawnAngle) * dist;
+            
+            let type = 'normal';
+            if (currentWave >= 15 && Math.random() < 0.2) type = 'heavy';
+            else if (currentWave >= 6 && Math.random() < 0.3) type = 'fast';
+
+            let r = 14, hp = 20 + gameTime*0.4, spd = 15 + Math.random()*20, dmg = 5, color = '#ef4444';
+            if(type === 'heavy') { r = 22; hp = 80 + gameTime*1.5; spd = 6 + Math.random()*8; dmg = 15; color = '#831843'; } 
+            else if(type === 'fast') { r = 10; hp = 10 + gameTime*0.2; spd = 40 + Math.random()*25; dmg = 2; color = '#f97316'; }
+
+            enemies.push({ 
+                id: enemyIdCounter++, type: type, x: ex, y: ey, radius: r, hp: hp, maxHp: hp, speed: spd, currentSpeed: 0, damage: dmg, color: color,
+                frostTimer: 0, frostSlow: 0, venomTimer: 0, venomDps: 0, venomTick: 0
+            });
+        }
+
+        function spawnBoss() {
+            let spawnAngle = caravan.angle + (Math.random() - 0.5) * (Math.PI / 2);
+            let dist = Math.max(worldWidth, worldHeight) / 2 + 300;
+            let ex = caravan.x + Math.cos(spawnAngle) * dist; let ey = caravan.y + Math.sin(spawnAngle) * dist;
+
+            enemies.push({
+                id: enemyIdCounter++, type: 'boss', x: ex, y: ey, radius: 45,
+                hp: 2000 + (gameTime * 2), maxHp: 2000 + (gameTime * 2),
+                speed: 55, // Fast Speed as requested
+                currentSpeed: 0, damage: 30, color: '#9333ea', 
+                state: 'chasing', stateTimer: 0, dashAngle: 0,
+                frostTimer: 0, frostSlow: 0, venomTimer: 0, venomDps: 0, venomTick: 0
+            });
+            spawnFloatingText(caravan.x, caravan.y - 100, "BOSS INCOMING!", "#ef4444");
+        }
+
+        function spawnResource() {
+            let spawnAngle = caravan.angle + (Math.random() - 0.5) * (Math.PI / 1.5); 
+            let dist = Math.max(worldWidth, worldHeight) / 2 + 100;
+            let rx = caravan.x + Math.cos(spawnAngle) * dist; let ry = caravan.y + Math.sin(spawnAngle) * dist;
+
+            const roll = Math.random(); let type = 'stone'; let radius = 28.6;
+            if (roll < 0.01) { type = 'mithril'; radius = 25; } else if (roll < 0.505) { type = 'wood'; radius = 31.2; }
+            resources.push({ x: rx, y: ry, type: type, radius: radius, hp: type==='mithril'?60:30, maxHp: type==='mithril'?60:30, yield: type==='mithril' ? 1 : (10 + Math.floor(Math.random() * 8)) });
+        }
+
+        function spawnObstacle() {
+            let spawnAngle = caravan.angle + (Math.random() - 0.5) * (Math.PI / 1.5);
+            let dist = Math.max(worldWidth, worldHeight) / 2 + 250;
+            let rx = caravan.x + Math.cos(spawnAngle) * dist; let ry = caravan.y + Math.sin(spawnAngle) * dist;
+            
+            let points = []; let numPoints = 6 + Math.floor(Math.random() * 4); let radius = 40 + Math.random() * 30; 
+            for(let i=0; i<numPoints; i++) {
+                let a = (i/numPoints) * Math.PI * 2; let r = radius * (0.7 + Math.random() * 0.3);
+                points.push({x: Math.cos(a)*r, y: Math.sin(a)*r});
+            }
+            obstacles.push({ x: rx, y: ry, radius: radius, points: points });
+        }
+
+        function spawnFloatingText(x, y, text, color) { floatingTexts.push({ x, y, text, color, life: 1.0, maxLife: 1.0, vy: -25 }); }
+        function spawnParticles(x, y, color, count) { for(let i=0; i<count; i++) { const angle = Math.random() * Math.PI * 2; const speed = Math.random() * 30 + 10; particles.push({ x, y, vx: Math.cos(angle)*speed, vy: Math.sin(angle)*speed, life: Math.random()*0.4+0.2, color, size: Math.random()*3+2 }); } }
+
+        function checkObstaclePush(entity, obs) {
+            let dist = Math.hypot(entity.x - obs.x, entity.y - obs.y);
+            if (dist < entity.radius + obs.radius) {
+                let overlap = (entity.radius + obs.radius) - dist;
+                let dx = entity.x - obs.x; let dy = entity.y - obs.y;
+                let mag = Math.hypot(dx, dy); if(mag===0) {dx=1; mag=1;}
+                entity.x += (dx/mag) * overlap; entity.y += (dy/mag) * overlap;
+            }
+        }
+
+        function update(dt) {
+            gameTime += dt;
+            currentWave = 1 + Math.floor(gameTime / 30);
+            
+            // --- STEERING ---
+            if (isSteering) {
+                let targetAngle = Math.atan2(player.y - caravan.y, player.x - caravan.x);
+                let diff = targetAngle - caravan.angle;
+                while (diff < -Math.PI) diff += Math.PI * 2; while (diff > Math.PI) diff -= Math.PI * 2;
+                
+                let maxTurn = (Math.PI / 2) * dt; 
+                if (Math.abs(diff) < maxTurn) caravan.angle = targetAngle;
+                else caravan.angle += Math.sign(diff) * maxTurn;
+                
+                while (caravan.angle < -Math.PI) caravan.angle += Math.PI * 2; while (caravan.angle > Math.PI) caravan.angle -= Math.PI * 2;
+            }
+
+            let driftX = -Math.cos(caravan.angle) * scrollSpeed; let driftY = -Math.sin(caravan.angle) * scrollSpeed;
+
+            bgElements.forEach(bg => { 
+                bg.x += driftX * bg.speedMult * dt; bg.y += driftY * bg.speedMult * dt; 
+                if(bg.x > worldWidth + 20) bg.x = -20; else if(bg.x < -20) bg.x = worldWidth + 20;
+                if(bg.y > worldHeight + 20) bg.y = -20; else if(bg.y < -20) bg.y = worldHeight + 20;
+            });
+
+            // Player Mov
+            let px = 0, py = 0;
+            if (keys['KeyW'] || keys['ArrowUp']) py -= 1; if (keys['KeyS'] || keys['ArrowDown']) py += 1;
+            if (keys['KeyA'] || keys['ArrowLeft']) px -= 1; if (keys['KeyD'] || keys['ArrowRight']) px += 1;
+            if (px !== 0 || py !== 0) { const len = Math.hypot(px, py); player.x += (px / len) * player.speed * dt; player.y += (py / len) * player.speed * dt; } 
+            else if (joyData.active) { player.x += joyData.nx * player.speed * dt; player.y += joyData.ny * player.speed * dt; }
+            player.x = Math.max(player.radius, Math.min(worldWidth - player.radius, player.x)); player.y = Math.max(player.radius, Math.min(worldHeight - player.radius, player.y));
+
+            // Obstacles Update
+            obstacleSpawnTimer -= dt; if (obstacleSpawnTimer <= 0) { obstacleSpawnTimer = 4 + Math.random() * 4; spawnObstacle(); }
+            for (let i = obstacles.length - 1; i >= 0; i--) {
+                let obs = obstacles[i]; obs.x += driftX * dt; obs.y += driftY * dt;
+                
+                let cDist = Math.hypot(caravan.x - obs.x, caravan.y - obs.y);
+                if (cDist < caravan.radius + obs.radius) {
+                    caravan.hp -= 40 * dt; 
+                    if(Math.random() < 0.1) spawnParticles(caravan.x + (Math.random()-0.5)*30, caravan.y + (Math.random()-0.5)*30, '#ef4444', 3);
+                    if(Math.random() < 0.05) spawnFloatingText(caravan.x, caravan.y - 20, "CRASH!", "#ef4444");
+                    checkGameOver();
+                }
+
+                checkObstaclePush(player, obs);
+                
+                let rm = Math.max(worldWidth, worldHeight) + 400;
+                if (obs.x > worldWidth + rm || obs.x < -rm || obs.y > worldHeight + rm || obs.y < -rm) obstacles.splice(i, 1);
+            }
+
+            if (Math.hypot(player.x - caravan.x, player.y - caravan.y) < player.radius + caravan.radius + 25) {
+                if (playerWood > 0 || playerStone > 0 || playerMithril > 0) {
+                    wood += playerWood; stone += playerStone; mithril += playerMithril;
+                    spawnFloatingText(caravan.x, caravan.y - 45, `+${Math.floor(playerWood)}W +${Math.floor(playerStone)}S +${Math.floor(playerMithril)}M`, '#4ade80');
+                    playerWood = 0; playerStone = 0; playerMithril = 0; updateUI();
+                }
+            }
+
+            // Boss Check & Spawn Management
+            if (currentWave >= 8 && !bossSpawnedWave8) {
+                // Kill all existing enemies except the boss
+                enemies.forEach(e => spawnParticles(e.x, e.y, e.color, 15));
+                enemies = []; 
+                
+                spawnBoss(); 
+                bossSpawnedWave8 = true; 
+                suppressEnemiesTimer = 60.0;
+            }
+
+            if (suppressEnemiesTimer > 0) {
+                suppressEnemiesTimer -= dt;
+            } else {
+                enemySpawnTimer -= dt; 
+                if (enemySpawnTimer <= 0) { enemySpawnTimer = 6; for(let i=0; i<baseEnemies + Math.floor(gameTime/30); i++) spawnEnemy(); }
+            }
+            
+            resourceSpawnTimer -= dt; if (resourceSpawnTimer <= 0) { resourceSpawnTimer = 1.6 + Math.random() * 1.3; spawnResource(); }
+
+            let currentInv = playerWood + playerStone + playerMithril; let maxInv = upgradeTypes.capacity.currentVal;
+            const gatherTimeMultiplier = Math.max(0.1, 1 - (upgradeTypes.gather.currentVal * 0.01));
+            let activeGatherPower = (currentInv < maxInv) ? (player.gatherPower / gatherTimeMultiplier) : 0;
+
+            for (let i = resources.length - 1; i >= 0; i--) {
+                let r = resources[i]; r.x += driftX * dt; r.y += driftY * dt;
+
+                if (Math.hypot(player.x - r.x, player.y - r.y) < player.radius + r.radius + 30) { 
+                    if (activeGatherPower > 0) {
+                        r.hp -= activeGatherPower * dt;
+                        if(Math.random() < 0.2) particles.push({ x: r.x + (Math.random()-0.5)*r.radius, y: r.y + (Math.random()-0.5)*r.radius, vx: 0, vy: -20, life: 0.3, size: 2, color: '#fff' });
+
+                        if (r.hp <= 0) {
+                            let spaceLeft = maxInv - (playerWood + playerStone + playerMithril);
+                            let actualYield = Math.min(r.yield, spaceLeft);
+                            if (actualYield > 0) {
+                                let cHex = '#9ca3af';
+                                if (r.type === 'wood') { playerWood += actualYield; cHex='#fbbf24'; } else if (r.type === 'mithril') { playerMithril += actualYield; cHex='#22d3ee'; } else { playerStone += actualYield; }
+                                spawnFloatingText(r.x, r.y, `+${actualYield}`, cHex);
+                            }
+                            spawnParticles(r.x, r.y, r.type === 'wood' ? '#8B4513' : (r.type === 'mithril' ? '#06b6d4' : '#6B7280'), 15);
+                            resources.splice(i, 1); updateUI(); continue;
+                        }
+                    } else if (Math.random() < 0.02) { spawnFloatingText(player.x, player.y - 15, "BAG FULL", "#ef4444"); }
+                }
+
+                if (Math.hypot(caravan.x - r.x, caravan.y - r.y) < caravan.radius + r.radius) {
+                    caravan.hp -= 15; spawnFloatingText(caravan.x, caravan.y, "-15", "#ef4444"); spawnParticles(r.x, r.y, '#6B7280', 20); resources.splice(i, 1); updateUI(); checkGameOver(); continue;
+                }
+                
+                let rm = Math.max(worldWidth, worldHeight) + 400;
+                if (r.x > worldWidth + rm || r.x < -rm || r.y > worldHeight + rm || r.y < -rm) resources.splice(i, 1);
+            }
+
+            // Shards Update
+            for (let i = shards.length - 1; i >= 0; i--) {
+                let s = shards[i]; s.x += driftX * dt; s.y += driftY * dt;
+                if (Math.hypot(player.x - s.x, player.y - s.y) < player.radius + s.radius + 20) {
+                    mithril += 5; // Reward straight to bank!
+                    spawnFloatingText(caravan.x, caravan.y - 45, "+5 MITHRIL SHARD!", '#22d3ee');
+                    shards.splice(i, 1); updateUI();
+                } else {
+                    let rm = Math.max(worldWidth, worldHeight) + 400;
+                    if (s.x > worldWidth + rm || s.x < -rm || s.y > worldHeight + rm || s.y < -rm) shards.splice(i, 1);
+                }
+            }
+
+            // Cannons Firing
+            caravan.fireCooldown -= dt;
+            let visualAngle = caravan.angle - Math.PI; 
+            let cosA = Math.cos(visualAngle); let sinA = Math.sin(visualAngle);
+
+            if (caravan.fireCooldown <= 0) {
+                let anyFired = false;
+                cannons.forEach(c => {
+                    if (!c.built) return;
+                    let cx = caravan.x + c.offsetX * cosA - c.offsetY * sinA; let cy = caravan.y + c.offsetX * sinA + c.offsetY * cosA;
+                    
+                    let target = null; let minDist = upgradeTypes.range.currentVal;
+                    enemies.forEach(e => { let d = Math.hypot(e.x - cx, e.y - cy); if (d < minDist) { minDist = d; target = e; } });
+
+                    if (target) {
+                        anyFired = true;
+                        let dx = target.x - cx; let dy = target.y - cy; let mag = Math.hypot(dx, dy); c.angle = Math.atan2(dy, dx); 
+                        let parseMod = (type) => c.mods.filter(m => m === type).length;
+                        
+                        bullets.push({
+                            x: cx, y: cy, vx: (dx/mag) * 400, vy: (dy/mag) * 400,
+                            damage: upgradeTypes.damage.currentVal, radius: c.mods.length > 0 ? 7 : 4, life: 2.0,
+                            isShrapnel: false, hitEnemies: [], primaryMod: c.mods.length > 0 ? c.mods[0] : null,
+                            
+                            pierce: parseMod('pierce') * upgradeTypes.magicPierce.currentVal,
+                            aoeRadius: parseMod('aoe') * upgradeTypes.magicAoe.currentVal, 
+                            chain: parseMod('chain') * upgradeTypes.magicChain.currentVal,
+                            frost: parseMod('frost') * upgradeTypes.magicFrost.currentVal,
+                            venom: parseMod('venom') * upgradeTypes.magicVenom.currentVal,
+                            knockback: parseMod('knockback') * upgradeTypes.magicKnockback.currentVal,
+                            vampiric: parseMod('vampiric') * upgradeTypes.magicVampiric.currentVal,
+                            shrapnel: parseMod('shrapnel') * upgradeTypes.magicShrapnel.currentVal,
+                            critical: parseMod('critical') * upgradeTypes.magicCritical.currentVal
+                        });
+                    }
+                });
+                if (anyFired) caravan.fireCooldown = 1.0 / upgradeTypes.fireRate.currentVal;
+            }
+
+            let newBullets = []; 
+            for (let i = bullets.length - 1; i >= 0; i--) {
+                let b = bullets[i]; b.x += b.vx * dt; b.y += b.vy * dt; b.life -= dt;
+                let destroyed = false;
+
+                for(let k=0; k<obstacles.length; k++) {
+                    if(Math.hypot(b.x - obstacles[k].x, b.y - obstacles[k].y) < b.radius + obstacles[k].radius) {
+                        destroyed = true; spawnParticles(b.x, b.y, '#9ca3af', 5); break;
+                    }
+                }
+
+                if(!destroyed) {
+                    for (let j = enemies.length - 1; j >= 0; j--) {
+                        let e = enemies[j];
+                        if (!b.hitEnemies.includes(e.id) && Math.hypot(b.x - e.x, b.y - e.y) < b.radius + e.radius) {
+                            
+                            let finalDamage = b.damage; let isCrit = false;
+                            if (b.critical > 0 && Math.random() * 100 < b.critical) { finalDamage *= 3.0; isCrit = true; }
+                            
+                            e.hp -= finalDamage; b.hitEnemies.push(e.id);
+                            if (b.vampiric > 0) { caravan.hp = Math.min(caravan.maxHp, caravan.hp + b.vampiric); }
+                            if (b.frost > 0) { e.frostTimer = 2.0; e.frostSlow = b.frost; }
+                            if (b.venom > 0) { e.venomTimer = 3.0; e.venomDps = b.venom; }
+                            if (b.knockback > 0 && !b.isShrapnel && e.type !== 'boss') {
+                                let pushDx = e.x - b.x; let pushDy = e.y - b.y; let pMag = Math.hypot(pushDx, pushDy);
+                                if (pMag > 0) { e.x += (pushDx/pMag) * b.knockback; e.y += (pushDy/pMag) * b.knockback; }
+                            }
+
+                            let impactColor = b.primaryMod ? modColors[b.primaryMod].hex : '#fbbf24';
+                            spawnParticles(b.x, b.y, impactColor, b.primaryMod ? 15 : 5);
+                            if (isCrit) spawnFloatingText(e.x, e.y - 20, "CRIT!", "#f472b6");
+                            
+                            if (b.aoeRadius > 0) {
+                                spawnParticles(b.x, b.y, '#f97316', 20); 
+                                enemies.forEach(otherE => {
+                                    if (otherE.id !== e.id && Math.hypot(b.x - otherE.x, b.y - otherE.y) < b.aoeRadius) {
+                                        otherE.hp -= finalDamage * 0.5; spawnParticles(otherE.x, otherE.y, '#f97316', 5);
+                                    }
+                                });
+                            }
+
+                            if (b.shrapnel > 0 && !b.isShrapnel) {
+                                for(let k=0; k<b.shrapnel; k++) {
+                                    let angle = Math.random() * Math.PI * 2;
+                                    newBullets.push({
+                                        x: b.x, y: b.y, vx: Math.cos(angle)*300, vy: Math.sin(angle)*300,
+                                        damage: b.damage * 0.3, radius: 3, life: 0.5, isShrapnel: true, hitEnemies: [e.id],
+                                        pierce: 0, aoeRadius: 0, chain: 0, frost: 0, venom: 0, knockback: 0, vampiric: 0, shrapnel: 0, critical: 0, primaryMod: 'shrapnel'
+                                    });
+                                }
+                            }
+
+                            let chained = false;
+                            if (b.chain > 0 && !b.isShrapnel) {
+                                let closest = null; let cDist = Infinity;
+                                enemies.forEach(ce => { if (!b.hitEnemies.includes(ce.id)) { let d = Math.hypot(b.x - ce.x, b.y - ce.y); if (d < 300 && d < cDist) { closest = ce; cDist = d; } } });
+                                if (closest) {
+                                    let dx = closest.x - b.x; let dy = closest.y - b.y; let mag = Math.hypot(dx, dy);
+                                    b.vx = (dx/mag) * 500; b.vy = (dy/mag) * 500; b.chain--; b.life += 1.0; chained = true;
+                                }
+                            }
+
+                            if (!chained) { if (b.pierce > 0) { b.pierce--; } else { destroyed = true; break; } }
+                        }
+                    }
+                }
+                let rm = Math.max(worldWidth, worldHeight);
+                if (destroyed || b.life <= 0 || b.x < -rm || b.x > worldWidth+rm || b.y < -rm || b.y > worldHeight+rm) bullets.splice(i, 1);
+            }
+            bullets.push(...newBullets);
+
+            for (let i = enemies.length - 1; i >= 0; i--) {
+                let e = enemies[i];
+                e.x += driftX * dt; e.y += driftY * dt;
+
+                if (e.venomTimer > 0) {
+                    e.venomTimer -= dt; e.venomTick -= dt;
+                    if(e.venomTick <= 0) { e.hp -= e.venomDps; e.venomTick = 0.5; spawnParticles(e.x, e.y, '#4ade80', 3); }
+                }
+                
+                e.currentSpeed = e.speed;
+                if (e.frostTimer > 0) { e.frostTimer -= dt; e.currentSpeed = e.speed * (1 - (Math.min(e.frostSlow, 90) / 100)); }
+
+                if (e.type === 'boss') {
+                    if (e.state === 'chasing') {
+                        let dx = caravan.x - e.x; let dy = caravan.y - e.y; let dist = Math.hypot(dx, dy);
+                        // INCREASED CHARGE TIME HERE (1.5 -> 3.0)
+                        if (dist < 400) { e.state = 'charging'; e.stateTimer = 3.0; e.dashAngle = Math.atan2(dy, dx); } 
+                        else { let dirX = dx / dist; let dirY = dy / dist; e.x += dirX * e.currentSpeed * dt; e.y += dirY * e.currentSpeed * dt; }
+                    } else if (e.state === 'charging') {
+                        e.stateTimer -= dt; if (e.stateTimer <= 0) { e.state = 'dashing'; e.stateTimer = 1.0; }
+                    } else if (e.state === 'dashing') {
+                        let dSpeed = 600 * (e.currentSpeed / e.speed);
+                        e.x += Math.cos(e.dashAngle) * dSpeed * dt; e.y += Math.sin(e.dashAngle) * dSpeed * dt; e.stateTimer -= dt;
+                        
+                        let hit = false;
+                        if (Math.hypot(caravan.x - e.x, caravan.y - e.y) < caravan.radius + e.radius) {
+                            caravan.hp -= 40; spawnFloatingText(caravan.x, caravan.y, "-40", "#ef4444"); spawnParticles(caravan.x, caravan.y, '#ef4444', 20); checkGameOver(); hit = true;
+                        }
+                        if (!hit) {
+                            for (let rIdx = resources.length - 1; rIdx >= 0; rIdx--) {
+                                let r = resources[rIdx]; if (Math.hypot(e.x - r.x, e.y - r.y) < e.radius + r.radius) { spawnParticles(r.x, r.y, '#9ca3af', 15); resources.splice(rIdx, 1); hit = true; break; }
+                            }
+                        }
+                        if (!hit) {
+                            for (let oIdx = 0; oIdx < obstacles.length; oIdx++) {
+                                let obs = obstacles[oIdx]; if (Math.hypot(e.x - obs.x, e.y - obs.y) < e.radius + obs.radius) { hit = true; break; }
+                            }
+                        }
+                        
+                        if (hit) { e.state = 'stunned'; e.stateTimer = 6.0; } else if (e.stateTimer <= 0) { e.state = 'cooldown'; e.stateTimer = 2.0; }
+
+                    } else if (e.state === 'cooldown' || e.state === 'stunned') {
+                        e.stateTimer -= dt; if (e.stateTimer <= 0) e.state = 'chasing';
+                    }
+
+                    if (e.state !== 'dashing') obstacles.forEach(obs => checkObstaclePush(e, obs));
+                    
+                } else {
+                    let dx = caravan.x - e.x; let dy = caravan.y - e.y; let dist = Math.hypot(dx, dy); let dirX = dx / dist; let dirY = dy / dist;
+                    e.x += (dirX * e.currentSpeed) * dt; e.y += (dirY * e.currentSpeed) * dt;
+
+                    obstacles.forEach(obs => checkObstaclePush(e, obs));
+
+                    if (dist < caravan.radius + e.radius) { caravan.hp -= e.damage; spawnFloatingText(caravan.x, caravan.y - 15, `-${e.damage}`, "#ef4444"); spawnParticles(caravan.x, caravan.y, '#ef4444', 5); enemies.splice(i, 1); updateUI(); checkGameOver(); continue; }
+                }
+
+                if (e.hp <= 0) { 
+                    spawnParticles(e.x, e.y, e.color, e.type === 'boss' ? 40 : 15); 
+                    if (e.type === 'boss') { shards.push({ x: e.x, y: e.y, radius: 15 }); suppressEnemiesTimer = 0; }
+                    enemies.splice(i, 1); continue; 
+                }
+
+                let em = Math.max(worldWidth, worldHeight) + 400;
+                if (e.x > worldWidth + em || e.x < -em || e.y > worldHeight + em || e.y < -em) enemies.splice(i, 1);
+            }
+
+            for (let i = particles.length - 1; i >= 0; i--) { let p = particles[i]; p.x += p.vx * dt; p.y += p.vy * dt; p.life -= dt; if (p.life <= 0) particles.splice(i, 1); }
+            for (let i = floatingTexts.length - 1; i >= 0; i--) { let ft = floatingTexts[i]; ft.y += ft.vy * dt; ft.life -= dt; if (ft.life <= 0) floatingTexts.splice(i, 1); }
+
+            if(Math.floor(gameTime*10)%5 === 0) updateUI();
+        }
+
+        function checkGameOver() {
+            if (caravan.hp <= 0) { isPlaying = false; document.getElementById('final-time').innerText = Math.floor(gameTime); gameOverScreen.classList.remove('hidden'); upgradesModal.classList.add('hidden'); }
+        }
+
+        function draw() {
+            ctx.fillStyle = '#1e3a1f'; ctx.fillRect(0, 0, width, height); ctx.save(); ctx.scale(cameraZoom, cameraZoom);
+            bgElements.forEach(bg => { ctx.fillStyle = bg.color; ctx.beginPath(); ctx.arc(bg.x, bg.y, bg.size, 0, Math.PI * 2); ctx.fill(); });
+
+            obstacles.forEach(obs => {
+                ctx.save(); ctx.translate(obs.x, obs.y);
+                ctx.fillStyle = '#111827'; ctx.beginPath(); ctx.moveTo(obs.points[0].x, obs.points[0].y);
+                for(let i=1; i<obs.points.length; i++) ctx.lineTo(obs.points[i].x, obs.points[i].y);
+                ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#374151'; ctx.lineWidth = 4; ctx.stroke();
+                ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.moveTo(obs.points[0].x * 0.7, obs.points[0].y * 0.7);
+                for(let i=1; i<obs.points.length; i++) ctx.lineTo(obs.points[i].x * 0.7, obs.points[i].y * 0.7);
+                ctx.closePath(); ctx.fill(); ctx.restore();
+            });
+
+            shards.forEach(s => {
+                ctx.save(); ctx.translate(s.x, s.y); ctx.fillStyle = '#22d3ee'; ctx.shadowColor = '#06b6d4'; ctx.shadowBlur = 10;
+                ctx.beginPath(); ctx.moveTo(0, -s.radius); ctx.lineTo(s.radius*0.6, 0); ctx.lineTo(0, s.radius); ctx.lineTo(-s.radius*0.6, 0); ctx.closePath(); ctx.fill();
+                ctx.fillStyle = '#cffafe'; ctx.beginPath(); ctx.moveTo(0, -s.radius*0.5); ctx.lineTo(s.radius*0.3, 0); ctx.lineTo(0, s.radius*0.5); ctx.lineTo(-s.radius*0.3, 0); ctx.closePath(); ctx.fill(); ctx.restore();
+            });
+
+            ctx.beginPath(); ctx.arc(caravan.x, caravan.y, upgradeTypes.range.currentVal, 0, Math.PI * 2); ctx.fillStyle = 'rgba(255, 255, 255, 0.03)'; ctx.fill(); ctx.strokeStyle = 'rgba(255, 255, 255, 0.08)'; ctx.lineWidth = 1; ctx.stroke();
+
+            let visualAngle = caravan.angle - Math.PI;
+
+            ctx.save(); ctx.translate(caravan.x, caravan.y); ctx.rotate(visualAngle);
+            ctx.fillStyle = '#4b5563'; ctx.fillRect(-26, -36, 17, 10); ctx.fillRect(10, -36, 17, 10); ctx.fillRect(-26, 26, 17, 10); ctx.fillRect(10, 26, 17, 10);
+            ctx.fillStyle = '#b45309'; ctx.fillRect(-30, -26, 60, 52); ctx.fillStyle = '#e5e7eb'; ctx.beginPath(); ctx.roundRect(-24, -22, 48, 44, 10); ctx.fill(); 
+            ctx.restore();
+
+            let cosA = Math.cos(visualAngle); let sinA = Math.sin(visualAngle);
+
+            cannons.forEach(c => {
+                if(!c.built) return;
+                let cx = caravan.x + c.offsetX * cosA - c.offsetY * sinA; let cy = caravan.y + c.offsetX * sinA + c.offsetY * cosA;
+
+                ctx.save(); ctx.translate(cx, cy);
+                ctx.fillStyle = '#1f2937'; ctx.beginPath(); ctx.arc(0, 0, 8, 0, Math.PI*2); ctx.fill(); ctx.strokeStyle = '#4b5563'; ctx.lineWidth=2; ctx.stroke();
+                ctx.rotate(c.angle); ctx.fillStyle = '#9ca3af'; ctx.fillRect(0, -3, 14, 6); ctx.restore();
+
+                if(c.mods.length > 0) {
+                    ctx.save(); ctx.translate(cx, cy); ctx.rotate(visualAngle);
+                    c.mods.forEach((m, idx) => {
+                        ctx.fillStyle = modColors[m].hex; ctx.beginPath(); let gx = c.mods.length === 1 ? 0 : (idx === 0 ? -3 : 3);
+                        ctx.arc(gx, 0, 3, 0, Math.PI*2); ctx.fill(); ctx.shadowColor = modColors[m].hex; ctx.shadowBlur = 5; ctx.fill(); ctx.shadowBlur = 0;
+                    });
+                    ctx.restore();
+                }
+            });
+
+            resources.forEach(r => {
+                ctx.save(); ctx.translate(r.x, r.y);
+                if (r.type === 'wood') { ctx.fillStyle = '#78350f'; ctx.fillRect(-6, -r.radius, 12, r.radius*2); ctx.fillStyle = '#166534'; ctx.beginPath(); ctx.arc(0, -5, r.radius, 0, Math.PI*2); ctx.fill(); } 
+                else if (r.type === 'stone') { ctx.fillStyle = '#9ca3af'; ctx.beginPath(); ctx.moveTo(-r.radius, 0); ctx.lineTo(-r.radius/2, -r.radius); ctx.lineTo(r.radius/2, -r.radius); ctx.lineTo(r.radius, 0); ctx.lineTo(r.radius/2, r.radius); ctx.lineTo(-r.radius/2, r.radius); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#4b5563'; ctx.lineWidth=2; ctx.stroke(); } 
+                else if (r.type === 'mithril') { ctx.fillStyle = '#22d3ee'; ctx.beginPath(); ctx.moveTo(0, -r.radius); ctx.lineTo(r.radius*0.6, 0); ctx.lineTo(0, r.radius); ctx.lineTo(-r.radius*0.6, 0); ctx.closePath(); ctx.fill(); ctx.fillStyle = '#0891b2'; ctx.beginPath(); ctx.moveTo(0, -r.radius*0.7); ctx.lineTo(r.radius*0.4, 0); ctx.lineTo(0, r.radius*0.7); ctx.lineTo(-r.radius*0.4, 0); ctx.closePath(); ctx.fill(); ctx.strokeStyle = '#cffafe'; ctx.lineWidth=1; ctx.stroke(); }
+                if (r.hp < r.maxHp) { ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(-r.radius, r.radius + 4, r.radius*2, 3); ctx.fillStyle = '#3b82f6'; ctx.fillRect(-r.radius, r.radius + 4, (r.hp/r.maxHp)*r.radius*2, 3); }
+                ctx.restore();
+            });
+
+            ctx.save(); ctx.translate(player.x, player.y);
+            ctx.fillStyle = '#3b82f6'; ctx.beginPath(); ctx.arc(0, 0, player.radius, 0, Math.PI * 2); ctx.fill(); ctx.fillStyle = '#fbbf24'; ctx.beginPath(); ctx.arc(0, 0, player.radius/2.5, 0, Math.PI * 2); ctx.fill();
+            if(playerWood + playerStone + playerMithril >= upgradeTypes.capacity.currentVal) { ctx.strokeStyle = '#ef4444'; ctx.lineWidth = 2.5; ctx.beginPath(); ctx.arc(0, 0, player.radius + 5, 0, Math.PI * 2); ctx.stroke(); }
+            ctx.restore();
+
+            enemies.forEach(e => {
+                ctx.save(); 
+                
+                let drawX = e.x; let drawY = e.y;
+                if (e.type === 'boss' && e.state === 'charging') { drawX += (Math.random()-0.5)*4; drawY += (Math.random()-0.5)*4; }
+                
+                if (e.type === 'boss' && e.state === 'charging') {
+                    ctx.beginPath(); ctx.moveTo(drawX, drawY); ctx.lineTo(drawX + Math.cos(e.dashAngle)*400, drawY + Math.sin(e.dashAngle)*400);
+                    ctx.strokeStyle = 'rgba(239, 68, 68, 0.5)'; ctx.lineWidth = 4; ctx.stroke();
+                }
+
+                ctx.translate(drawX, drawY);
+                let eColor = e.color; if (e.frostTimer > 0) eColor = '#2dd4bf'; else if (e.venomTimer > 0) eColor = '#4ade80'; 
+                ctx.fillStyle = eColor; ctx.beginPath(); ctx.arc(0, 0, e.radius, 0, Math.PI * 2); ctx.fill(); 
+                
+                ctx.fillStyle = '#000'; ctx.beginPath(); 
+                let eyeOff = e.radius * 0.3; let eyeS = e.radius * 0.15;
+                if (e.type === 'boss') {
+                    ctx.moveTo(-15, -10); ctx.lineTo(-5, -5); ctx.lineTo(-15, -2); ctx.fill();
+                    ctx.beginPath(); ctx.moveTo(15, -10); ctx.lineTo(5, -5); ctx.lineTo(15, -2); ctx.fill();
+                } else {
+                    ctx.arc(-eyeOff, -eyeOff, eyeS, 0, Math.PI*2); ctx.arc(eyeOff, -eyeOff, eyeS, 0, Math.PI*2); ctx.fill();
+                }
+
+                if (e.type === 'boss' && e.state === 'stunned') {
+                    let sAngle = gameTime * 5; ctx.fillStyle = '#facc15';
+                    ctx.beginPath(); ctx.arc(Math.cos(sAngle)*e.radius, Math.sin(sAngle)*e.radius, 5, 0, Math.PI*2); ctx.fill();
+                    ctx.beginPath(); ctx.arc(Math.cos(sAngle + Math.PI)*e.radius, Math.sin(sAngle + Math.PI)*e.radius, 5, 0, Math.PI*2); ctx.fill();
+                }
+                
+                if(e.hp < e.maxHp) { ctx.fillStyle = 'rgba(0,0,0,0.6)'; ctx.fillRect(-10, -e.radius - 6, 20, 3); ctx.fillStyle = eColor; ctx.fillRect(-10, -e.radius - 6, (e.hp/e.maxHp)*20, 3); }
+                ctx.restore();
+            });
+
+            bullets.forEach(b => {
+                let fill = '#fbbf24'; let glow = 'rgba(251, 191, 36, 0.4)';
+                if (b.primaryMod) { fill = modColors[b.primaryMod].hex; glow = fill; }
+                ctx.fillStyle = fill; ctx.beginPath(); ctx.arc(b.x, b.y, b.radius, 0, Math.PI * 2); ctx.fill();
+                ctx.fillStyle = glow; ctx.globalAlpha = 0.4; ctx.beginPath(); ctx.arc(b.x - b.vx*0.015, b.y - b.vy*0.015, b.radius*1.5, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1.0;
+            });
+
+            particles.forEach(p => { ctx.globalAlpha = p.life * 2; ctx.fillStyle = p.color; ctx.beginPath(); ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2); ctx.fill(); ctx.globalAlpha = 1.0; });
+            ctx.font = 'bold 18px monospace'; ctx.textAlign = 'center';
+            floatingTexts.forEach(ft => { ctx.globalAlpha = ft.life / ft.maxLife; ctx.fillStyle = ft.color; ctx.shadowColor = "black"; ctx.shadowBlur = 3; ctx.shadowOffsetX = 1; ctx.shadowOffsetY = 1; ctx.fillText(ft.text, ft.x, ft.y); ctx.shadowColor = "transparent"; ctx.shadowBlur = 0; ctx.shadowOffsetX = 0; ctx.shadowOffsetY = 0; ctx.globalAlpha = 1.0; });
+            ctx.restore();
+        }
+
+        function gameLoop(time) {
+            if (!isPlaying || isPaused) return; 
+            const dt = (time - lastTime) / 1000; lastTime = time;
+            if (dt < 0.1) { update(dt); draw(); }
+            requestAnimationFrame(gameLoop);
+        }
+
+        resize(); renderUpgrades();
+        
+    </script>
+</body>
+</html>
