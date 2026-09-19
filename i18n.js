@@ -18,12 +18,12 @@ var els=document.querySelectorAll('h1,h2,h3,h4,p,li,dt,dd,span,a,button,em,stron
 for(var i=0;i<els.length;i++){
 var el=els[i];
 if(el.querySelector('div,section,article,dl,ul,ol,nav,header,footer,p,h1,h2,h3,button'))continue;
-if(el.innerHTML.indexOf('id=')>-1)continue; /* never rebuild nodes other scripts hold */
 var k=norm(el.innerHTML);
+if(k.indexOf('id=')>-1)continue; /* never rebuild nodes other scripts hold */
 if(h[k])el.innerHTML=h[k];
 }
-var ATTR=['data-say','data-name','alt','aria-label','placeholder','title'];
-var all=document.querySelectorAll('[data-say],[data-name],[alt],[aria-label],[placeholder],[title]');
+var ATTR=['data-say','data-name','data-menu-label','alt','aria-label','placeholder','title'];
+var all=document.querySelectorAll('[data-say],[data-name],[data-menu-label],[alt],[aria-label],[placeholder],[title]');
 for(var j=0;j<all.length;j++)for(var n=0;n<ATTR.length;n++){
 var v=all[j].getAttribute(ATTR[n]);
 if(v&&a[v.trim()])all[j].setAttribute(ATTR[n],a[v.trim()]);

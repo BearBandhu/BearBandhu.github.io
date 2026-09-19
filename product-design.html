@@ -1,0 +1,849 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Alejandro Melian — Senior Product Designer · systems & retention</title>
+    <meta name="description" content="Senior Product Designer specializing in retention systems, onboarding, and the unglamorous machinery that turns first opens into Tuesdays. EdTech + entertainment. Based in Lima, Peru — EN/ES." />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+    <style>
+      /* page-specific */
+      .hero { padding: 96px 0 72px; position: relative; }
+      .hero__meta-row {
+        display: grid; grid-template-columns: auto 1fr auto; gap: 16px;
+        align-items: end; margin-bottom: 36px;
+      }
+      .hero__display {
+        font-family: var(--serif); font-weight: 400;
+        font-size: clamp(56px, 8.6vw, 124px);
+        line-height: 0.98; letter-spacing: -0.02em; text-wrap: balance;
+      }
+      .hero__display em { font-style: italic; color: var(--accent); }
+      .hero__sub {
+        margin-top: 36px; font-family: var(--text);
+        font-size: 20px; line-height: 1.55; max-width: 64ch; color: var(--ink-2);
+      }
+      .hero__cta { margin-top: 36px; display: flex; gap: 12px; flex-wrap: wrap; }
+
+      /* stat strip — softer cards */
+      .stat-strip {
+        display: grid; grid-template-columns: repeat(4, 1fr); gap: 12px;
+        margin-top: 64px;
+      }
+      .stat {
+        padding: 20px 22px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: var(--paper);
+      }
+      .stat__k {
+        font-family: var(--mono);
+        font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--ink-3);
+      }
+      .stat__v {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 40px; line-height: 1;
+        margin-top: 10px; letter-spacing: -0.01em;
+      }
+      .stat__caption {
+        font-family: var(--text);
+        font-size: 13px; color: var(--ink-3); margin-top: 8px; line-height: 1.5;
+      }
+
+      /* principles */
+      .principles {
+        display: grid; grid-template-columns: repeat(2, 1fr); gap: 16px;
+        margin-top: 56px;
+      }
+      .principle {
+        padding: 28px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: var(--paper);
+      }
+      .principle__n {
+        font-family: var(--mono);
+        font-size: 10px; letter-spacing: 0.14em; color: var(--ink-3); text-transform: uppercase;
+      }
+      .principle__h {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 30px; line-height: 1.1; margin-top: 10px; letter-spacing: -0.005em;
+      }
+      .principle__h em { font-style: italic; color: var(--accent); }
+      .principle__p {
+        font-family: var(--text);
+        font-size: 16px; line-height: 1.65; margin-top: 14px; color: var(--ink-2); max-width: 52ch;
+      }
+
+      /* index table */
+      .index-head {
+        display: flex; align-items: flex-end; justify-content: space-between;
+        gap: 24px; margin-top: 120px; margin-bottom: 24px;
+      }
+      .filters { display: flex; flex-wrap: wrap; gap: 6px; }
+      .filter-btn {
+        padding: 5px 11px;
+        border: 1px solid var(--rule);
+        background: var(--paper);
+        border-radius: 999px;
+        font-family: var(--mono);
+        font-size: 10px;
+        letter-spacing: 0.08em;
+        text-transform: uppercase;
+        color: var(--ink-2);
+        cursor: pointer;
+        transition: border-color 120ms, background 120ms, color 120ms;
+      }
+      .filter-btn[aria-pressed="true"] { background: var(--ink); color: var(--paper); border-color: var(--ink); }
+      .filter-btn:hover { border-color: var(--accent); color: var(--accent); }
+      .filter-btn[aria-pressed="true"]:hover { background: var(--accent); color: var(--accent-ink); border-color: var(--accent); }
+      .sort-row {
+        display: flex; gap: 12px; align-items: center;
+        font-family: var(--mono); font-size: 11px; color: var(--ink-3); margin-top: 8px;
+      }
+      .sort-row select {
+        border: 1px solid var(--rule);
+        background: var(--paper);
+        padding: 4px 10px;
+        border-radius: 3px;
+        font-family: var(--mono);
+        font-size: 11px;
+        letter-spacing: 0.04em;
+        text-transform: uppercase;
+      }
+      .index-table {
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--paper);
+        margin-top: 8px;
+        overflow: hidden;
+      }
+      .index-row {
+        display: grid; grid-template-columns: 60px 1.4fr 1fr 110px 130px 14px;
+        gap: 20px; align-items: center;
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--hair);
+        transition: background 140ms, padding 140ms;
+        cursor: pointer; text-decoration: none; color: inherit;
+      }
+      .index-row:last-child { border-bottom: none; }
+      .index-row:hover { background: var(--paper-2); }
+      .index-row:hover .ix-arrow { transform: translateX(4px); color: var(--accent); }
+      .index-row:hover .ix-title { color: var(--accent); }
+      .ix-n {
+        font-family: var(--mono); font-size: 11px;
+        color: var(--ink-3); letter-spacing: 0.06em;
+      }
+      .ix-title {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 32px; line-height: 1.05; letter-spacing: -0.01em;
+        transition: color 140ms;
+      }
+      .ix-subtitle {
+        font-family: var(--text);
+        font-size: 14px; color: var(--ink-3); margin-top: 6px; line-height: 1.5;
+      }
+      .ix-meta { display: flex; flex-wrap: wrap; gap: 5px; font-size: 10px; }
+      .ix-year {
+        font-family: var(--mono); font-size: 12px;
+        color: var(--ink-3); letter-spacing: 0.04em;
+      }
+      .ix-status {
+        font-family: var(--mono); font-size: 10px;
+        letter-spacing: 0.08em; text-transform: uppercase;
+        text-align: right;
+      }
+      .ix-arrow {
+        font-family: var(--mono); text-align: right;
+        color: var(--ink-3);
+        transition: transform 120ms, color 120ms;
+      }
+      .visited-pill {
+        display: inline-block; width: 7px; height: 7px;
+        background: var(--good); border-radius: 999px;
+        margin-right: 8px; vertical-align: middle;
+      }
+
+      /* CV strip */
+      .cv {
+        margin-top: 32px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        display: grid;
+        grid-template-columns: 280px 1fr;
+        background: var(--paper);
+        overflow: hidden;
+      }
+      .cv__head {
+        padding: 28px;
+        border-right: 1px solid var(--hair);
+        display: flex; flex-direction: column; gap: 10px;
+        background: var(--paper-2);
+      }
+      .cv__title {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 32px; line-height: 1; letter-spacing: -0.01em;
+      }
+      .cv__title em { font-style: italic; color: var(--accent); }
+      .cv__sub {
+        font-family: var(--text);
+        font-size: 14px; color: var(--ink-3); line-height: 1.55;
+      }
+      .cv__body { padding: 0; }
+      .cv-row {
+        display: grid;
+        grid-template-columns: 100px 220px 1fr auto;
+        gap: 20px; align-items: start;
+        padding: 22px 24px;
+        border-bottom: 1px solid var(--hair);
+        font-family: var(--text);
+        font-size: 14px;
+        line-height: 1.55;
+      }
+      .cv-row:last-child { border-bottom: none; }
+
+      .cv-bullets {
+        list-style: none;
+        font-family: var(--text);
+        font-size: 14px;
+        line-height: 1.55;
+        color: var(--ink-2);
+        display: flex; flex-direction: column; gap: 6px;
+      }
+      .cv-bullets li {
+        position: relative;
+        padding-left: 16px;
+      }
+      .cv-bullets li::before {
+        content: "→";
+        position: absolute;
+        left: 0;
+        top: 0;
+        font-family: var(--mono);
+        font-size: 12px;
+        color: var(--accent);
+        font-weight: 700;
+        line-height: 1.6;
+      }
+      .cv-row .when {
+        font-family: var(--mono);
+        font-size: 11px; color: var(--ink-3); letter-spacing: 0.04em;
+      }
+      .cv-row .role-co {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 18px; line-height: 1.2; letter-spacing: -0.005em;
+      }
+      .cv-row .role-co em {
+        font-style: italic; color: var(--accent); font-weight: 400; font-family: var(--serif);
+      }
+      .cv-row .blurb { color: var(--ink-2); font-size: 14px; line-height: 1.55; }
+      .cv-row .tag-cell { font-size: 10px; }
+
+      /* now / contact */
+      .blocks {
+        display: grid; grid-template-columns: 1.4fr 1fr; gap: 16px;
+        margin-top: 120px;
+      }
+      .block {
+        padding: 32px;
+        border: 1px solid var(--rule);
+        border-radius: 8px;
+        background: var(--paper);
+      }
+      .block__k {
+        font-family: var(--mono);
+        font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--ink-3); margin-bottom: 18px;
+        display: flex; align-items: center; gap: 8px;
+      }
+      .block__k::before { content: "§"; color: var(--accent); font-weight: 700; }
+      .block h3 {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 36px; line-height: 1.08; letter-spacing: -0.01em;
+      }
+      .block p {
+        font-family: var(--text);
+        font-size: 16px; line-height: 1.65; margin-top: 14px; color: var(--ink-2);
+      }
+      .now-list {
+        list-style: none; margin-top: 20px;
+        display: flex; flex-direction: column; gap: 14px;
+        font-family: var(--text);
+        font-size: 15px;
+      }
+      .now-list li {
+        display: grid; grid-template-columns: 100px 1fr; gap: 16px;
+        padding-bottom: 14px; border-bottom: 1px dashed var(--hair-strong);
+        line-height: 1.55;
+      }
+      .now-list li:last-child { border-bottom: none; padding-bottom: 0; }
+      .now-list .when {
+        font-family: var(--mono);
+        font-size: 11px; color: var(--ink-3); text-transform: uppercase;
+        letter-spacing: 0.06em; padding-top: 3px;
+      }
+      .contact-actions {
+        display: flex; flex-direction: column; gap: 10px; margin-top: 20px;
+      }
+      .contact-actions a {
+        display: flex; justify-content: space-between; align-items: center;
+        padding: 12px 14px;
+        border: 1px solid var(--rule);
+        border-radius: 4px;
+        text-decoration: none;
+        font-family: var(--mono);
+        font-size: 12px; letter-spacing: 0.04em; text-transform: uppercase;
+        transition: border-color 120ms, color 120ms, background 120ms;
+      }
+      .contact-actions a:hover {
+        background: var(--accent); color: var(--accent-ink); border-color: var(--accent);
+      }
+
+      /* awards strip */
+      .awards {
+        margin-top: 24px;
+        display: grid; grid-template-columns: repeat(3, 1fr); gap: 16px;
+      }
+      .award {
+        padding: 22px 24px;
+        border: 1px solid var(--rule);
+        border-radius: 6px;
+        background: var(--paper);
+      }
+      .award__k {
+        font-family: var(--mono);
+        font-size: 10px; letter-spacing: 0.14em; text-transform: uppercase;
+        color: var(--accent); font-weight: 700;
+      }
+      .award__t {
+        font-family: var(--serif); font-weight: 400;
+        font-size: 24px; line-height: 1.1; margin-top: 8px; letter-spacing: -0.005em;
+      }
+      .award__s {
+        font-family: var(--text);
+        font-size: 13px; color: var(--ink-3); margin-top: 8px; line-height: 1.5;
+      }
+
+      @media (max-width: 880px) {
+        .hero__display { font-size: 56px; }
+        .stat-strip { grid-template-columns: repeat(2, 1fr); }
+        .principles { grid-template-columns: 1fr; }
+        .blocks { grid-template-columns: 1fr; }
+        .index-row { grid-template-columns: 1fr; gap: 6px; padding: 18px; }
+        .ix-arrow { display: none; }
+        .cv { grid-template-columns: 1fr; }
+        .cv__head { border-right: none; border-bottom: 1px solid var(--hair); }
+        .cv-row { grid-template-columns: 1fr; gap: 4px; }
+        .awards { grid-template-columns: 1fr; }
+      }
+        </style>
+  </head>
+  <body data-page="home" data-screen-label="01 Home">
+    <header class="topbar">
+      <div class="wrap-wide topbar__inner">
+        <div class="topbar__crumb topbar__crumb--strong" data-shell-logo>
+          <span style="font-family:var(--serif);font-size:18px;line-height:1;letter-spacing:-0.02em;">A.M.</span>
+          <span style="font-size:10px;letter-spacing:0.14em;opacity:0.7;">/ MELIAN · LIMA</span>
+        </div>
+        <div class="topbar__crumb" aria-label="Current file">
+          <span class="dim">~/portfolio/</span><span class="bold">index.html</span>
+        </div>
+        <div class="topbar__crumb" style="border-right:none;">
+          <span class="proglet">
+            <span class="proglet__ring js-progress-ring"></span>
+            <span><span class="js-progress-pct">0%</span> explored · <span class="js-ach-count">0/8</span></span>
+          </span>
+        </div>
+        <nav class="topbar__nav"><button class="js-top-contact" onclick="location.href='mailto:alejandro.melian.r@gmail.com'">Contact me</button>
+          <button onclick="Portfolio.openCmdk()">⌘K Search<span class="kbd" style="margin-left:8px;">⌘K</span></button>
+          <button class="js-mode-toggle" aria-pressed="false">Mode: <span class="js-mode-label" style="margin-left:4px;">DEEP</span></button>
+          <a href="#contact">Contact</a>
+        </nav>
+      </div>
+    </header>
+
+    <!-- HERO -->
+    <section class="wrap" id="hero" data-section="hero">
+      <div class="hero">
+        <div class="hero__meta-row">
+          <span class="tag tag--solid">EST. 2020 · 5+ YRS</span>
+          <span class="muted small" style="text-align:center;">[ OPEN TO SENIOR PRODUCT DESIGN ROLES ] · LIMA, PE · REMOTE-FRIENDLY · EN / ES</span>
+          <span class="tag tag--accent">↳ NOW: EDENIC ERA</span>
+        </div>
+        <h1 class="hero__display">
+          I design <em style="font-family: Helvetica">systems</em><br />that keep<br />people<em style="font-family: Helvetica"> coming back.</em>
+        </h1>
+        <p class="hero__sub">Alejandro Melian. Senior Product Designer working at the intersection of product and  design — five years across EdTech, entertainment, and B2C mobile. Trained as an industrial designer (SCAD), Masters of interactive media at U-tad Madrid. I focus on human centered design, informed and backed by data. </p>
+        <div class="hero__cta">
+          <a href="#index-table" class="btn btn--solid">↓ See the work</a>
+          <button class="btn" onclick="Portfolio.openCmdk()">⌘K · jump anywhere</button>
+          <a href="mailto:alejandro.melian.r@gmail.com" class="btn">alejandro.melian.r@gmail.com</a>
+        </div>
+
+        <div class="stat-strip" role="group" aria-label="At a glance">
+          <div class="stat">
+            <div class="stat__k">/ track record</div>
+            <div class="stat__v">26%</div>
+            <div class="stat__caption">D30 retention shipped at Innova Schools (mobile EdTech)</div>
+          </div>
+          <div class="stat">
+            <div class="stat__k">/ users touched</div>
+            <div class="stat__v">10k+</div>
+            <div class="stat__caption">monthly learners on the Innova mobile product</div>
+          </div>
+          <div class="stat">
+            <div class="stat__k">/ scope</div>
+            <div class="stat__v">6</div>
+            <div class="stat__caption">products shipped across EdTech, entertainment, B2B</div>
+          </div>
+          <div class="stat">
+            <div class="stat__k">/ teams led</div>
+            <div class="stat__v">16</div>
+            <div class="stat__caption">largest cross-functional team, as Lead at Blinkshot</div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- PRINCIPLES -->
+    <section class="wrap" id="principles" data-section="principles">
+      <div class="eyebrow"># 01 — operating principles</div>
+      <h2 class="h1" style="margin-top:8px;">How I think about <em style="font-style: italic; color: var(--accent); font-family: Helvetica">making people stay.</em></h2>
+
+      <div class="principles">
+        <article class="principle">
+          <div class="principle__n">01 / RETENTION</div>
+          <div class="principle__h">Retention is a system, <em>never</em> a feature.</div>
+          <div class="principle__p">
+            Sticky products earn each return with overlapping loops — habit cues, perceived
+            progress, social texture, content velocity. I map the loops before drawing pixels.
+            Game designers have been doing this for decades; product hasn't caught up.
+          </div>
+          <div class="expand">
+            <button class="expand__head" data-expand>
+              <span class="expand__caret">+</span><span>The two-loop heuristic I keep coming back to</span>
+            </button>
+            <div class="expand__body" data-reveal="false">
+              <p>Step 1: <span class="bold">flatten the funnel into a loop.</span> What event has to repeat?
+                What triggers it? What blocks it from repeating?</p>
+              <p>Step 2: <span class="bold">measure the gap between trigger and reward.</span>
+                Shorter is better, but <em>predictable</em> is the actual metric.</p>
+              <p>Step 3: <span class="bold">layer a second loop</span> — usually social, content, or status —
+                to catch users who fall out of the first.</p>
+            </div>
+          </div>
+        </article>
+
+        <article class="principle">
+          <div class="principle__n">02 / INFORMATION</div>
+          <div class="principle__h">Make finding feel like <em>remembering.</em></div>
+          <div class="principle__p">
+            Navigation should match how someone thinks about their own work. Good IA lets users
+            shortcut their own future selves. I design the search before I design the screens.
+            This site uses the principle on itself — try ⌘K.
+          </div>
+          <div class="expand">
+            <button class="expand__head" data-expand>
+              <span class="expand__caret">+</span><span>The skim / deep principle</span>
+            </button>
+            <div class="expand__body" data-reveal="false">
+              <p>Every dense product has at least two readers: the scanner (who arrived with a question)
+                and the explorer (who arrived with time). Same screen, different jobs.</p>
+              <p>I design two reading layers from the start — a TL;DR for the scanner, progressive
+                disclosure for the explorer. <span class="muted">(Toggle DEEP/SKIM in the top bar.)</span></p>
+            </div>
+          </div>
+        </article>
+
+        <article class="principle">
+          <div class="principle__n">03 / SYSTEMS</div>
+          <div class="principle__h">Components compound; <em>screens decay.</em></div>
+          <div class="principle__p">
+            I lead with patterns and pull tokens behind. A clean component library is worth more
+            than a beautiful screen — particularly in the kind of fast-iteration startup environments
+            I've spent the last five years in.
+          </div>
+        </article>
+
+        <article class="principle">
+          <div class="principle__n">04 / METHOD</div>
+          <div class="principle__h">Prototype first. <em>Then</em> argue.</div>
+          <div class="principle__p">
+            A working prototype kills a hundred Slack threads. I push teams toward clickable
+            artifacts inside the first week — even if it embarrasses everyone, including me.
+            Mostly because of my time in game design, where you have to <em>feel</em> a system to know
+            if it works.
+          </div>
+        </article>
+      </div>
+    </section>
+
+    <!-- PROJECT INDEX -->
+    <section class="wrap" id="index-table" data-section="index-table">
+      <div class="index-head">
+        <div>
+          <div class="eyebrow"># 02 — selected work</div>
+          <h2 class="h1" style="margin-top:8px;">The <em style="font-style:italic;color:var(--accent);">index.</em></h2>
+          <div class="sort-row mt-8">
+            <span>SORT</span>
+            <select id="sort-select" aria-label="Sort projects">
+              <option value="default">DEFAULT (RECENT)</option>
+              <option value="impact">BY IMPACT</option>
+              <option value="alpha">A → Z</option>
+            </select>
+            <span class="dim">·</span>
+            <span><span id="result-count">3</span> RESULTS</span>
+          </div>
+        </div>
+        <div class="filters" id="filters" role="toolbar" aria-label="Filter by tag">
+          <button class="filter-btn" data-tag="all" aria-pressed="true">ALL</button>
+          <button class="filter-btn" data-tag="retention" aria-pressed="false">RETENTION</button>
+          <button class="filter-btn" data-tag="edtech" aria-pressed="false">EDTECH</button>
+          <button class="filter-btn" data-tag="entertainment" aria-pressed="false">ENTERTAINMENT</button>
+          <button class="filter-btn" data-tag="mobile" aria-pressed="false">MOBILE</button>
+          <button class="filter-btn" data-tag="b2c" aria-pressed="false">B2C</button>
+          <button class="filter-btn" data-tag="systems" aria-pressed="false">SYSTEMS</button>
+        </div>
+      </div>
+
+      <div class="index-table" id="project-table"></div>
+
+      <div class="muted small mt-16">
+        ▓ Press <span class="kbd">⌘</span><span class="kbd">K</span> to jump anywhere · Hover a row to preview ·
+        <span class="accent">Visited rows get a small mark</span> so you can pick up where you left off.
+      </div>
+    </section>
+
+    <!-- EXPERIENCE CV STRIP -->
+    <section class="wrap" id="cv" data-section="cv">
+      <div class="eyebrow" style="margin-top:96px;"># 03 — track record</div>
+      <h2 class="h1" style="margin-top:8px;margin-bottom:24px;">Six places, <em style="font-style: italic; color: var(--accent); font-family: Helvetica">one journey.</em></h2>
+      <div class="cv">
+        <div class="cv__head">
+          <div class="cv__title">Five years of <em>shipping</em>.</div>
+          <p class="cv__sub mono">EdTech · entertainment · B2C mobile · multiplayer game systems · educational platforms · all roles cross-functional, all teams 8–16 people.</p>
+          <div class="mt-16 small">
+            <div class="bold mono" style="font-size:10px;letter-spacing:0.14em;color:var(--ink-3);">EDUCATION</div>
+            <div class="mt-8" style="font-size:12px;line-height:1.5;">
+              <span class="bold">MSc · Digital Interactive Media Design</span><br />
+              <span class="muted">U-tad — Centro Universitario · Madrid</span>
+            </div>
+            <div class="mt-8" style="font-size:12px;line-height:1.5;">
+              <span class="bold">BFA · Industrial & Product Design</span><br />
+              <span class="muted">SCAD · Savannah College of Art and Design</span>
+            </div>
+          </div>
+        </div>
+        <div class="cv__body">
+          <div class="cv-row">
+            <span class="when">2024 — NOW</span>
+            <span class="role-co">Gameplay & Systems Designer<br /><em>Edenic Era</em></span>
+            <ul class="cv-bullets">
+              <li style="width: 285px">Spearheaded human-centered design of the core product, tailoring gameplay mechanics and interactive experiences to the target user demographic.</li>
+              <li>Engineered and balanced scalable game systems, optimizing workflows to significantly reduce development cycles and improve cross-functional efficiency.</li>
+              <li>Conducted comprehensive product-market fit research to guide development priorities and roadmapping.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--ghost">GAME SYSTEMS</span></span>
+          </div>
+          <div class="cv-row">
+            <span class="when">2024 — 2025</span>
+            <span class="role-co">Product Designer / PM<br /><em>Lyly Interactive</em></span>
+            <ul class="cv-bullets">
+              <li>Led product design strategy and execution for a B2C mobile application (iOS / Android) inside a 3-product ecosystem.</li>
+              <li>Managed a cross-functional team of 8 through iterative Agile sprints, aligning design with technical constraints.</li>
+              <li>Defined the product roadmap with a strict focus on human-centered design — translating user needs into clear specs.</li>
+              <li>Prioritized user engagement and retention features, balancing rapid MVP launches with quality UX.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--ghost">B2C MOBILE</span></span>
+          </div>
+          <div class="cv-row">
+            <span class="when">2024</span>
+            <span class="role-co">Product Designer / PM<br /><em>TrainingIT</em></span>
+            <ul class="cv-bullets">
+              <li>Drove end-to-end discovery and design for a new digital product line targeted at IT professionals.</li>
+              <li>Conducted market &amp; competitive research to inform positioning and user-centric feature prioritization.</li>
+              <li>Owned requirements gathering, MVP scoping, and go-to-market execution — intuitive onboarding, successful product adoption.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--ghost">B2B · DISCOVERY</span></span>
+          </div>
+          <div class="cv-row">
+            <span class="when">2023 — 2024</span>
+            <span class="role-co">Associate Producer / Design Ops<br /><em>Divertifica</em></span>
+            <ul class="cv-bullets">
+              <li>Supported design and product development for a B2B educational platform with an 8-person cross-functional team (Scrum).</li>
+              <li>Maintained detailed product and design documentation, bridging technical teams and business stakeholders.</li>
+              <li>Ensured iterative platform updates consistently reflected user needs and design quality standards.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--ghost">EDTECH · B2B</span></span>
+          </div>
+          <div class="cv-row">
+            <span class="when">2021 — 2022</span>
+            <span class="role-co">Lead Game Designer / PM<br /><em>Blinkshot</em></span>
+            <ul class="cv-bullets">
+              <li>Managed the product roadmap, UX scoping, and sprint execution for a multiplayer entertainment platform with a 16-person team.</li>
+              <li>Drove cross-department alignment on product priorities and represented the product vision at industry events.</li>
+              <li>Defined the interaction design and UX framework for core multiplayer systems — from onboarding to session flow.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--ghost">ENTERTAINMENT</span></span>
+          </div>
+          <div class="cv-row">
+            <span class="when">2020 — 2021</span>
+            <span class="role-co">Product Designer<br /><em>Innova Schools</em></span>
+            <ul class="cv-bullets">
+              <li>Designed and launched a mobile education product achieving <span class="bold">26% 30-day retention</span> across <span class="bold">10,000+ users</span>.</li>
+              <li>Conducted user research to develop forward-facing user packages, onboarding flows, and marketing materials.</li>
+              <li>Analyzed Google Analytics metrics to drive data-informed design iterations and feature-set optimization.</li>
+            </ul>
+            <span class="tag-cell"><span class="tag tag--accent">EDTECH · SHIPPED</span></span>
+          </div>
+        </div>
+      </div>
+
+      <!-- AWARDS -->
+      <div class="awards" aria-label="Awards & recognition">
+        <div class="award">
+          <div class="award__k">★ 1ST PLACE</div>
+          <div class="award__t">DAFO & Pro Innovate</div>
+          <div class="award__s">Startup incubation, EdTech category</div>
+        </div>
+        <div class="award">
+          <div class="award__k">★ 1ST PLACE</div>
+          <div class="award__t">BIG</div>
+          <div class="award__s">Recognition for entertainment product work</div>
+        </div>
+        <div class="award">
+          <div class="award__k">/ TOOLBOX</div>
+          <div class="award__t">Figma · Unity · Aseprite</div>
+          <div class="award__s">+ Notion · Jira · GA · Scrum/Kanban</div>
+        </div>
+      </div>
+    </section>
+
+    <!-- NOW / CONTACT -->
+    <section class="wrap" id="now" data-section="now">
+      <div class="blocks">
+        <div class="block">
+          <div class="block__k">// now — may 2026, lima</div>
+          <h3>Designing <em style="font-family:inherit;color:var(--accent);">systems</em> at Edenic Era. Open to senior product roles.</h3>
+          <ul class="now-list">
+            <li>
+              <span class="when">DAILY</span>
+              <span><span class="bold">Gameplay & systems designer, Edenic Era.</span> Balancing the core loop,
+              tailoring mechanics to the target demographic, and reducing dev-cycle time through
+              modular system design.</span>
+            </li>
+            <li>
+              <span class="when">WEEKLY</span>
+              <span><span class="bold">Reading & writing about retention loops.</span> A long-form essay called
+              "Two-Loop Products" is in the works — the thesis behind every project below.</span>
+            </li>
+            <li>
+              <span class="when">Q3 — 2026</span>
+              <span><span class="bold">Open to a senior product design role.</span> EdTech, fintech, B2C mobile,
+              or anything game-adjacent. Remote, hybrid, or relocation considered. <a href="mailto:alejandro.melian.r@gmail.com" class="bold">→ let's talk.</a></span>
+            </li>
+            <li>
+              <span class="when">ALWAYS</span>
+              <span><span class="bold">Bilingual EN / ES.</span> Comfortable leading research and product work in both;
+              latam ↔ europe ↔ us time zones manageable.</span>
+            </li>
+          </ul>
+        </div>
+        <div class="block" id="contact" data-section="contact">
+          <div class="block__k">// contact</div>
+          <h3>Let's talk.</h3>
+          <p>If the work feels close to a problem you're stuck on — onboarding that doesn't
+            convert, retention that doesn't compound, an IA that's grown weeds — I'd like to
+            hear about it.</p>
+          <div class="contact-actions">
+            <a href="mailto:alejandro.melian.r@gmail.com">
+              <span>EMAIL</span><span class="muted">alejandro.melian.r@gmail.com ↗</span>
+            </a>
+            <a href="#" id="copy-email" onclick="event.preventDefault();navigator.clipboard?.writeText('alejandro.melian.r@gmail.com');this.querySelector('span:last-child').textContent='COPIED ✓';setTimeout(()=>this.querySelector('span:last-child').textContent='Tap to copy',1400);">
+              <span>COPY ADDRESS</span><span class="muted">Tap to copy</span>
+            </a>
+            <a href="https://linkedin.com/in/a-melian" target="_blank" rel="noopener">
+              <span>LINKEDIN</span><span class="muted">in/a-melian ↗</span>
+            </a>
+            <a href="tel:+34672809223">
+              <span>PHONE</span><span class="muted">+34 672 809 223 ↗</span>
+            </a>
+          </div>
+          <div class="muted tiny mt-16">
+            Lima, Peru · GMT-5 · response time ~24h. I read everything; I reply to almost everything.
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <footer class="footer">
+      <div class="wrap">
+        <div>
+          <h4>// portfolio</h4>
+          <ul>
+            <li><a href="index.html">Index</a></li>
+            <li><a href="case-innova.html">Innova Schools</a></li>
+            <li><a href="case-lyly.html">Lyly Interactive</a></li>
+            <li><a href="case-edenic.html">Edenic Era</a></li>
+          </ul>
+        </div>
+        <div>
+          <h4>// elsewhere</h4>
+          <ul>
+            <li><a href="https://linkedin.com/in/a-melian">LinkedIn</a></li>
+            <li><a href="mailto:alejandro.melian.r@gmail.com">Email</a></li>
+            <li>Behance · soon</li>
+            <li>Read.cv · soon</li>
+          </ul>
+        </div>
+        <div>
+          <h4>// colophon</h4>
+          <ul>
+            <li>Hand-built, 2026</li>
+            <li>JetBrains Mono · Instrument Serif</li>
+            <li>One accent: <span class="accent">●</span> burnt orange</li>
+            <li>No analytics. No cookies.</li>
+          </ul>
+        </div>
+        <div>
+          <h4>// secrets</h4>
+          <ul>
+            <li class="muted">8 achievements hidden in here.</li>
+            <li class="muted">⌘K reveals most of them.</li>
+            <li class="muted">↑↑↓↓←→←→ B A reveals one. (game-dev habit.)</li>
+            <li><button onclick="Portfolio.openCmdk()" class="bold accent" style="padding:0;">› Open the palette</button></li>
+          </ul>
+        </div>
+      </div>
+      <div class="wrap" style="display:flex;justify-content:space-between;margin-top:32px;border-top:1px dashed var(--hair-strong);padding-top:16px;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">
+        <span>© 2020–2026 ALEJANDRO MELIAN</span>
+        <span>LIMA · 12.0464°S 77.0428°W · GMT−5</span>
+        <span>v4.0 · resume v.2026-05</span>
+      </div>
+    </footer>
+
+    <script>
+      const PROJECTS = [
+        {
+          id: "edenic",
+          n: "01",
+          title: "Core game systems",
+          company: "AT EDENIC ERA",
+          subtitle: "Designing the gameplay loop, economy, and retention triggers for a new entertainment title.",
+          year: "2024 — NOW",
+          status: "LIVE",
+          impact: "IN-PROGRESS",
+          tags: ["retention", "entertainment", "systems"],
+          href: "case-edenic.html",
+        },
+        {
+          id: "lyly",
+          n: "02",
+          title: "B2C app in a 3-product ecosystem",
+          company: "AT LYLY INTERACTIVE",
+          subtitle: "Leading design for a B2C mobile app inside a three-app studio. Team of 8, MVP after MVP.",
+          year: "2024 — 2025",
+          status: "SHIPPED",
+          impact: "MVP",
+          tags: ["b2c", "mobile", "systems"],
+          href: "case-lyly.html",
+        },
+        {
+          id: "innova",
+          n: "03",
+          title: "Mobile EdTech companion",
+          company: "AT INNOVA SCHOOLS",
+          subtitle: "Mobile learning for a LATAM K-12 network. 10,000+ learners, 26% D30 retention.",
+          year: "2020 — 2021",
+          status: "SHIPPED",
+          impact: "26% D30",
+          tags: ["retention", "edtech", "mobile"],
+          href: "case-innova.html",
+        },
+      ];
+
+      let activeTag = "all";
+      let activeSort = "default";
+
+      function getVisited() {
+        try {
+          const raw = localStorage.getItem("am.portfolio.v1");
+          if (!raw) return {};
+          return JSON.parse(raw).visits || {};
+        } catch { return {}; }
+      }
+
+      function renderProjects() {
+        const visited = getVisited();
+        let list = PROJECTS.filter((p) => activeTag === "all" || p.tags.includes(activeTag));
+        if (activeSort === "impact") {
+          // sort by visited first as proxy; "in-progress" last
+          list = [...list].sort((a, b) => {
+            const av = a.impact === "IN-PROGRESS" ? 0 : parseInt(a.impact) || 1;
+            const bv = b.impact === "IN-PROGRESS" ? 0 : parseInt(b.impact) || 1;
+            return bv - av;
+          });
+        } else if (activeSort === "alpha") {
+          list = [...list].sort((a, b) => a.title.localeCompare(b.title));
+        }
+        const root = document.getElementById("project-table");
+        root.innerHTML = "";
+        if (list.length === 0) {
+          root.innerHTML = `<div style="padding:48px;text-align:center;color:var(--ink-3);font-size:12px;">// no matches for that tag — clear filters</div>`;
+        }
+        list.forEach((p) => {
+          const a = document.createElement("a");
+          a.className = "index-row";
+          a.href = p.href;
+          a.dataset.id = p.id;
+          a.innerHTML = `
+            <div class="ix-n">§ ${p.n}</div>
+            <div>
+              <div class="ix-title">${visited[p.id] ? '<span class="visited-pill" title="Visited"></span>' : ''}${p.title}</div>
+              <div class="ix-subtitle"><span class="accent bold" style="letter-spacing:0.08em;">${p.company}</span> · ${p.subtitle}</div>
+            </div>
+            <div class="ix-meta">${p.tags.map(t => `<span class="tag tag--ghost">${t.toUpperCase()}</span>`).join("")}</div>
+            <div class="ix-year">${p.year}</div>
+            <div class="ix-status accent">${p.impact}</div>
+            <div class="ix-arrow">→</div>
+          `;
+          root.appendChild(a);
+        });
+        document.getElementById("result-count").textContent = list.length;
+      }
+
+      document.querySelectorAll(".filter-btn").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          activeTag = btn.dataset.tag;
+          document.querySelectorAll(".filter-btn").forEach((b) => {
+            b.setAttribute("aria-pressed", b.dataset.tag === activeTag ? "true" : "false");
+          });
+          renderProjects();
+        });
+      });
+      document.getElementById("sort-select").addEventListener("change", (e) => {
+        activeSort = e.target.value;
+        renderProjects();
+      });
+
+      document.querySelectorAll("[data-expand]").forEach((btn) => {
+        btn.addEventListener("click", () => {
+          const body = btn.parentElement.querySelector(".expand__body");
+          const caret = btn.querySelector(".expand__caret");
+          const open = body.dataset.reveal === "true";
+          body.dataset.reveal = open ? "false" : "true";
+          caret.textContent = open ? "+" : "−";
+        });
+      });
+
+      renderProjects();
+    </script>
+
+    <script src="portfolio-shell.js"></script>
+  </body>
+</html>

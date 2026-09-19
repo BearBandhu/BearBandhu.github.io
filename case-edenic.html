@@ -1,0 +1,398 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Edenic Era — game systems for retention · Alejandro Melian</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+  </head>
+  <body data-page="edenic" data-screen-label="04 Case · Edenic Era" data-reading-target="article">
+    <header class="topbar">
+      <div class="wrap-wide topbar__inner">
+        <a href="index.html" class="topbar__crumb topbar__crumb--strong" data-shell-logo style="text-decoration:none;">
+          <span style="font-family:var(--serif);font-size:18px;line-height:1;letter-spacing:-0.02em;">A.M.</span>
+          <span style="font-size:10px;letter-spacing:0.14em;opacity:0.7;">/ MELIAN · LIMA</span>
+        </a>
+        <div class="topbar__crumb"><span class="dim">~/work/</span><span class="bold">01-edenic.md</span></div>
+        <div class="topbar__crumb" style="border-right:none;">
+          <span class="proglet">
+            <span class="proglet__ring js-progress-ring"></span>
+            <span><span class="js-progress-pct">0%</span> explored · <span data-reading-time>— min read</span></span>
+          </span>
+        </div>
+        <nav class="topbar__nav"><button class="js-top-contact" onclick="location.href='mailto:alejandro.melian.r@gmail.com'">Contact me</button>
+          <button onclick="Portfolio.openCmdk()">⌘K Search</button>
+          <button class="js-mode-toggle" aria-pressed="false">Mode: <span class="js-mode-label" style="margin-left:4px;">DEEP</span></button>
+          <a href="index.html">← Index</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap" id="article" data-reading-target>
+      <div id="resume-slot" class="mt-16"></div>
+
+      <section class="case-hero" id="hero">
+                <div class="eyebrow">CASE STUDY · §01 / 03 · CURRENT ROLE</div>
+        <h1 class="case-title mt-8">
+          Engineering a game's core loop — so the <em>second session</em> earns itself.
+        </h1>
+        <p class="case-deck">
+          <span class="bold">Edenic Era is the game studio I currently work at as Gameplay &amp; Systems Designer.</span>
+          My job is the shape of the core loop, the balance of the economy, and the moments
+          that make a player choose to come back tomorrow. This is the most explicit retention
+          work I've ever done — in games, you have to <em>earn</em> every return or the product
+          evaporates. The case study below is an NDA-light sketch of how I think about the work.
+        </p>
+
+        <div class="case-meta">
+          <div><span class="case-meta__k">COMPANY</span><br /><span class="case-meta__v">EDENIC ERA · GAME STUDIO</span></div>
+          <div><span class="case-meta__k">ROLE</span><br /><span class="case-meta__v">GAMEPLAY &amp; SYSTEMS DESIGNER</span></div>
+          <div><span class="case-meta__k">YEARS</span><br /><span class="case-meta__v">2024 — NOW</span></div>
+          <div><span class="case-meta__k">SCOPE</span><br /><span class="case-meta__v">CORE LOOP · ECONOMY · BALANCE</span></div>
+          <div></div>
+          <span class="tag tag--accent">CURRENT ROLE</span>
+        </div>
+
+        <div class="tldr" id="tldr" data-section="tldr">
+          <div class="tldr__rail">
+            <span>// TL;DR</span>
+            <span class="big">2nd<em>×</em></span>
+            <span>the session that decides retention</span>
+          </div>
+          <div class="tldr__body">
+            <ul class="tldr__list">
+              <li><span><b>The job</b>Design the gameplay systems and economy so that the player <em>wants</em> session #2 to exist.</span></li>
+              <li><span><b>The bet</b>The second session is everything. If session #2 happens, session #30 is statistically inevitable.</span></li>
+              <li><span><b>The work</b>Core loop spec, economy balancing tables, fail-state redesign, daily-shape system.</span></li>
+              <li><span><b>The outcome</b>Ongoing — but every product designer should read this case to understand how game designers think about retention.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="case-grid">
+        <aside class="toc">
+          <div class="toc__head">// on this page</div>
+          <ul>
+            <li><a href="#problem">§ Problem</a></li>
+            <li><a href="#research">§ Research</a></li>
+            <li><a href="#system">§ The system</a></li>
+            <li><a href="#outcome">§ Outcome</a></li>
+            <li><a href="#next">§ What's next</a></li>
+          </ul>
+          <div class="toc__foot">
+            <span>EST. <span data-reading-time>—</span></span>
+            <span>↑ TRY ⌘K · IT'S META</span>
+            <span class="muted">→ NDA-LIGHT VERSION</span>
+          </div>
+        </aside>
+
+        <article class="article">
+          <section id="problem" data-section="problem">
+            <div class="section-eyebrow">§ 01 — PROBLEM</div>
+            <h2>In games, retention is the <em>only</em> metric that matters.</h2>
+            <p>
+              Product designers tend to think of retention as one metric among many. Game
+              designers know it's <em>the</em> metric — because if no one plays your game on day
+              two, no other metric exists. This honesty about what matters is, in my opinion,
+              what makes game designers the world's best retention designers. Every part of
+              the craft is tuned to "did the player come back?" — and the question is asked
+              ruthlessly, daily, in playtests.
+            </p>
+            <p>
+              At Edenic Era, my job is to design the gameplay systems so that the answer is
+              yes. Not the cinematics. Not the art. The <span class="bold">systems</span> — the loop, the economy,
+              the failure-recovery — the load-bearing structure that determines whether a
+              player wakes up the next day thinking about us.
+            </p>
+
+            <div class="ba">
+              <div class="ba__col">
+                <div class="eyebrow">GAME DESIGN ANSWER</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  The second session is the most important session in the game. Everything is
+                  designed around it: the first session ends on an unresolved-but-not-frustrating
+                  beat, the offline state creates pull, the return rewards the right action.
+                </p>
+              </div>
+              <div class="ba__col">
+                <div class="eyebrow">PRODUCT DESIGN PARALLEL</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  Most products optimize the first session (onboarding) and the long-tail
+                  (engagement). They under-design the second session. <span class="bold">The second session is
+                  where retention is decided.</span> The same is true in product. Steal this.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="research" data-section="research">
+            <div class="section-eyebrow">§ 02 — RESEARCH / METHOD</div>
+            <h2>Playtests, balance tables, and a <em>brutally honest</em> spreadsheet.</h2>
+            <p>
+              The game designer's research toolkit is mostly two things: <span class="bold">playtests</span> and
+              <span class="bold">balance spreadsheets</span>. We run small playtests early and often — 4 to 6 players,
+              one hour, observed in person where possible. The questions are simple. <em>Did they
+              come back?</em> <em>What did they remember?</em> <em>Where did they get bored?</em>
+            </p>
+            <p>
+              The balance spreadsheet does the math the playtests can't. We model the economy
+              — every resource, every cost, every gain — across 60 simulated player sessions
+              and look for the moments where the curves go wrong. <span class="bold">A bored player is almost
+              always a player on the wrong side of a balance curve.</span>
+            </p>
+
+            <div class="artifact" aria-label="Core loop diagram">
+              <div class="artifact__head">
+                <span>FIG. 1 · core loop · with retention triggers</span>
+                <span class="muted">v8 · annotated</span>
+              </div>
+              <div class="artifact__body">
+                <svg viewBox="0 0 720 280" width="100%" xmlns="http://www.w3.org/2000/svg" style="display: block; width: 718px">
+                  <defs>
+                    <marker id="ar3" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                      <path d="M0,0 L10,5 L0,10 z" fill="oklch(0.62 0.22 30)"/>
+                    </marker>
+                  </defs>
+                  <g font-family="JetBrains Mono" font-size="11" fill="#0e0e0c">
+                    <!-- core 4-node loop -->
+                    <circle cx="360" cy="140" r="100" fill="none" stroke="oklch(0.62 0.22 30)" stroke-dasharray="3 3"/>
+
+                    <rect x="320" y="20" width="80" height="50" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="360" y="40" text-anchor="middle" font-weight="700">EXPLORE</text>
+                    <text x="360" y="58" text-anchor="middle" font-size="9" fill="#6b6960">curiosity</text>
+
+                    <rect x="490" y="115" width="80" height="50" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="530" y="135" text-anchor="middle" font-weight="700">CHALLENGE</text>
+                    <text x="530" y="153" text-anchor="middle" font-size="9" fill="#6b6960">skill expression</text>
+
+                    <rect x="320" y="220" width="80" height="50" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="360" y="240" text-anchor="middle" font-weight="700">REWARD</text>
+                    <text x="360" y="258" text-anchor="middle" font-size="9" fill="#6b6960">visible · earned</text>
+
+                    <rect x="150" y="115" width="80" height="50" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="190" y="135" text-anchor="middle" font-weight="700">UPGRADE</text>
+                    <text x="190" y="153" text-anchor="middle" font-size="9" fill="#6b6960">power growth</text>
+
+                    <!-- inner arrows -->
+                    <path d="M400 50 Q 490 70 510 115" fill="none" stroke="oklch(0.62 0.22 30)" marker-end="url(#ar3)"/>
+                    <path d="M510 165 Q 480 220 400 240" fill="none" stroke="oklch(0.62 0.22 30)" marker-end="url(#ar3)"/>
+                    <path d="M320 240 Q 240 220 210 165" fill="none" stroke="oklch(0.62 0.22 30)" marker-end="url(#ar3)"/>
+                    <path d="M210 115 Q 240 70 320 50" fill="none" stroke="oklch(0.62 0.22 30)" marker-end="url(#ar3)"/>
+
+                    <!-- retention triggers labels around the ring -->
+                    <text x="360" y="100" text-anchor="middle" font-size="9" fill="#6b6960" font-style="italic">"there's more to see"</text>
+                    <text x="430" y="195" text-anchor="middle" font-size="9" fill="#6b6960" font-style="italic">"I earned this"</text>
+                    <text x="290" y="195" text-anchor="middle" font-size="9" fill="#6b6960" font-style="italic">"I'm stronger now"</text>
+                    <text x="290" y="100" text-anchor="middle" font-size="9" fill="#6b6960" font-style="italic">"new mystery"</text>
+
+                    <!-- end-of-session hook -->
+                    <rect x="600" y="20" width="100" height="50" fill="#0e0e0c" stroke="#0e0e0c"/>
+                    <text x="650" y="40" text-anchor="middle" font-weight="700" fill="#f2eee5">SESSION END</text>
+                    <text x="650" y="58" text-anchor="middle" font-size="9" fill="#a8a497">on an "almost"</text>
+
+                    <rect x="600" y="220" width="100" height="50" fill="#0e0e0c" stroke="#0e0e0c"/>
+                    <text x="650" y="240" text-anchor="middle" font-weight="700" fill="#f2eee5">OFFLINE PULL</text>
+                    <text x="650" y="258" text-anchor="middle" font-size="9" fill="#a8a497">progress accrues</text>
+
+                    <path d="M570 140 L 600 70" stroke="#0e0e0c" stroke-dasharray="2 3" marker-end="url(#ar3)"/>
+                    <path d="M570 140 L 600 240" stroke="#0e0e0c" stroke-dasharray="2 3" marker-end="url(#ar3)"/>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="deep-only">
+              The labels on the loop are the heart of the work: each transition has a phrase the
+              player should silently be thinking. If a playtester doesn't say something close to
+              "I earned this" when finishing a challenge, the reward isn't reading. We adjust the
+              animation, the audio, the timing — small craft moves — until the phrase shows up
+              unprompted in feedback.
+              <a href="#fn1" data-footnote class="accent">†</a>
+            </p>
+
+            <div class="footnote deep-only" id="fn1">
+              <span class="footnote__mark">†</span>
+              <span>This is the technique most worth stealing from game design. <em>Every transition
+                in a product is a moment the user is silently narrating.</em> Design the narration,
+                not just the screen.</span>
+            </div>
+          </section>
+
+          <section id="system" data-section="system">
+            <div class="section-eyebrow">§ 03 — THE SYSTEM</div>
+            <h2>End every session on <em>"almost"</em>.</h2>
+            <p>
+              The single highest-leverage retention design move in the game is how the first
+              session <em>ends</em>. We end it on a hook — the player is 80% of the way to a
+              meaningful upgrade, not 100%. The cliffhanger is small, specific, and resolvable
+              in the first 3 minutes of session 2.
+            </p>
+
+            <h3>The daily-shape system</h3>
+            <p>
+              The other system I'm proudest of is what we call the <span class="bold">daily shape</span>. Every
+              calendar day, the game proposes a shape for the player's session — three short
+              activities, a longer one, and a "discovery" slot. The shapes vary day to day so
+              the game never feels like a checklist. The shape is suggestion, not demand —
+              players can ignore it without penalty.
+            </p>
+
+            <div class="artifact">
+              <div class="artifact__head">
+                <span>FIG. 2 · daily shape · monday → sunday</span>
+                <span class="muted">tunable per cohort</span>
+              </div>
+              <div class="artifact__body" style="padding:24px;">
+                <div style="display:grid;grid-template-columns:repeat(7,1fr);gap:8px;font-family:var(--mono);font-size:11px;">
+                  <div style="border:1px solid var(--ink);padding:10px;">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">MON</div>
+                    <div style="margin-top:6px;font-weight:700;">Onboarding-light</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">re-teach a system</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;background:var(--paper-2);">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">TUE</div>
+                    <div style="margin-top:6px;font-weight:700;">Challenge</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">harder of the week</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">WED</div>
+                    <div style="margin-top:6px;font-weight:700;">Discovery</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">new content slot</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;background:var(--paper-2);">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">THU</div>
+                    <div style="margin-top:6px;font-weight:700;">Mastery</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">re-do, faster</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;border-color:var(--accent);background:var(--accent);color:var(--accent-ink);">
+                    <div style="font-size:9px;letter-spacing:0.12em;opacity:0.8;text-transform:uppercase;">FRI</div>
+                    <div style="margin-top:6px;font-weight:700;">Reward</div>
+                    <div style="font-size:10px;opacity:0.85;margin-top:2px;">unlock + show off</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">SAT</div>
+                    <div style="margin-top:6px;font-weight:700;">Long session</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">deep play available</div>
+                  </div>
+                  <div style="border:1px solid var(--ink);padding:10px;background:var(--paper-2);">
+                    <div style="font-size:9px;letter-spacing:0.12em;color:var(--ink-3);text-transform:uppercase;">SUN</div>
+                    <div style="margin-top:6px;font-weight:700;">Forgive</div>
+                    <div style="font-size:10px;color:var(--ink-3);margin-top:2px;">streak holds free</div>
+                  </div>
+                </div>
+                <div class="mt-16 muted" style="font-size:11px;">
+                  ▒ Each day's shape is the <em>default</em> — players choose. The system suggests; it never demands.
+                </div>
+              </div>
+            </div>
+
+            <div class="expand deep-only">
+              <button class="expand__head" data-expand>
+                <span class="expand__caret">+</span><span>Why "forgive" matters more than "reward"</span>
+              </button>
+              <div class="expand__body" data-reveal="false">
+                <p>The standard mistake in retention design is to over-reward and under-forgive.
+                  Streak apps that punish missed days produce higher 7-day metrics and lower 30-day
+                  metrics, because the punishment is the moment the user uninstalls.</p>
+                <p>At Edenic Era we built forgiveness into the calendar from the start. Sunday is a
+                  free day. Streaks freeze on travel. Missed days roll into a "catch up" rather than
+                  a loss. <em>The game forgives, so the player stays.</em></p>
+              </div>
+            </div>
+
+            <h3>Balance is design</h3>
+            <p>
+              An economy that's too generous bores players. An economy that's too stingy
+              frustrates them. The space between is narrow, and the only way to find it is to
+              <em>model the math</em>. I maintain a 14-tab spreadsheet of every economy curve —
+              and yes, the spreadsheet is more of the work than the screens. <span class="bold">Most
+              products have an economy whether they admit it or not.</span> Time spent, attention
+              invested, social capital earned — these are resources flowing through a system.
+              Designing without modeling that system is hoping.
+            </p>
+
+            <blockquote>
+              "I didn't mean to play for two hours. The end of every session felt like the
+              start of the next one."
+              <cite>— Playtester · session 4</cite>
+            </blockquote>
+          </section>
+
+          <section id="outcome" data-section="outcome">
+            <div class="section-eyebrow">§ 04 — STATUS</div>
+            <h2>Ongoing — but the <em>lessons travel.</em></h2>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric__k">PLAYTEST D2 RETURN</div>
+                <div class="metric__v"><em>72%</em></div>
+                <div class="metric__caption">small N · directional · last 3 builds</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">SESSION END HOOK</div>
+                <div class="metric__v"><em>89%</em></div>
+                <div class="metric__caption">% of sessions ending on "almost"</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">ECONOMY MODEL</div>
+                <div class="metric__v"><em>14 tabs</em></div>
+                <div class="metric__caption">balance spreadsheet · 60-session sim</div>
+              </div>
+            </div>
+
+            <p>
+              Edenic Era is not done. What's done is the <em>thinking</em> I want to bring to my
+              next product role. Game designers have decades of hard-won retention craft. Most
+              product teams aren't using any of it. <span class="bold">I'd like to be the bridge.</span>
+            </p>
+
+            <h3>What I'm taking with me</h3>
+            <ul>
+              <li><span class="bold">The second session is the metric.</span> Design every onboarding to <em>end on a hook</em>, not a completion.</li>
+              <li><span class="bold">Model the economy.</span> Even non-game products have one. Build the spreadsheet.</li>
+              <li><span class="bold">Forgive more than you reward.</span> Punishment creates short-term metrics and long-term churn.</li>
+              <li><span class="bold">Design the player's internal narration.</span> Every transition should have a phrase the user is silently saying. Make sure it's the right one.</li>
+            </ul>
+          </section>
+
+          <section id="next" data-section="next">
+            <div class="section-eyebrow">§ 05 — WHAT'S NEXT</div>
+            <h2>I want to apply this <em>outside</em> games.</h2>
+            <p>
+              The reason this case study exists at the front of the portfolio is because the
+              role I'm looking for next is a senior product design role where I get to bring
+              the game-systems toolkit into a product context. EdTech, fintech, B2C mobile,
+              anything where retention is the real metric. If you're hiring for that — <a href="mailto:alejandro.melian.r@gmail.com" class="bold">let's
+              talk.</a>
+            </p>
+          </section>
+
+          <a class="next-card" href="case-lyly.html" data-next-link>
+            <div>
+              <div class="next-card__kicker">NEXT CASE · §02 / 03</div>
+              <div class="next-card__title" data-next-title>Lyly Interactive</div>
+            </div>
+            <div class="muted small" data-next-kicker>B2C ecosystem · 3 apps</div>
+            <div class="next-card__arrow">→</div>
+          </a>
+        </article>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap" style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">
+        <span>© 2020–2026 ALEJANDRO MELIAN</span>
+        <a href="index.html">← BACK TO INDEX</a>
+        <span>EDENIC ERA · 2024–NOW</span>
+      </div>
+    </footer>
+
+    <script src="portfolio-shell.js"></script>
+    <script src="case-study.js"></script>
+  </body>
+</html>

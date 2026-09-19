@@ -1,0 +1,375 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Lyly Interactive — B2C ecosystem · Alejandro Melian</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+  </head>
+  <body data-page="lyly" data-screen-label="03 Case · Lyly" data-reading-target="article">
+    <header class="topbar">
+      <div class="wrap-wide topbar__inner">
+        <a href="index.html" class="topbar__crumb topbar__crumb--strong" data-shell-logo style="text-decoration:none;">
+          <span style="font-family:var(--serif);font-size:18px;line-height:1;letter-spacing:-0.02em;">A.M.</span>
+          <span style="font-size:10px;letter-spacing:0.14em;opacity:0.7;">/ MELIAN · LIMA</span>
+        </a>
+        <div class="topbar__crumb"><span class="dim">~/work/</span><span class="bold">02-lyly.md</span></div>
+        <div class="topbar__crumb" style="border-right:none;">
+          <span class="proglet">
+            <span class="proglet__ring js-progress-ring"></span>
+            <span><span class="js-progress-pct">0%</span> explored · <span data-reading-time>— min read</span></span>
+          </span>
+        </div>
+        <nav class="topbar__nav"><button class="js-top-contact" onclick="location.href='mailto:alejandro.melian.r@gmail.com'">Contact me</button>
+          <button onclick="Portfolio.openCmdk()">⌘K Search</button>
+          <button class="js-mode-toggle" aria-pressed="false">Mode: <span class="js-mode-label" style="margin-left:4px;">DEEP</span></button>
+          <a href="index.html">← Index</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap" id="article" data-reading-target>
+      <div id="resume-slot" class="mt-16"></div>
+
+      <section class="case-hero" id="hero">
+        <div class="eyebrow">CASE STUDY · §02 / 03</div>
+        <h1 class="case-title mt-8">
+          Designing one B2C mobile app inside a <em>three-app ecosystem</em>, with one team of eight.
+        </h1>
+        <p class="case-deck">
+          Lyly Interactive is a B2C mobile studio with a three-product ecosystem aimed at
+          adjacent audiences. I led product design and helped run the program — eight people,
+          Agile sprints, a constant tension between shipping standalone MVPs and shipping
+          something that <em>compounded across the three apps</em>. I designed the shared
+          system that let us do both.
+        </p>
+
+        <div class="case-meta">
+          <div><span class="case-meta__k">COMPANY</span><br /><span class="case-meta__v">LYLY INTERACTIVE · B2C STUDIO</span></div>
+          <div><span class="case-meta__k">ROLE</span><br /><span class="case-meta__v">PRODUCT DESIGNER / PM</span></div>
+          <div><span class="case-meta__k">YEAR</span><br /><span class="case-meta__v">2024 — 2025</span></div>
+          <div><span class="case-meta__k">TEAM</span><br /><span class="case-meta__v">8 CROSS-FUNCTIONAL</span></div>
+          <div></div>
+          <span class="tag tag--accent">SHIPPED</span>
+        </div>
+
+        <div class="tldr" id="tldr" data-section="tldr">
+          <div class="tldr__rail">
+            <span>// TL;DR</span>
+            <span class="big">3<em>×</em></span>
+            <span>apps · 1 design system · 1 team</span>
+          </div>
+          <div class="tldr__body">
+            <ul class="tldr__list">
+              <li><span><b>The problem</b>Three apps competing for the same eight engineers, three diverging design languages, MVP pressure on all three.</span></li>
+              <li><span><b>The bet</b>One shared design system & component library. Each app gets a skin — not a fork.</span></li>
+              <li><span><b>The work</b>Tokens-and-patterns system, shared onboarding spine, sprint-friendly handoff, MVP roadmap rewrite.</span></li>
+              <li><span><b>The outcome</b>Design throughput up ~2×. Time-to-MVP for the third app: ~6 weeks vs. ~14 for the first.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="case-grid">
+        <aside class="toc">
+          <div class="toc__head">// on this page</div>
+          <ul>
+            <li><a href="#problem">§ Problem</a></li>
+            <li><a href="#research">§ Research</a></li>
+            <li><a href="#system">§ The system</a></li>
+            <li><a href="#outcome">§ Outcome</a></li>
+            <li><a href="#next">§ What's next</a></li>
+          </ul>
+          <div class="toc__foot">
+            <span>EST. <span data-reading-time>—</span></span>
+            <span>↑ TOP-BAR TO RETURN</span>
+            <span class="muted">→ TIP: try ⌘K</span>
+          </div>
+        </aside>
+
+        <article class="article">
+          <section id="problem" data-section="problem">
+            <div class="section-eyebrow">§ 01 — PROBLEM</div>
+            <h2>Three apps. One team. <em>Diverging visual languages.</em></h2>
+            <p>
+              When I joined Lyly, three B2C mobile products were in different states of
+              build-out. Each had its own designer (in rotation) and its own visual direction.
+              The three products targeted overlapping audiences but spoke in three different
+              voices. Engineering was paying the tax in duplicated code and decisions; users
+              who used more than one app were paying the tax in cognitive whiplash.
+            </p>
+            <p>
+              The org's reflex was to merge the apps. We argued — and the data agreed — that
+              merging would dilute each product's specific value proposition. The right move
+              was the opposite: <span class="bold">keep the apps separate, unify the system underneath.</span>
+            </p>
+
+            <div class="ba">
+              <div class="ba__col">
+                <div class="eyebrow">BEFORE</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  Each app had its own type scale, color palette, component implementations, and
+                  onboarding patterns. Sprint velocity was bottlenecked by design handoff — eng
+                  was waiting on three separate component decisions in parallel.
+                </p>
+              </div>
+              <div class="ba__col">
+                <div class="eyebrow">AFTER</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  One shared design system. One library of components in code. Each app expresses
+                  itself through a small set of brand tokens. <span class="bold">App #3 went from spec to MVP in 6
+                  weeks</span> because it inherited everything.
+                </p>
+              </div>
+            </div>
+          </section>
+
+          <section id="research" data-section="research">
+            <div class="section-eyebrow">§ 02 — RESEARCH</div>
+            <h2>I audited the three codebases <em>before</em> I audited the design files.</h2>
+            <p>
+              The most useful research artifact in this project was a spreadsheet of every
+              component used across the three apps, with the actual delta noted. Buttons that
+              looked different but were 95% the same. Modals that were structurally identical
+              with different padding. A list of about <span class="bold">60 components</span> that, with discipline,
+              could become 20.
+            </p>
+
+            <div class="artifact" aria-label="Component consolidation map">
+              <div class="artifact__head">
+                <span>FIG. 1 · component consolidation · 60 → 20</span>
+                <span class="muted">audit · v2</span>
+              </div>
+              <div class="artifact__body">
+                <svg viewBox="0 0 720 220" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                  <defs>
+                    <marker id="ar2" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                      <path d="M0,0 L10,5 L0,10 z" fill="#6b6960"/>
+                    </marker>
+                  </defs>
+                  <text x="20" y="22" font-family="JetBrains Mono" font-size="10" fill="#6b6960" letter-spacing="2">60 COMPONENTS (BEFORE) · 3 APPS</text>
+                  <g font-family="JetBrains Mono" font-size="8" fill="#0e0e0c">
+                    <!-- crowded boxes -->
+                    <g>
+                      <rect x="20" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="45" y="44" text-anchor="middle">btn-A</text>
+                      <rect x="75" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="100" y="44" text-anchor="middle">btn-B</text>
+                      <rect x="130" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="155" y="44" text-anchor="middle">btn-C</text>
+                      <rect x="185" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="210" y="44" text-anchor="middle">cta-A</text>
+                      <rect x="240" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="265" y="44" text-anchor="middle">cta-B</text>
+                      <rect x="295" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="320" y="44" text-anchor="middle">cta-C</text>
+                      <rect x="350" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="375" y="44" text-anchor="middle">link-A</text>
+                      <rect x="405" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="430" y="44" text-anchor="middle">link-B</text>
+                      <rect x="460" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="485" y="44" text-anchor="middle">link-C</text>
+                      <rect x="515" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="540" y="44" text-anchor="middle">tab-A</text>
+                      <rect x="570" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="595" y="44" text-anchor="middle">tab-B</text>
+                      <rect x="625" y="34" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="650" y="44" text-anchor="middle">tab-C</text>
+                    </g>
+                    <g>
+                      <rect x="20" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="45" y="62" text-anchor="middle">card-A</text>
+                      <rect x="75" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="100" y="62" text-anchor="middle">card-B</text>
+                      <rect x="130" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="155" y="62" text-anchor="middle">card-C</text>
+                      <rect x="185" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="210" y="62" text-anchor="middle">tile-A</text>
+                      <rect x="240" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="265" y="62" text-anchor="middle">tile-B</text>
+                      <rect x="295" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="320" y="62" text-anchor="middle">tile-C</text>
+                      <rect x="350" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="375" y="62" text-anchor="middle">modal-A</text>
+                      <rect x="405" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="430" y="62" text-anchor="middle">modal-B</text>
+                      <rect x="460" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="485" y="62" text-anchor="middle">modal-C</text>
+                      <rect x="515" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="540" y="62" text-anchor="middle">sheet-A</text>
+                      <rect x="570" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="595" y="62" text-anchor="middle">sheet-B</text>
+                      <rect x="625" y="52" width="50" height="14" fill="#f2eee5" stroke="#0e0e0c"/><text x="650" y="62" text-anchor="middle">sheet-C</text>
+                    </g>
+                    <text x="20" y="80" font-size="8" fill="#6b6960">+ 36 more</text>
+                  </g>
+
+                  <path d="M180 100 L 180 130" stroke="#6b6960" stroke-dasharray="2 3" marker-end="url(#ar2)"/>
+                  <path d="M360 100 L 360 130" stroke="#6b6960" stroke-dasharray="2 3" marker-end="url(#ar2)"/>
+                  <path d="M540 100 L 540 130" stroke="#6b6960" stroke-dasharray="2 3" marker-end="url(#ar2)"/>
+
+                  <text x="20" y="130" font-family="JetBrains Mono" font-size="10" fill="oklch(0.62 0.22 30)" letter-spacing="2">20 SHARED COMPONENTS (AFTER) · BRAND-SKINNED</text>
+                  <g font-family="JetBrains Mono" fill="#0e0e0c">
+                    <rect x="120" y="142" width="160" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="200" y="166" text-anchor="middle" font-size="12" font-weight="700">ACTION</text>
+                    <text x="200" y="184" text-anchor="middle" font-size="9" fill="#6b6960">button · cta · link · tab</text>
+
+                    <rect x="300" y="142" width="160" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="380" y="166" text-anchor="middle" font-size="12" font-weight="700">SURFACE</text>
+                    <text x="380" y="184" text-anchor="middle" font-size="9" fill="#6b6960">card · tile · modal · sheet</text>
+
+                    <rect x="480" y="142" width="160" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-width="2"/>
+                    <text x="560" y="166" text-anchor="middle" font-size="12" font-weight="700">INPUT</text>
+                    <text x="560" y="184" text-anchor="middle" font-size="9" fill="#6b6960">field · stepper · toggle</text>
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p class="deep-only">
+              The hardest part of the consolidation wasn't the technical work — it was the
+              social work. Each app's previous designer had reasons for each variant. Some
+              were good reasons (a specific accessibility constraint), most were not (it was
+              Tuesday). I spent two weeks running consolidation reviews with engineers, not
+              designers, because the engineers were the ones who knew where the variants were
+              actually different and where they only <em>looked</em> different.
+              <a href="#fn1" data-footnote class="accent">†</a>
+            </p>
+
+            <div class="footnote deep-only" id="fn1">
+              <span class="footnote__mark">†</span>
+              <span>This is the move I'd recommend to any designer joining a multi-product team:
+                <em>audit with the engineers first, the designers second.</em> Engineers will tell
+                you the truth about how often a variant is actually used.</span>
+            </div>
+
+            <blockquote>
+              "I shipped the third app's settings screen in a day. A year ago it would have been
+              a sprint."
+              <cite>— Engineer, after the system went live · week 9</cite>
+            </blockquote>
+          </section>
+
+          <section id="system" data-section="system">
+            <div class="section-eyebrow">§ 03 — THE SYSTEM</div>
+            <h2>Tokens behind. <em>Patterns in front.</em></h2>
+            <p>
+              The unfashionable opinion I held throughout this project: <span class="bold">we don't need a
+              massive token system. We need a small set of patterns.</span> Most design systems
+              over-build tokens (the syntax) and under-build patterns (the sentences). At
+              Lyly's scale — three apps, eight people — patterns were the higher-leverage
+              investment.
+            </p>
+
+            <h3>The three layers</h3>
+            <p>
+              <span class="bold">LAYER 1 · Brand tokens.</span> Per-app: color, type face, default radius. About 18 tokens, no more.
+            </p>
+            <p>
+              <span class="bold">LAYER 2 · Shared components.</span> The 20 components from the audit. Built once in code, themed by the tokens.
+            </p>
+            <p>
+              <span class="bold">LAYER 3 · Patterns.</span> The high-leverage layer. Onboarding spine, empty states, payment sheet, settings shape. Each pattern is a recipe of components plus the rule for how they compose.
+            </p>
+
+            <div class="artifact">
+              <div class="artifact__head">
+                <span>FIG. 2 · pattern spec · onboarding spine (shared)</span>
+                <span class="muted">v4 final</span>
+              </div>
+              <div class="artifact__body" style="padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+                <div class="placeholder" data-label="01 · WELCOME" data-spec="brand only" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="02 · INTENT" data-spec="picker · 1 choice" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="03 · QUICK WIN" data-spec="aha · ≤90s" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="04 · COMMIT" data-spec="streak / save" style="aspect-ratio:9/16;"></div>
+              </div>
+            </div>
+
+            <h3>The shared onboarding spine</h3>
+            <p>
+              All three apps now use the same four-screen onboarding rhythm: <span class="bold">welcome →
+              intent → quick win → commit.</span> The screens look different per app — different
+              brand, different copy, different micro-interactions. But the rhythm is identical,
+              and the metrics are comparable across apps. We can A/B test changes in one app
+              and lift them into the others with high confidence they'll hold.
+            </p>
+
+            <div class="expand deep-only">
+              <button class="expand__head" data-expand>
+                <span class="expand__caret">+</span><span>The "quick win" screen — what shipped</span>
+              </button>
+              <div class="expand__body" data-reveal="false">
+                <p>The quick-win screen does one thing: produce a small, real, visible reward
+                  within 90 seconds of app open. The constraint forces every PM into a useful
+                  conversation: <em>what is the one thing your user can experience that's actually
+                  good in the first 90 seconds?</em></p>
+                <p>App 1 (B2C, audio): "Hear your first 30-second clip + save it."<br />
+                  App 2 (B2C, social): "See three friends already here + send one a wave."<br />
+                  App 3 (B2C, content): "Read one thing, get one recommendation, save both."</p>
+              </div>
+            </div>
+
+            <h3>How handoff changed</h3>
+            <p>
+              Before: design files contained pixel-perfect mocks of every screen, per app.
+              After: design files contain <em>tokens + a list of patterns to compose</em>.
+              Engineers stopped asking "what does this button look like" because they
+              already knew. The conversation moved up a level: <em>what's the right pattern
+              here?</em> — which is the conversation worth having anyway.
+            </p>
+          </section>
+
+          <section id="outcome" data-section="outcome">
+            <div class="section-eyebrow">§ 04 — OUTCOME</div>
+            <h2>The system <em>compounded.</em></h2>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric__k">TIME TO MVP (APP 3)</div>
+                <div class="metric__v"><em>−57%</em></div>
+                <div class="metric__caption">14 weeks → 6 weeks, with the same team size</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">COMPONENTS IN CODE</div>
+                <div class="metric__v"><em>−67%</em></div>
+                <div class="metric__caption">60 variants → 20 themed components</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">DESIGN THROUGHPUT</div>
+                <div class="metric__v"><em>~2×</em></div>
+                <div class="metric__caption">tickets closed / week, post-system</div>
+              </div>
+            </div>
+
+            <p>
+              The thing I'm proudest of: <span class="bold">the system didn't slow down product work.</span> Most
+              design-system efforts produce a beautiful library and a delivery slowdown. We
+              built ours by extracting from the products that were already shipping, never
+              ahead of them. By the time the system was "done", it was already in use.
+            </p>
+
+            <h3>What I'd do differently</h3>
+            <ul>
+              <li><span class="bold">Document the patterns sooner.</span> The components were clear; the patterns lived in my head for two months too long. New designers joining couldn't ramp without them.</li>
+              <li><span class="bold">Build the third app's MVP first.</span> If I'd known what the third app would teach us, I'd have prototyped its onboarding before finalizing the spine. We retrofitted instead, which cost two weeks.</li>
+              <li><span class="bold">More cross-app user research.</span> We had great per-app insight; we had almost no insight into the user who touched two apps. That's the most valuable user we had.</li>
+            </ul>
+          </section>
+
+          <section id="next" data-section="next">
+            <div class="section-eyebrow">§ 05 — WHAT'S NEXT</div>
+            <h2>The cross-app pattern I didn't get to ship.</h2>
+            <p>
+              The natural next step at Lyly is a <em>cross-app identity</em> — the user signs
+              in once, their progress and preferences travel. We sketched it. It didn't ship
+              before my engagement ended. The hardest part is not the auth (solved) — it's
+              the design of the cross-app surface: what do you show a user who has interesting
+              state in two of your three apps? That's the question I'd love to come back to.
+            </p>
+          </section>
+
+          <a class="next-card" href="case-innova.html" data-next-link>
+            <div>
+              <div class="next-card__kicker">NEXT CASE · §03 / 03</div>
+              <div class="next-card__title" data-next-title>Innova Schools</div>
+            </div>
+            <div class="muted small" data-next-kicker>EdTech mobile retention</div>
+            <div class="next-card__arrow">→</div>
+          </a>
+        </article>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap" style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">
+        <span>© 2020–2026 ALEJANDRO MELIAN</span>
+        <a href="index.html">← BACK TO INDEX</a>
+        <span>LYLY · 2024–2025</span>
+      </div>
+    </footer>
+
+    <script src="portfolio-shell.js"></script>
+    <script src="case-study.js"></script>
+  </body>
+</html>

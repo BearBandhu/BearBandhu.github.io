@@ -1,0 +1,403 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <title>Innova Schools — mobile EdTech · Alejandro Melian</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=JetBrains+Mono:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Source+Serif+4:ital,opsz,wght@0,8..60,400;0,8..60,500;0,8..60,600;0,8..60,700;1,8..60,400&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="portfolio.css" />
+  </head>
+  <body data-page="innova" data-screen-label="02 Case · Innova" data-reading-target="article">
+    <header class="topbar">
+      <div class="wrap-wide topbar__inner">
+        <a href="index.html" class="topbar__crumb topbar__crumb--strong" data-shell-logo style="text-decoration:none;">
+          <span style="font-family:var(--serif);font-size:18px;line-height:1;letter-spacing:-0.02em;">A.M.</span>
+          <span style="font-size:10px;letter-spacing:0.14em;opacity:0.7;">/ MELIAN · LIMA</span>
+        </a>
+        <div class="topbar__crumb"><span class="dim">~/work/</span><span class="bold">03-innova.md</span></div>
+        <div class="topbar__crumb" style="border-right:none;">
+          <span class="proglet">
+            <span class="proglet__ring js-progress-ring"></span>
+            <span><span class="js-progress-pct">0%</span> explored · <span data-reading-time>— min read</span></span>
+          </span>
+        </div>
+        <nav class="topbar__nav"><button class="js-top-contact" onclick="location.href='mailto:alejandro.melian.r@gmail.com'">Contact me</button>
+          <button onclick="Portfolio.openCmdk()">⌘K Search</button>
+          <button class="js-mode-toggle" aria-pressed="false">Mode: <span class="js-mode-label" style="margin-left:4px;">DEEP</span></button>
+          <a href="index.html">← Index</a>
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap" id="article" data-reading-target>
+      <div id="resume-slot" class="mt-16"></div>
+
+      <section class="case-hero" id="hero">
+        <div class="eyebrow">CASE STUDY · §03 / 03</div>
+        <h1 class="case-title mt-8">
+          A mobile learning product 10,000 students <em>actually returned to</em> on Tuesday.
+        </h1>
+        <p class="case-deck">
+          Innova Schools is one of Latin America's largest private K-12 networks. They needed
+          a mobile companion product their students would <em>use voluntarily</em> outside of
+          class hours — something that lived next to TikTok on the home screen and won at
+          least a few of those battles. I was the product designer. We shipped to 10,000+
+          learners and held a 26% D30 retention rate in a category where most edtech apps
+          die at 8%.
+        </p>
+
+        <div class="case-meta">
+          <div><span class="case-meta__k">COMPANY</span><br /><span class="case-meta__v">INNOVA SCHOOLS · LATAM K-12</span></div>
+          <div><span class="case-meta__k">ROLE</span><br /><span class="case-meta__v">PRODUCT DESIGNER</span></div>
+          <div><span class="case-meta__k">YEAR</span><br /><span class="case-meta__v">2020 — 2021</span></div>
+          <div><span class="case-meta__k">SCOPE</span><br /><span class="case-meta__v">RESEARCH · UX · UI · GA</span></div>
+          <div></div>
+          <span class="tag tag--accent">SHIPPED · 10K+ USERS</span>
+        </div>
+
+        <div class="tldr" id="tldr" data-section="tldr">
+          <div class="tldr__rail">
+            <span>// TL;DR</span>
+            <span class="big">26<em>%</em></span>
+            <span>D30 retention · 10k+ learners</span>
+          </div>
+          <div class="tldr__body">
+            <ul class="tldr__list">
+              <li><span><b>The problem</b>EdTech apps fight TikTok for student attention. Most lose. The category average D30 is single-digit.</span></li>
+              <li><span><b>The bet</b>Don't compete with content velocity. Compete on <em>perceived progress</em> — the thing TikTok doesn't give you.</span></li>
+              <li><span><b>The work</b>Onboarding that earned the first session, micro-progress feedback, a weekly review the parent could see.</span></li>
+              <li><span><b>The outcome</b><span class="bold">26% D30 retention</span> across 10,000+ learners. 3× the EdTech category baseline.</span></li>
+            </ul>
+          </div>
+        </div>
+      </section>
+
+      <div class="case-grid">
+        <aside class="toc">
+          <div class="toc__head">// on this page</div>
+          <ul>
+            <li><a href="#problem">§ Problem</a></li>
+            <li><a href="#research">§ Research</a></li>
+            <li><a href="#system">§ The system</a></li>
+            <li><a href="#outcome">§ Outcome</a></li>
+            <li><a href="#next">§ What's next</a></li>
+          </ul>
+          <div class="toc__foot">
+            <span>EST. <span data-reading-time>—</span></span>
+            <span>SCROLL FOR PROGRESS</span>
+            <span class="muted">→ TIP: ⌘K to jump</span>
+          </div>
+        </aside>
+
+        <article class="article">
+          <section id="problem" data-section="problem">
+            <div class="section-eyebrow">§ 01 — PROBLEM</div>
+            <h2>EdTech that "works" still loses to <em>literally anything else</em> on a phone.</h2>
+            <p>
+              Innova had a captive in-class product. Outside class, they had nothing — and the
+              parent base was asking for something. The first instinct was to build a homework
+              tracker. The data on every similar product I could find said this would die at
+              D7. <span class="bold">Students don't want more school in their pockets. They want progress.</span>
+            </p>
+            <p>
+              The hard truth I had to walk leadership through: the product had to earn its
+              opens on the same terms as a game or a social app. That meant rewarding the
+              act of opening, surfacing perceived growth in seconds, and never punishing a
+              missed day. School can punish. The app couldn't.
+            </p>
+
+            <div class="ba">
+              <div class="ba__col">
+                <div class="eyebrow">CATEGORY BASELINE</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  Most LATAM mobile EdTech apps shipping in 2020 saw D30 retention between
+                  6–10% (internal benchmark across 14 comparable apps). The category had
+                  trained students to expect a chore.
+                </p>
+              </div>
+              <div class="ba__col">
+                <div class="eyebrow">OUR TARGET</div>
+                <p style="font-size:14px;line-height:1.5;">
+                  20% D30. The PM and I pre-committed to killing the product if we couldn't
+                  hold it for 90 days. We hit <span class="bold">26%</span> and held. Killing the product was off
+                  the table.
+                </p>
+              </div>
+            </div>
+
+            <h3>Why this framing mattered</h3>
+            <p>
+              Innova's leadership wanted "an app for the students". My contribution at the
+              kick-off was reframing this as <em>"a product the students will <span class="bold">choose</span> to
+              open"</em>. Same words, different metric. The whole project hinged on this — every
+              feature we cut or kept was tested against "would a 14-year-old voluntarily open
+              this on a Sunday?".
+            </p>
+
+            <div class="expand deep-only">
+              <button class="expand__head" data-expand>
+                <span class="expand__caret">+</span><span>Why this was a game-design problem, not an EdTech problem</span>
+              </button>
+              <div class="expand__body" data-reveal="false">
+                <p>Game designers have been solving "make people come back tomorrow" for decades.
+                  EdTech has been solving "make people learn the material". These are different
+                  problems with different toolkits. The breakthrough for me was admitting we needed
+                  the game-design toolkit first — because if no one opens the app, the learning
+                  toolkit is irrelevant.</p>
+                <p>This case-study is what made me a retention designer. Everything I do now
+                  traces back to it.</p>
+              </div>
+            </div>
+          </section>
+
+          <section id="research" data-section="research">
+            <div class="section-eyebrow">§ 02 — RESEARCH</div>
+            <h2>I asked 30 students <em>what they did on Sunday night.</em></h2>
+            <p>
+              Not "what they liked about school". Not "how they preferred to study". I asked
+              them to walk me through the apps on their home screen, in order, and tell me
+              when they'd last opened each one. The pattern that emerged was the entire thesis
+              of the product:
+            </p>
+            <ul>
+              <li>Students opened apps that <span class="bold">showed them they'd grown</span> — streaks, levels, follower counts.</li>
+              <li>They avoided apps that <span class="bold">made them feel behind</span> — calendar reminders, unfinished tasks.</li>
+              <li>The most-used app on every device was the one that felt the <span class="bold">cheapest to open</span> — under 3 seconds to a reward.</li>
+            </ul>
+
+            <div class="artifact" aria-label="Retention loop diagram">
+              <div class="artifact__head">
+                <span>FIG. 1 · two-loop retention map · what we built</span>
+                <span class="muted">v3 · annotated</span>
+              </div>
+              <div class="artifact__body">
+                <svg viewBox="0 0 720 280" width="100%" xmlns="http://www.w3.org/2000/svg" style="display:block;">
+                  <defs>
+                    <pattern id="hatch" patternUnits="userSpaceOnUse" width="6" height="6" patternTransform="rotate(45)">
+                      <line x1="0" y1="0" x2="0" y2="6" stroke="#0e0e0c" stroke-width="0.5" />
+                    </pattern>
+                    <marker id="arr" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                      <path d="M0,0 L10,5 L0,10 z" fill="#0e0e0c"/>
+                    </marker>
+                    <marker id="arrA" viewBox="0 0 10 10" refX="8" refY="5" markerWidth="8" markerHeight="8" orient="auto">
+                      <path d="M0,0 L10,5 L0,10 z" fill="oklch(0.62 0.22 30)"/>
+                    </marker>
+                  </defs>
+                  <text x="40" y="32" font-family="JetBrains Mono" font-size="10" fill="oklch(0.62 0.22 30)" letter-spacing="2">LOOP A · DAILY · ~90s</text>
+                  <g font-family="JetBrains Mono" font-size="11" fill="#0e0e0c">
+                    <rect x="40" y="46" width="120" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" />
+                    <text x="100" y="70" text-anchor="middle" font-weight="700">DAILY CARD</text>
+                    <text x="100" y="86" text-anchor="middle" font-size="9" fill="#6b6960">3 questions · 90s</text>
+
+                    <rect x="220" y="46" width="120" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" />
+                    <text x="280" y="70" text-anchor="middle" font-weight="700">XP + STREAK</text>
+                    <text x="280" y="86" text-anchor="middle" font-size="9" fill="#6b6960">visible micro-reward</text>
+
+                    <rect x="400" y="46" width="120" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" />
+                    <text x="460" y="70" text-anchor="middle" font-weight="700">GROWTH BAR</text>
+                    <text x="460" y="86" text-anchor="middle" font-size="9" fill="#6b6960">subject-level mastery</text>
+
+                    <rect x="580" y="46" width="100" height="56" fill="#f2eee5" stroke="oklch(0.62 0.22 30)" stroke-dasharray="4 3" />
+                    <text x="630" y="70" text-anchor="middle" font-weight="700">PUSH (FREE)</text>
+                    <text x="630" y="86" text-anchor="middle" font-size="9" fill="#6b6960">never about a task</text>
+
+                    <path d="M160 74 L220 74" stroke="oklch(0.62 0.22 30)" marker-end="url(#arrA)" />
+                    <path d="M340 74 L400 74" stroke="oklch(0.62 0.22 30)" marker-end="url(#arrA)" />
+                    <path d="M520 74 L580 74" stroke="oklch(0.62 0.22 30)" marker-end="url(#arrA)" />
+                    <path d="M630 102 Q 630 200 100 200 L 100 102" fill="none" stroke="oklch(0.62 0.22 30)" stroke-dasharray="3 3" marker-end="url(#arrA)" />
+                  </g>
+
+                  <text x="40" y="160" font-family="JetBrains Mono" font-size="10" fill="#0e0e0c" letter-spacing="2">LOOP B · WEEKLY · ~4m · PARENT-VISIBLE</text>
+                  <g font-family="JetBrains Mono" font-size="11" fill="#0e0e0c">
+                    <rect x="40" y="176" width="120" height="56" fill="url(#hatch)" stroke="#0e0e0c"/>
+                    <text x="100" y="200" text-anchor="middle" font-weight="700" fill="#0e0e0c">WEEK RECAP</text>
+                    <text x="100" y="216" text-anchor="middle" font-size="9" fill="#6b6960">friday card</text>
+
+                    <rect x="220" y="176" width="120" height="56" fill="url(#hatch)" stroke="#0e0e0c"/>
+                    <text x="280" y="200" text-anchor="middle" font-weight="700" fill="#0e0e0c">GROWTH SHOWN</text>
+                    <text x="280" y="216" text-anchor="middle" font-size="9" fill="#6b6960">subject deltas</text>
+
+                    <rect x="400" y="176" width="120" height="56" fill="url(#hatch)" stroke="#0e0e0c"/>
+                    <text x="460" y="200" text-anchor="middle" font-weight="700" fill="#0e0e0c">SHARE w/ PARENT</text>
+                    <text x="460" y="216" text-anchor="middle" font-size="9" fill="#6b6960">opt-in · pride loop</text>
+
+                    <path d="M160 204 L220 204" stroke="#0e0e0c" marker-end="url(#arr)" />
+                    <path d="M340 204 L400 204" stroke="#0e0e0c" marker-end="url(#arr)" />
+                  </g>
+                </svg>
+              </div>
+            </div>
+
+            <p>
+              Two loops, one feeding the other. <span class="bold">Loop A</span> earns the daily return. <span class="bold">Loop B</span>
+              re-engages students who fell out of Loop A — even a missed week ended with a
+              Friday recap card celebrating whatever <em>did</em> happen. The two loops compound
+              instead of competing.
+            </p>
+
+            <p class="deep-only">
+              We also discovered (and this surprised the team) that students who shared their
+              week recap with a parent were 3.4× more likely to be on D30. Parent visibility
+              was a retention multiplier — and it cost nothing to add.
+              <a href="#fn1" data-footnote class="accent">†</a>
+            </p>
+
+            <div class="footnote deep-only" id="fn1">
+              <span class="footnote__mark">†</span>
+              <span>This was the unexpected finding. The students didn't want their parents
+                checking on them — but they did want to show off something they'd earned. The
+                framing matters: <em>pride loop, not surveillance loop.</em></span>
+            </div>
+          </section>
+
+          <section id="system" data-section="system">
+            <div class="section-eyebrow">§ 03 — THE SYSTEM</div>
+            <h2>Four design moves. <em>One product principle.</em></h2>
+            <p>
+              The product principle: <span class="bold">never make a student feel behind</span>. Behind any feature
+              that violated this, no matter how pedagogically sound, we cut. This principle
+              alone killed half the original product spec — and the result is the half that
+              shipped.
+            </p>
+
+            <div class="artifact">
+              <div class="artifact__head">
+                <span>FIG. 2 · onboarding spine</span>
+                <span class="muted">7 screens · ~60s · ends in xp</span>
+              </div>
+              <div class="artifact__body" style="padding:24px;display:grid;grid-template-columns:repeat(4,1fr);gap:14px;">
+                <div class="placeholder" data-label="01 · WELCOME" data-spec="warm · es/en" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="02 · GRADE + GOAL" data-spec="2 taps" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="03 · FIRST CARD" data-spec="aha · 90s" style="aspect-ratio:9/16;"></div>
+                <div class="placeholder" data-label="04 · XP + STREAK" data-spec="loop A close" style="aspect-ratio:9/16;"></div>
+              </div>
+            </div>
+
+            <h3>Move 1 — Earn the first session in 90 seconds</h3>
+            <p>
+              Old plan: 14 onboarding screens, ending on a subject-picker. New plan: 7 screens,
+              ending with a completed 90-second card, +25 XP, and a streak of 1. Mastery and
+              full subject picking happen <em>after</em> the first reward — never before.
+            </p>
+
+            <h3>Move 2 — Push notifications never ask for a task</h3>
+            <p>
+              Most EdTech push reads "you have 3 assignments due". We made a hard rule: <span class="bold">our
+              push messages only celebrate or invite, never demand</span>. "Tu racha de 4 días te
+              espera 👋" instead of "completa tu lección de hoy". <span class="bold">Push CTR went from 6% to
+              17%</span> in week one.
+            </p>
+
+            <div class="expand deep-only">
+              <button class="expand__head" data-expand>
+                <span class="expand__caret">+</span><span>The push-copy framework we used</span>
+              </button>
+              <div class="expand__body" data-reveal="false">
+                <p><span class="bold">CELEBRATE</span> · "Tu racha llegó a 7 días — sigues fuerte."</p>
+                <p><span class="bold">INVITE</span> · "Tu tarjeta de hoy te espera (90s)."</p>
+                <p><span class="bold">CURIOUS</span> · "¿Sabías que mejoraste 12% en historia esta semana?"</p>
+                <p>Banned categories: anything starting with <em>"completa"</em>, <em>"no olvides"</em>, or any
+                  fear-of-missing-out language. We tested these — they got opens but tanked
+                  retention.</p>
+              </div>
+            </div>
+
+            <h3>Move 3 — Make growth visible at every scale</h3>
+            <p>
+              The daily card produces XP (micro). XP fills a subject-level bar (meso). Subject
+              bars feed into a "this month you grew most in…" card on the home screen (macro).
+              Three time-scales of visible progress, all reinforcing each other. The student
+              always has <em>something</em> to look at that's moved since the last open.
+            </p>
+
+            <h3>Move 4 — Streaks that forgive</h3>
+            <p>
+              Hardcore streaks are hostile. We built in a <span class="bold">"freeze day"</span> — every Sunday,
+              the streak holds even if the student doesn't open the app. Missed-day messaging
+              read "tu racha sigue en pie" instead of "perdiste tu racha". This was the single
+              biggest factor in retention past day 14, where the brittle-streak apps usually die.
+            </p>
+
+            <blockquote>
+              "Mom, mira lo que aprendí esta semana."
+              <cite>— Student, 13, beta · the line that closed the deal internally</cite>
+            </blockquote>
+          </section>
+
+          <section id="outcome" data-section="outcome">
+            <div class="section-eyebrow">§ 04 — OUTCOME</div>
+            <h2>The numbers held. <em>That was the whole point.</em></h2>
+
+            <div class="metrics">
+              <div class="metric">
+                <div class="metric__k">D30 RETENTION</div>
+                <div class="metric__v"><em>26%</em></div>
+                <div class="metric__caption">vs. 8% category baseline · 3× the median</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">LEARNERS</div>
+                <div class="metric__v"><em>10k+</em></div>
+                <div class="metric__caption">across the Innova network in the launch window</div>
+              </div>
+              <div class="metric">
+                <div class="metric__k">PUSH CTR</div>
+                <div class="metric__v"><em>+183%</em></div>
+                <div class="metric__caption">6% → 17%, driven by celebrate-not-demand copy rule</div>
+              </div>
+            </div>
+
+            <p>
+              The lesson I took out of this and into every project since: <span class="bold">retention is a
+              system, not a feature.</span> The streak alone wouldn't have done it. The push copy
+              alone wouldn't have done it. The growth bar alone wouldn't have done it. <em>The
+              four moves together, reinforcing one another</em> — that's the whole thing. Take
+              one away and retention collapses.
+            </p>
+
+            <h3>What I'd do differently</h3>
+            <ul>
+              <li><span class="bold">Build the parent-side product earlier.</span> The "share with parent" feature was an afterthought, and it ended up being the strongest D14+ lever. It deserved more design time.</li>
+              <li><span class="bold">Instrument before launching.</span> I lost two weeks adding GA events after the fact. Funnels are part of the spec, not the cleanup.</li>
+              <li><span class="bold">Stop calling it homework.</span> Internal language matters; the team kept slipping into "tarea" and the design followed. Once we made "tarjeta" (card) the only allowed noun, the screens improved.</li>
+            </ul>
+          </section>
+
+          <section id="next" data-section="next">
+            <div class="section-eyebrow">§ 05 — WHAT'S NEXT</div>
+            <h2>The version I'd build now.</h2>
+            <p>
+              Five years later, with what I've learned doing game systems at Edenic Era and B2C
+              ecosystems at Lyly, the version I'd ship is fundamentally a multi-loop product
+              from day one — and probably a small social layer between siblings or
+              classmates. The pride loop with parents was the surprise insight. The next
+              surprise insight is sitting in peer-to-peer growth.
+            </p>
+          </section>
+
+          <a class="next-card" href="case-lyly.html" data-next-link>
+            <div>
+              <div class="next-card__kicker">NEXT CASE · §02 / 03</div>
+              <div class="next-card__title" data-next-title>Lyly Interactive</div>
+            </div>
+            <div class="muted small" data-next-kicker>B2C ecosystem · 3 apps</div>
+            <div class="next-card__arrow">→</div>
+          </a>
+        </article>
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="wrap" style="display:flex;justify-content:space-between;font-size:10px;letter-spacing:0.08em;text-transform:uppercase;">
+        <span>© 2020–2026 ALEJANDRO MELIAN</span>
+        <a href="index.html">← BACK TO INDEX</a>
+        <span>INNOVA SCHOOLS · 2020–2021</span>
+      </div>
+    </footer>
+
+    <script src="portfolio-shell.js"></script>
+    <script src="case-study.js"></script>
+  </body>
+</html>
