@@ -29,22 +29,7 @@ b.onclick=function(){closeMenu();window.scrollTo({top:s.getBoundingClientRect().
 menu.appendChild(b)});
 if(!/(^|\/)(index\.html)?$/.test(location.pathname)){var home=document.createElement('button');home.type='button';home.innerHTML='<i>←</i>Back to the index';
 home.onclick=function(){location.href='index.html'};menu.appendChild(home)}
-var ES=document.documentElement.lang==='es',MSG=ES?'Haz clic o toca para enviarle un mensaje a Alejandro':'Click or Tap me to send Alejandro a message';
-var dst=document.createElement('style');dst.textContent='.sdraw{position:fixed;z-index:61;width:min(320px,calc(100vw - 28px));padding:16px 16px 14px;border-radius:20px;background:#fff;border:1px solid rgba(22,20,27,.12);box-shadow:0 30px 70px -30px rgba(22,20,27,.55);opacity:0;pointer-events:none;transform:translateY(8px) scale(.97);transition:opacity .22s,transform .22s;font-family:var(--f-b,"Schibsted Grotesk",sans-serif)}.sdraw.is-on{opacity:1;pointer-events:auto;transform:none}.sdraw__h{display:flex;justify-content:space-between;align-items:center;gap:10px;margin-bottom:2px}.sdraw__k{font-family:var(--f-m,"JetBrains Mono",monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#6b6773)}.sdraw__x{font:inherit;font-size:14px;line-height:1;width:28px;height:28px;border-radius:50%;border:0;background:rgba(22,20,27,.06);cursor:pointer;color:var(--ink,#16141b)}.sdraw__x:hover{background:rgba(22,20,27,.12)}.sdraw .msg{display:flex;flex-direction:column;gap:8px;margin-top:10px}.sdraw .msg input,.sdraw .msg textarea{width:100%;box-sizing:border-box;font:inherit;font-size:13px;color:var(--ink,#16141b);background:rgba(22,20,27,.03);border:1px solid rgba(22,20,27,.14);border-radius:10px;padding:9px 11px;outline:none}.sdraw .msg textarea{min-height:86px;resize:vertical;line-height:1.45}.sdraw .msg input:focus,.sdraw .msg textarea:focus{border-color:#e97a4e;background:#fff}.sdraw .msg__send{font:inherit;font-size:13px;font-weight:600;cursor:pointer;border:0;border-radius:10px;padding:10px 14px;color:#fff;background:linear-gradient(120deg,#e97a4e,#8a5cf0)}.sdraw .msg__send:hover{filter:brightness(1.07)}.sdraw__idx{display:flex;justify-content:space-between;align-items:center;width:100%;margin-top:12px;padding:10px 12px;font:inherit;font-size:13px;font-weight:600;color:var(--ink,#16141b);background:rgba(22,20,27,.04);border:1px solid rgba(22,20,27,.12);border-radius:10px;cursor:pointer}.sdraw__idx:hover{border-color:#8a5cf0;background:rgba(138,92,240,.06)}.sdraw__idx b{font-weight:400;color:var(--ink-3,#6b6773)}.sdraw .msg__note{margin:0;font-size:11px;line-height:1.4;color:var(--ink-3,#6b6773)}';document.head.appendChild(dst);
-var draw=document.createElement('div');draw.className='sdraw';draw.id='slimeDraw';draw.setAttribute('role','dialog');draw.setAttribute('aria-label',ES?'Envíame un mensaje':'Send me a message');
-draw.innerHTML='<div class="sdraw__h"><span class="sdraw__k">'+(ES?'Envíame un mensaje':'Send me a message')+'</span><button class="sdraw__x" type="button" aria-label="Close">✕</button></div><form class="msg"><input name="name" type="text" placeholder="'+(ES?'Tu nombre':'Your name')+'" autocomplete="name" required><input name="email" type="email" placeholder="'+(ES?'Tu correo':'Your email')+'" autocomplete="email" required><textarea name="message" placeholder="'+(ES?'¿En qué estás trabajando?':'What are you working on?')+'" required></textarea><button class="msg__send" type="submit">'+(ES?'Enviar mensaje':'Send message')+'</button><p class="msg__note">'+(ES?'Abre tu app de correo con el mensaje listo.':'Opens your mail app with the message ready to send.')+'</p></form><button class="sdraw__idx" type="button"><span>'+(ES?'Ver el índice':'Show the page index')+'</span><b>☰</b></button>';
-document.body.appendChild(draw);
-var drawOpen=false;
-function openDraw(){closeMenu();drawOpen=true;draw.classList.add('is-on');bubble.classList.remove('is-on');bubbleT=0;setTimeout(function(){var i=draw.querySelector('input');if(i)i.focus({preventScroll:true})},220)}
-function closeDraw(){drawOpen=false;draw.classList.remove('is-on')}
-window.slimeMessage=openDraw;
-draw.addEventListener('click',function(e){e.stopPropagation()});
-draw.querySelector('.sdraw__x').onclick=closeDraw;
-draw.querySelector('.sdraw__idx').onclick=function(e){e.stopPropagation();closeDraw();openMenu()};
-document.addEventListener('keydown',function(e){if(e.key==='Escape'&&drawOpen)closeDraw()});
-if(!window.__msgSubmit){window.__msgSubmit=1;document.addEventListener('submit',function(e){var f=e.target.closest('form.msg');if(!f)return;e.preventDefault();var n=f.elements.name.value.trim(),m=f.elements.email.value.trim(),b=f.elements.message.value.trim();location.href='mailto:alejandro.melian.r@gmail.com?subject='+encodeURIComponent('Portfolio message from '+n)+'&body='+encodeURIComponent(b+'\n\n— '+n+' ('+m+')')})}
-var mBtn=document.createElement('button');mBtn.type='button';mBtn.innerHTML='<i>✉</i>'+(ES?'Envíame un mensaje':'Send me a message');mBtn.onclick=function(e){e.stopPropagation();openDraw()};menu.appendChild(mBtn);
-var mbs=[].slice.call(menu.children).filter(function(b){return b!==mBtn});
+var mbs=[].slice.call(menu.children);
 var quiet=false;try{quiet=localStorage.getItem('slimeQuiet')==='1'}catch(e){}
 var qBtn=document.createElement('button');qBtn.type='button';qBtn.className='menu__toggle';
 var QT={en:['Okay, you can talk','Please stop talking'],es:['Vale, puedes hablar','Deja de hablar, por favor']},QL=QT[document.documentElement.lang]||QT.en;
@@ -98,7 +83,6 @@ bubble.style.top=(sy-52-bubble.offsetHeight+bob)+'px';
 bubble.style.borderRadius='18px';
 menu.style.left=Math.max(14,Math.min(innerWidth-238,sx-112))+'px';
 menu.style.top=(sy-54-menu.offsetHeight)+'px';
-if(drawOpen){var dw=draw.offsetWidth;draw.style.left=Math.max(14,Math.min(innerWidth-14-dw,sx-dw/2))+'px';draw.style.top=Math.max(12,sy-54-draw.offsetHeight)+'px'}
 if(bubbleT&&ts>bubbleT&&!menuOpen){if(slimeClicked){bubble.classList.remove('is-on')}else{sayHint()}}
 return requestAnimationFrame(tick)}
 bubble.style.left=(right?sx+52:sx-52-bubble.offsetWidth)+'px';
@@ -106,7 +90,6 @@ bubble.style.top=(sy-24-bubble.offsetHeight/2+bob)+'px';
 bubble.style.borderRadius=right?'18px 18px 18px 6px':'18px 18px 6px 18px';
 menu.style.left=Math.max(14,Math.min(innerWidth-238,sx-(right?0:214)))+'px';
 menu.style.top=(sy>innerHeight*0.5?sy-54-menu.offsetHeight:sy+54)+'px';
-if(drawOpen){var dw2=draw.offsetWidth,dh=draw.offsetHeight;draw.style.left=Math.max(14,Math.min(innerWidth-14-dw2,sx-(right?0:dw2-28)))+'px';draw.style.top=Math.max(12,Math.min(innerHeight-12-dh,sy>innerHeight*0.5?sy-54-dh:sy+54))+'px'}
 if(bubbleT&&ts>bubbleT&&!menuOpen){if(slimeClicked){bubble.classList.remove('is-on')}else{sayHint()}}
 requestAnimationFrame(tick)}
 requestAnimationFrame(function(ts){t0=ts;tick(ts)});
@@ -131,7 +114,7 @@ var o=hits({left:left,right:left+bw,top:top,bottom:top+bh});
 if(o<bestO-4){bestO=o;best=top-top0;if(o===0)break}}
 bubbleDY=best}
 var saidOnce={};
-function say(txt,ms){if(!txt||menuOpen||drawOpen)return;if(saidOnce[txt]&&txt!==MSG)return;saidOnce[txt]=1;bubble.textContent=txt;bubble.classList.add('is-on');bubbleT=performance.now()+(ms||5200);bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,600)}
+function say(txt,ms){if(!txt||menuOpen)return;if(saidOnce[txt])return;saidOnce[txt]=1;bubble.textContent=txt;bubble.classList.add('is-on');bubbleT=performance.now()+(ms||5200);bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,600)}
 window.slimeSay=say;
 function openMenu(){menuOpen=true;menu.classList.add('is-on');bubble.classList.remove('is-on')}
 function closeMenu(){menuOpen=false;menu.classList.remove('is-on')}
@@ -142,10 +125,9 @@ var slimeClicked=false;try{slimeClicked=localStorage.getItem('slimeClicked')==='
 function sayHint(){if(slimeClicked||menuOpen)return;bubble.textContent='Click me';bubble.classList.add('is-on');bubbleT=0;bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,400)}
 function gotClick(){if(slimeClicked)return;slimeClicked=true;try{localStorage.setItem('slimeClicked','1')}catch(e){}}
 function poke(){gotClick();slime.classList.remove('is-poked');void slime.offsetWidth;slime.classList.add('is-poked');setTimeout(function(){slime.classList.remove('is-poked')},600)}
-function slimeAct(){poke();if(drawOpen){closeDraw();return}if(bubble.classList.contains('is-on')&&bubble.textContent===MSG){openDraw();return}menuOpen?closeMenu():openMenu()}
-slime.addEventListener('click',function(e){e.stopPropagation();slimeAct()});
-slime.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();slimeAct()}});
-document.addEventListener('click',function(){if(menuOpen)closeMenu();if(drawOpen)closeDraw()});
+slime.addEventListener('click',function(e){e.stopPropagation();poke();menuOpen?closeMenu():openMenu()});
+slime.addEventListener('keydown',function(e){if(e.key==='Enter'||e.key===' '){e.preventDefault();poke();menuOpen?closeMenu():openMenu()}});
+document.addEventListener('click',function(){if(menuOpen)closeMenu()});
 menu.addEventListener('click',function(e){e.stopPropagation()});
 
 /* section tracking */
@@ -156,9 +138,8 @@ if(here<0||here===live)return;
 live=here;
 mbs.forEach(function(b,k){b.classList.toggle('is-here',k===live)});
 var s=secs[live],k=s.dataset.section;
-if(k!==said){said=k;if(!quiet)say((k==='work'||k==='cases')?MSG:(s.dataset.say||SAY[k]),(k==='work'||k==='cases')?7000:0)}
+if(k!==said){said=k;if(!quiet)say(s.dataset.say||SAY[k])}
 }
 addEventListener('scroll',onScroll,{passive:true});
-var atEnd=false;addEventListener('scroll',function(){var end=innerHeight+pageYOffset>=document.documentElement.scrollHeight-40;if(end&&!atEnd&&!quiet)say(MSG,8000);atEnd=end},{passive:true});
 setTimeout(function(){mbs[0].classList.add('is-here');if(!quiet)say(secs[0]&&secs[0].dataset.say||SAY.hero);onScroll()},800);
 })();

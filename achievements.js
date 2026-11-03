@@ -3,8 +3,8 @@
 var LIST=[
 {id:'boot',n:'First Steps',how:'Move past the hero screen.'},
 {id:'guide',n:'Ask the Guide',how:'Click the slime to open its menu.'},
-{id:'scout',n:'Scout the Line',how:'Focus all six shipped games in the rail.'},
 {id:'keys',n:'Keyboard Player',how:'Change screens with the arrow keys.'},
+{id:'scout',n:'Scout the Line',how:'Focus all six shipped games in the rail.'},
 {id:'screening',n:'Screening Room',how:'Watch one game trailer.'},
 {id:'binge',n:'Full Reel',how:'Open all six game trailers.'},
 {id:'hands',n:'Hands On',how:'Open one playable prototype.'},
