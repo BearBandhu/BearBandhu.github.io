@@ -26,8 +26,7 @@ p{text-wrap:pretty}
 .b1{width:52vmax;height:52vmax;background:radial-gradient(circle at 35% 35%,var(--peach),transparent 68%);top:-6%;left:2%}
 .b2{width:46vmax;height:46vmax;background:radial-gradient(circle at 50% 50%,var(--lilac),transparent 68%);top:18%;right:-4%}
 .b3{width:44vmax;height:44vmax;background:radial-gradient(circle at 50% 50%,var(--mint),transparent 66%);bottom:-8%;left:22%}
-body>header,body>section,body>footer,body>.wrap{position:relative;z-index:1}
-body>.bar{z-index:20}
+body>header,body>section,body>footer,body>.bar,body>.wrap{position:relative;z-index:1}
 
 /* top bar */
 .bar{position:sticky;top:0;z-index:20;backdrop-filter:blur(14px);background:rgba(250,247,244,.72);border-bottom:1px solid var(--line)}

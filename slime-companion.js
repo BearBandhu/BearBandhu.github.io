@@ -9,7 +9,7 @@ design:'Design notes. This is the part I actually like.',
 systems:'Every system in the build, listed. No mystery boxes.',
 contact:'Seen enough? He answers email.'
 };
-var SPOTS={hero:[.9,.66],work:[.94,.68],about:[.92,.34],companion:[.2,.3],play:[.95,.52],trailer:[.95,.5],gallery:[.94,.58],loop:[.94,.28],role:[.93,.34],problems:[.94,.3],design:[.93,.3],systems:[.94,.62],pipeline:[.93,.36],contact:[.16,.68]};
+var SPOTS={hero:[.9,.3],play:[.95,.52],trailer:[.95,.5],gallery:[.94,.58],loop:[.94,.28],role:[.93,.34],problems:[.94,.3],design:[.93,.3],systems:[.94,.62],pipeline:[.93,.36],contact:[.16,.68]};
 var frag=document.createElement('div');
 frag.innerHTML='<div class="bubble" id="bubble" role="status" aria-live="polite"></div><div class="menu" id="menu"></div>'+
 '<div class="slime" id="slime" role="button" tabindex="0" aria-label="Companion menu"><div class="slime__body"><span class="slime__gloss"></span><span class="slime__face"><i class="slime__ear slime__ear--l"></i><i class="slime__ear slime__ear--r"></i><i class="slime__eye slime__eye--c"></i><i class="slime__eye slime__eye--y"></i></span></div></div>';
@@ -20,20 +20,16 @@ secs=[].slice.call(document.querySelectorAll('[data-section]')),live=0,said='';
 /* menu: page sections + home */
 secs.forEach(function(s,i){
 var b=document.createElement('button');b.type='button';
-var h=s.querySelector('h1,h2'),num=s.querySelector('.sec__num'),
-lab=s.dataset.menuLabel||(h?h.innerHTML.replace(/<br\s*\/?>/gi,' ').replace(/<[^>]+>/g,'').replace(/\s+/g,' ').trim():s.dataset.section),
-n=s.dataset.menuNum||(num?num.textContent.trim():'00');
-if(n.length>3)n='00';
-b.innerHTML='<i>'+n+'</i>'+lab;
+var h=s.querySelector('h1,h2'),num=s.querySelector('.sec__num');
+b.innerHTML='<i>'+(num?num.textContent:'00')+'</i>'+(h?h.textContent.replace(/\s+/g,' ').trim():s.dataset.section);
 b.onclick=function(){closeMenu();window.scrollTo({top:s.getBoundingClientRect().top+pageYOffset-70,behavior:'smooth'})};
 menu.appendChild(b)});
-if(!/(^|\/)(index\.html)?$/.test(location.pathname)){var home=document.createElement('button');home.type='button';home.innerHTML='<i>←</i>Back to the index';
-home.onclick=function(){location.href='index.html'};menu.appendChild(home)}
+var home=document.createElement('button');home.type='button';home.innerHTML='<i>←</i>Back to the index';
+home.onclick=function(){location.href='index.html'};menu.appendChild(home);
 var mbs=[].slice.call(menu.children);
 var quiet=false;try{quiet=localStorage.getItem('slimeQuiet')==='1'}catch(e){}
 var qBtn=document.createElement('button');qBtn.type='button';qBtn.className='menu__toggle';
-var QT={en:['Okay, you can talk','Please stop talking'],es:['Vale, puedes hablar','Deja de hablar, por favor']},QL=QT[document.documentElement.lang]||QT.en;
-function paintQuiet(){qBtn.innerHTML='<i>'+(quiet?'○':'●')+'</i>'+(quiet?QL[0]:QL[1]);qBtn.setAttribute('aria-pressed',quiet?'true':'false')}
+function paintQuiet(){qBtn.innerHTML='<i>'+(quiet?'○':'●')+'</i>'+(quiet?'Okay, you can talk':'Please stop talking');qBtn.setAttribute('aria-pressed',quiet?'true':'false')}
 paintQuiet();
 qBtn.onclick=function(e){e.stopPropagation();quiet=!quiet;try{localStorage.setItem('slimeQuiet',quiet?'1':'0')}catch(err){}paintQuiet();if(quiet)bubble.classList.remove('is-on')};
 menu.appendChild(qBtn);
@@ -118,8 +114,6 @@ function say(txt,ms){if(!txt||menuOpen)return;if(saidOnce[txt])return;saidOnce[t
 window.slimeSay=say;
 function openMenu(){menuOpen=true;menu.classList.add('is-on');bubble.classList.remove('is-on')}
 function closeMenu(){menuOpen=false;menu.classList.remove('is-on')}
-window.slimeMenu=function(o){o?openMenu():closeMenu()};
-window.slimeMenuOpen=function(){return menuOpen};
 
 var slimeClicked=false;try{slimeClicked=localStorage.getItem('slimeClicked')==='1'}catch(e){}
 function sayHint(){if(slimeClicked||menuOpen)return;bubble.textContent='Click me';bubble.classList.add('is-on');bubbleT=0;bubbleDY=0;clearTimeout(fitT);fitT=setTimeout(fit,400)}
