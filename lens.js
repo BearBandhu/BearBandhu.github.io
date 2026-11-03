@@ -5,5 +5,5 @@ document.addEventListener('click',function(e){var b=e.target.closest('[data-pick
 [].forEach.call(document.querySelectorAll('.lensbar__b'),function(b){b.setAttribute('aria-pressed',b.dataset.pick===L?'true':'false')});
 if(L==='game'){[].forEach.call(document.querySelectorAll('.pcard[data-lens-show]:not([data-lens-show~="game"])'),function(c){c.remove()})}
 if(L==='product'){[].forEach.call(document.querySelectorAll('.pcard'),function(c){var t=' '+(c.dataset.tags||'')+' ';if(t.includes(' prototype ')||t.includes(' jam '))c.remove()});[].forEach.call(document.querySelectorAll('.pcard[data-lens-show]:not([data-lens-show~="product"])'),function(c){c.remove()})}
-var t={product:'Alejandro Melian — Product Design Portfolio',game:'Alejandro Melian — Game Design Portfolio',all:'Alejandro Melian — Product & Game Design Portfolio'};if(t[L])document.title=t[L];
+var t={product:'Alejandro Melian — Product Design Portfolio',game:'Alejandro Melian — Game Design Portfolio',all:'Alejandro Melian — Portfolio'};if(t[L])document.title=t[L];
 })();
