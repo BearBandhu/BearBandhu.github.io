@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alejandro Melian — Game Design Portfolio</title>
+<link rel="icon" href="favicon-am.svg">
+<link rel="apple-touch-icon" href="favicon-am.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="depth.css">
+<link rel="stylesheet" href="home.css">
+<style>.hero__name{color:inherit;text-decoration:none;text-decoration-color:currentColor;transition:opacity .18s ease}.hero__name:hover{color:inherit;text-decoration:underline;text-decoration-thickness:.06em;text-underline-offset:.12em}.hero__sub .js-copy-mail{font-weight:700;color:#000;text-decoration:underline;text-decoration-thickness:.08em;text-underline-offset:.14em}
+.sec--hero .hero__lead{font-family:var(--f-d);font-size:clamp(38px,4.6vw,64px);line-height:1.14;letter-spacing:-.02em;max-width:40ch;font-weight:700;color:var(--ink);text-wrap:pretty}
+@media(max-width:820px){.sec--hero .hero__lead{font-size:clamp(34px,5.8vw,52px);max-width:34ch}}
+@media(max-height:720px){.sec--hero .hero__lead{font-size:clamp(32px,3.8vw,48px)}}
+.herogrid{display:grid;grid-template-columns:minmax(0,1.5fr) minmax(0,1fr);gap:clamp(24px,3.5vw,54px);align-items:start;margin-top:8px}
+.herogrid__side{display:flex;flex-direction:column;gap:14px}
+.hcard{padding:20px 22px;border-radius:20px;background:var(--card,rgba(255,255,255,.7));border:1px solid var(--line,rgba(22,20,27,.12));box-shadow:0 18px 44px -30px rgba(22,20,27,.4)}
+.hcard__k{display:block;font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3)}
+.hcard .bctc,.hcard .bstat{display:flex;flex-direction:column;gap:1px;margin:12px 0 0;border-top:1px solid var(--line,rgba(22,20,27,.12))}
+.hcard .bctc__row,.hcard .bstat__row{display:flex;align-items:baseline;gap:12px;padding:11px 0;border-bottom:1px solid var(--line,rgba(22,20,27,.12));text-decoration:none;color:inherit}
+.hcard .bctc__row{justify-content:space-between}
+.hcard .bctc__v{font-size:clamp(12px,.86vw,14px);line-height:1.35;word-break:break-word}
+.hcard .bctc__go{flex:none;font-size:11px;color:var(--ink-3)}
+.hcard .bctc__row--cv .bctc__v{font-weight:600}
+.hcard .bstat dd{margin:0;flex:none;min-width:1.8em;font-size:clamp(18px,1.3vw,22px);line-height:1;letter-spacing:-.02em;font-variant-numeric:tabular-nums;color:var(--ink)}
+.hcard .bstat dt{font-family:var(--f-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+@media(max-width:900px){.herogrid{grid-template-columns:minmax(0,1fr)}}
+.ctc{display:flex;flex-direction:column;gap:1px;max-width:640px;margin:22px 0 24px;border-top:1px solid rgba(22,20,27,.14)}
+.ctc__row{display:grid;grid-template-columns:96px 1fr auto;align-items:baseline;gap:16px;padding:11px 2px;border-bottom:1px solid rgba(22,20,27,.14);text-decoration:none;color:inherit}
+.ctc__k{font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-3)}
+.ctc__v{font-size:1.02rem;color:var(--ink)}
+.ctc__row--lead .ctc__v{font-weight:700;color:#000}
+.ctc__go{font-size:12px;letter-spacing:.04em;color:var(--ink-3);opacity:0;transition:opacity .18s ease}
+.ctc__row:not(.ctc__row--static):hover{background:rgba(22,20,27,.035)}
+.ctc__row:not(.ctc__row--static):hover .ctc__go{opacity:1}
+@media(max-width:640px){.ctc__row{grid-template-columns:1fr;gap:4px}.ctc__go{display:none}}
+.pcard__stat{position:absolute;top:10px;right:10px;z-index:3;display:flex;gap:6px;pointer-events:none}
+.ptag--stat{background:rgba(255,255,255,.92)!important;border-color:rgba(255,255,255,.7)!important;box-shadow:0 8px 20px -12px rgba(22,20,27,.6);backdrop-filter:blur(8px)}
+.ptag--stat.is-match{background:linear-gradient(120deg,rgba(233,122,78,.9),rgba(138,92,240,.9))!important;color:#fff!important;border-color:transparent!important}</style>
+</head>
+<body>
+<a class="skip" href="#work">Skip to the work</a>
+<div class="field" aria-hidden="true"><div class="blob b1"></div><div class="blob b2"></div><div class="blob b3"></div><div class="blob b4"></div></div>
+<div class="grain" aria-hidden="true"></div>
+
+<main class="page">
+
+<section class="sec sec--hero" id="home" data-section="hero" data-menu-num="00" data-menu-label="Home" data-screen-label="Hero" data-say="Hi. I'm the guide. Scroll and the work is right below.">
+<div class="sec__in">
+<div class="eyebrow"><i></i><span class="mono sec__lab">Designer · games and digital products</span></div>
+<div class="herogrid">
+<div class="herogrid__txt">
+<h1 class="hero__lead">Hi, I'm <a class="hero__name" href="#about">Alejandro Melian</a>.<br>Let's build something together.</h1>
+<p class="hero__sub">My design philosophy focuses around questions and iterations. I like to be able to answer why I make every design choice, and I make my choices around users, data, and experience. When designing I like thinking on the present and the future, how does it feel when something is new, and how does it feel when its the 100th time you do an action.</p>
+</div>
+<aside class="herogrid__side">
+<div class="hcard"><span class="mono hcard__k">Contact me</span>
+<div class="bctc">
+<a class="bctc__row" href="mailto:alejandro.melian.r@gmail.com"><span class="bctc__v">alejandro.melian.r@gmail.com</span><span class="bctc__go">→</span></a>
+<a class="bctc__row" href="https://www.linkedin.com/in/alejandro-melian-rodriguez/" target="_blank" rel="noopener"><span class="bctc__v">linkedin.com/in/alejandro-melian-rodriguez</span><span class="bctc__go">→</span></a>
+<a class="bctc__row bctc__row--cv" href="mailto:alejandro.melian.r@gmail.com?subject=CV%20request"><span class="bctc__v">Download CV</span><span class="bctc__go">Soon</span></a>
+</div></div>
+<div class="hcard"><span class="mono hcard__k">By the numbers</span>
+<dl class="bstat">
+<div class="bstat__row"><dd>6+</dd><dt>Years of experience</dt></div>
+<div class="bstat__row"><dd>6</dd><dt>Shipped products</dt></div>
+<div class="bstat__row"><dd>7</dd><dt>Working prototypes</dt></div>
+</dl></div>
+</aside>
+</div>
+</div>
+</section>
+
+<section class="sec" id="work" data-section="work" data-menu-num="01" data-menu-label="Work &amp; projects" data-screen-label="Work" data-say="Sixteen projects in one grid. Tap a skill to keep only the work that used it.">
+<div class="sec__in">
+<div class="wkhead"><div><div class="eyebrow"><i></i><span class="mono sec__num">01 — Work &amp; projects</span></div><h2>Work &amp; projects</h2></div><span class="spacer"></span><p>Shipped titles, playable prototypes and jam games. Filter by the skills you care about — everything else drops out.</p></div>
+
+<div class="filters" role="group" aria-label="Filter projects by skill">
+<span class="mono filters__lab">Filter by skill</span>
+<div class="filters__set">
+<button class="fchip fchip--all" type="button" aria-pressed="true">All</button>
+<button class="fchip" type="button" data-tag="shipped" aria-pressed="false">Shipped</button>
+<button class="fchip" type="button" data-tag="prototype" aria-pressed="false">Prototype</button>
+<button class="fchip" type="button" data-tag="jam" aria-pressed="false">Game jam</button>
+<button class="fchip fchip--more" id="fmore" type="button" aria-expanded="false" aria-controls="fskills" aria-label="More skill filters"><span class="fmore__i" aria-hidden="true">+</span><b id="fmoreN" hidden></b></button>
+<span class="filters__skills" id="fskills" hidden>
+<button class="fchip" type="button" data-tag="combat" aria-pressed="false">Combat design</button>
+<button class="fchip" type="button" data-tag="encounter" aria-pressed="false">Encounter design</button>
+<button class="fchip" type="button" data-tag="systems" aria-pressed="false">Systems design</button>
+<button class="fchip" type="button" data-tag="uxui" aria-pressed="false">UX/UI</button>
+<button class="fchip" type="button" data-tag="level" aria-pressed="false">Level design</button>
+<button class="fchip" type="button" data-tag="ai" aria-pressed="false">AI behaviour</button>
+<button class="fchip" type="button" data-tag="narrative" aria-pressed="false">Narrative</button>
+<button class="fchip" type="button" data-tag="economy" aria-pressed="false">Economy &amp; progression</button>
+<button class="fchip" type="button" data-tag="tools" aria-pressed="false">Tools &amp; editors</button>
+<button class="fchip" type="button" data-tag="proddesign" aria-pressed="false">Product design</button>
+<button class="fchip" type="button" data-tag="prodmgmt" aria-pressed="false">Product management</button>
+</span>
+<span class="fcount" id="fcount" role="status" aria-live="polite">16 projects</span>
+</div>
+</div>
+
+<div class="pgrid" id="pgrid">
+
+<article class="pcard" data-href="project-transmutowers.html" data-yt="7p3ASn6knIg" data-tags="shipped combat encounter ai systems"><div class="pcard__media"><img loading="lazy" alt="TransmuTowers trailer still" src="https://img.youtube.com/vi/7p3ASn6knIg/hqdefault.jpg"><button class="pcard__play" type="button" aria-label="Play the TransmuTowers trailer"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></button></div><div class="pcard__body"><span class="pcard__kind">Steam · Edenic Era</span><h3>TransmuTowers</h3><p class="pcard__desc">Choose your alchemist from a magical coven. Explore a hand-painted, post-apocalyptic fantasy world. Fend off hordes of magical beasts in this roguelite tower defense and survival game. Play solo or in co-op with up to 3 friends. Strategize and adapt in tower defense × survival × bullet heaven.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="encounter">Encounter design</span><span class="ptag" data-tag="ai">AI behaviour</span><span class="ptag" data-tag="systems">Systems design</span></div><div class="pcard__links"><a class="pcard__more" href="project-transmutowers.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://store.steampowered.com/app/2814360/TransmuTowers/">Steam ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-lylyland.html" data-tags="shipped systems uxui narrative"><div class="pcard__media"><img loading="lazy" alt="Lylyland key art" src="assets/lylyland/card.png"></div><div class="pcard__body"><span class="pcard__kind">Released · Lyly Interactive</span><h3>Lylyland</h3><p class="pcard__desc">A gamified app that uses games to guide people to real world locations and keep them engaged. Alongside one programmer and one artist I built over eight casual games, all built on skill and repetition, plus a narrative quest layer that sends users to real places to take pictures or read the space for clues to a riddle.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="uxui">UX/UI</span><span class="ptag" data-tag="narrative">Narrative</span></div><div class="pcard__links"><a class="pcard__more" href="project-lylyland.html">Design notes →</a></div></div></article>
+
+<article class="pcard" data-href="project-bugs-n-guns.html" data-yt="eMxsDWH9Zrc" data-tags="shipped combat level narrative encounter"><div class="pcard__media"><img loading="lazy" alt="Bugs 'N Guns trailer still" src="https://img.youtube.com/vi/eMxsDWH9Zrc/hqdefault.jpg"><button class="pcard__play" type="button" aria-label="Play the Bugs 'N Guns trailer"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></button></div><div class="pcard__body"><span class="pcard__kind">Steam · Blink Shot</span><h3>Bugs 'N Guns</h3><p class="pcard__desc">Bugs N' Guns is a cooperative third person shooter. Player will need to combine their weapons firepower to eliminate enemies and obstacles as players try to protect a train called MARC - OS from hostile flora and fauna.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="encounter">Encounter design</span><span class="ptag" data-tag="level">Level design</span><span class="ptag" data-tag="narrative">Narrative</span></div><div class="pcard__links"><a class="pcard__more" href="project-bugs-n-guns.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://store.steampowered.com/app/2648130/Bugs_N_Guns/">Steam ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-cusco-paradox.html" data-yt="kjDqkztJTuA" data-tags="shipped combat level ai uxui"><div class="pcard__media"><img loading="lazy" alt="Cusco Paradox trailer still" src="https://img.youtube.com/vi/kjDqkztJTuA/hqdefault.jpg"><button class="pcard__play" type="button" aria-label="Play the Cusco Paradox trailer"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></button></div><div class="pcard__body"><span class="pcard__kind">itch.io · Indaga Studios</span><h3>Cusco Paradox</h3><p class="pcard__desc">Cusco Paradox is an LGBTQ+ narrative puzzle game about a fox being trapped in the Incan netherworld. A journey of forlorn love and discovery, Atoq the Fox has lost his memories and must delve deep into this world to recover both his memories and his boyfriend. Move the blocks to build a path through the shrines and travel the nether.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="level">Level design</span><span class="ptag" data-tag="ai">AI behaviour</span><span class="ptag" data-tag="uxui">UX/UI</span></div><div class="pcard__links"><a class="pcard__more" href="project-cusco-paradox.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://indagastudios.itch.io/cuscoparadox">itch.io ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-escuela-kadabra.html" data-yt="9lFaFwQrFaA" data-tags="shipped uxui level systems narrative"><div class="pcard__media"><img loading="lazy" alt="Escuela Kadabra trailer still" src="https://img.youtube.com/vi/9lFaFwQrFaA/hqdefault.jpg"><button class="pcard__play" type="button" aria-label="Play the Escuela Kadabra trailer"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></button></div><div class="pcard__body"><span class="pcard__kind">Released · Innova</span><h3>Escuela Kadabra</h3><p class="pcard__desc">A child arrives at a magic school where every teacher has been turned into an animal. To turn them back he has to find the source of magic and the evil wizard behind it. A heavily narrative 2D platformer for children aged 9–12, built around minigames that train reading comprehension and vocabulary, and a creature taming system where the creatures help you rather than fight for you.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="uxui">UX/UI</span><span class="ptag" data-tag="level">Level design</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="narrative">Narrative</span></div><div class="pcard__links"><a class="pcard__more" href="project-escuela-kadabra.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=9lFaFwQrFaA">Trailer ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-trainingit.html" data-tags="shipped proddesign prodmgmt uxui"><div class="pcard__media" style="background:linear-gradient(135deg,#1d2440,#3a4a7a 55%,#e97a4e)"></div><div class="pcard__body"><span class="pcard__kind">Shipped · TrainingIT · Spain</span><h3>TrainingIT soft skills</h3><p class="pcard__desc">A new course line that teaches soft skills to IT professionals by anchoring every lesson in the hard skills they already work with. I ran the pipeline end to end: interviews with IT professionals, HR and company heads to rank the pain points, then the course format, the curriculums, the teachers, and four courses out for soft launch.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="proddesign">Product design</span><span class="ptag" data-tag="prodmgmt">Product management</span><span class="ptag" data-tag="uxui">UX/UI</span></div><div class="pcard__links"><a class="pcard__more" href="project-trainingit.html">Case study →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://www.trainingit.es/cursos-presenciales-it/">Course line ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-the-calling.html" data-yt="Po0Wyv0wKGk" data-tags="shipped combat encounter"><div class="pcard__media"><img loading="lazy" alt="The Calling trailer still" src="https://img.youtube.com/vi/Po0Wyv0wKGk/hqdefault.jpg"><button class="pcard__play" type="button" aria-label="Play The Calling trailer"><svg viewBox="0 0 24 24"><path d="M7 4l14 8-14 8z"/></svg></button></div><div class="pcard__body"><span class="pcard__kind">Trailer · Indaga Studios</span><h3>The Calling</h3><p class="pcard__desc">A game about unlocking your vocational profile. Play different minigames to generate a profile — a top down hand drawn game heavily focused on narrative elements, filled with a range of different activities and an in-depth choice system. Every action has a consequence.</p><div class="pcard__tags"><span class="ptag" data-tag="shipped">Shipped</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="encounter">Encounter design</span></div><div class="pcard__links"><a class="pcard__more" href="project-the-calling.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://www.youtube.com/watch?v=Po0Wyv0wKGk">Trailer ↗</a></div></div></article>
+
+<article class="pcard" data-href="prototype-mini-rogue.html" data-tags="prototype systems economy combat"><div class="pcard__media"><img loading="lazy" alt="Mini Rogue key art" src="art/proto-mini-rogue.jpg"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>Mini Rogue</h3><p class="pcard__desc">A minimalist tabletop roguelike in portrait. Four hero classes descend through a growing multi-biome grid where combat is dice you can nudge with Focus, weapons wear out and evolve, and the body of your last run is waiting on the floor where you died.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="economy">Economy &amp; progression</span><span class="ptag" data-tag="combat">Combat design</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-mini-rogue.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-caravan-defense.html" data-tags="prototype systems economy encounter"><div class="pcard__media"><img loading="lazy" alt="Caravan Defense key art" src="art/proto-caravan-defense.jpg"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>Caravan Defense</h3><p class="pcard__desc">The thing you defend is also the thing that moves. Gather out in the field, steer the caravan away from the mesas, and spend what you carried on engineering or magic before the next wave lands.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="encounter">Encounter design</span><span class="ptag" data-tag="economy">Economy &amp; progression</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-caravan-defense.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-qte-combat.html" data-tags="prototype combat encounter uxui"><div class="pcard__media"><img loading="lazy" alt="QTE Combat key art" src="art/proto-qte-combat.jpg"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>QTE Combat</h3><p class="pcard__desc">Reaction inside a turn structure. Attacks and defences resolve on an isometric grid, but every exchange opens a timed input window — the fight keeps asking for your attention between decisions.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="encounter">Encounter design</span><span class="ptag" data-tag="uxui">UX/UI</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-qte-combat.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-last-piece.html" data-tags="prototype systems combat"><div class="pcard__media"><img loading="lazy" alt="The Last Piece key art" src="art/proto-last-piece.jpg"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>The Last Piece</h3><p class="pcard__desc">A king alone on a 5×8 board, climbing. Chess movement supplies the tactics, a d6 against defence supplies the risk, and Focus lets you buy a second chance at the moment it matters.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="combat">Combat design</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-last-piece.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-gnome-garden.html" data-tags="prototype systems economy tools"><div class="pcard__media"><img loading="lazy" alt="Gnome Garden key art" src="art/proto-gnome-garden.jpg"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>Gnome Garden</h3><p class="pcard__desc">Tower defence where the towers are crops. A gnome plants, waters and harvests while bugs march on the house — and every plant is both a weapon and part of the economy that pays for the next one.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="economy">Economy &amp; progression</span><span class="ptag" data-tag="tools">Tools &amp; editors</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-gnome-garden.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-sonar-salvage.html" data-tags="prototype systems uxui"><div class="pcard__media"><img loading="lazy" alt="Sonar Salvage key art" src="art/proto-sonar-salvage.png"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>Sonar Salvage</h3><p class="pcard__desc">You never see the trench — only what the claw's lamp reaches. Drive a crane down 2,400 metres of dark on a two-minute battery, and the battery is also the light.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="uxui">UX/UI</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-sonar-salvage.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="prototype-cozy-meadow.html" data-tags="prototype systems economy"><div class="pcard__media" style="background:linear-gradient(135deg,#FFD8E8,#C6EFDC)"></div><div class="pcard__body"><span class="pcard__kind">Playable build</span><h3>Cozy Meadow</h3><p class="pcard__desc">A garden that grows into a habitat. Plant, water and harvest a meadow while unlocks, hybrids and wildlife arrive on their own schedule — progression you tend rather than grind.</p><div class="pcard__tags"><span class="ptag" data-tag="prototype">Prototype</span><span class="ptag" data-tag="systems">Systems design</span><span class="ptag" data-tag="economy">Economy &amp; progression</span></div><div class="pcard__links"><a class="pcard__more" href="prototype-cozy-meadow.html">Try the prototype →</a></div></div></article>
+
+<article class="pcard" data-href="project-neon-red.html" data-tags="jam combat encounter"><div class="pcard__media"><img loading="lazy" alt="Neon Red trailer still" src="https://img.youtube.com/vi/NoE4qOLrqMI/hqdefault.jpg"></div><div class="pcard__body"><span class="pcard__kind">Game jam · itch.io</span><h3>Neon Red</h3><p class="pcard__desc">Neon Red is a platformer for speedrunners. By utilizing the red line connecting your arm and hand, you'll need to use momentum and swings to reach the goal as quickly as possible. Defeat enemies and strive to improve your times.</p><div class="pcard__tags"><span class="ptag" data-tag="jam">Game jam</span><span class="ptag" data-tag="combat">Combat design</span><span class="ptag" data-tag="encounter">Encounter design</span></div><div class="pcard__links"><a class="pcard__more" href="project-neon-red.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://alvarocga.itch.io/neonred">itch.io ↗</a></div></div></article>
+
+<article class="pcard" data-href="project-super-transform.html" data-tags="jam level systems"><div class="pcard__media"><img loading="lazy" alt="Super Transform trailer still" src="https://img.youtube.com/vi/pPfRK8eXA9U/hqdefault.jpg"></div><div class="pcard__body"><span class="pcard__kind">Game jam · itch.io</span><h3>Super Transform</h3><p class="pcard__desc">Super transform is a first person puzzle videogame based on transforming different objects to traverse the rooftops. You will embody an interdimensional guard that has the mission to save the city of Madrid in a fractured reality which has been flooded (yes, now it has a beach) and is under the vengeful attack of the squids.</p><div class="pcard__tags"><span class="ptag" data-tag="jam">Game jam</span><span class="ptag" data-tag="level">Level design</span><span class="ptag" data-tag="systems">Systems design</span></div><div class="pcard__links"><a class="pcard__more" href="project-super-transform.html">Design notes →</a><a class="pcard__more" target="_blank" rel="noopener" href="https://alvarocga.itch.io/super-transform">itch.io ↗</a></div></div></article>
+
+</div>
+<p class="pempty" id="pempty" hidden>Nothing matches that combination yet. Clear a filter to see more.</p>
+</div>
+</section>
+
+<section class="sec" id="about" data-section="about" data-menu-num="02" data-menu-label="About" data-screen-label="About" data-say="Five years, a lot of hats. Combat is the one he keeps coming back to.">
+<div class="sec__in">
+<div class="eyebrow"><i></i><span class="mono sec__num">02 — About</span></div>
+<h2>Who am I?</h2>
+<div class="cols">
+<div>
+<p><strong>Dedicated and passionate about the world of gaming.</strong> 5+ years working in video games.</p>
+<p>Experience as a game designer focused on combat design, enemy and boss design, encounter design and game balancing. I have additional experience across multiple areas of game development — UX/UI, pixel art, animation, prototyping, gameplay, production, product management and research — and I taught game design fundamentals as a professor at UTAD.</p>
+<p>I understand the pipeline of most departments in games, and I use that knowledge to respect the complexity and necessity of teamwork and cooperation in game development.</p>
+<div class="chips"><span class="chip chip--hot">Combat design</span><span class="chip chip--hot">Enemy &amp; boss design</span><span class="chip chip--hot">Encounter design</span><span class="chip chip--hot">Game balancing</span><span class="chip">UX/UI</span><span class="chip">Pixel art</span><span class="chip">Animation</span><span class="chip">Prototyping</span><span class="chip">Gameplay</span><span class="chip">Production</span><span class="chip">Product management</span><span class="chip">Research</span><span class="chip">Teaching</span></div>
+</div>
+<dl class="card">
+<dt>Contact</dt><dd><a href="mailto:alejandro.melian.r@gmail.com">alejandro.melian.r@gmail.com</a></dd>
+<dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/a-melian/" target="_blank" rel="noopener">linkedin.com/in/a-melian</a></dd>
+<dt>Currently</dt><dd>Game designer at Edenic Era</dd>
+<dt>Open to</dt><dd>Game design (systems) · combat &amp; gameplay design</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section class="sec" id="companion" data-section="companion" data-menu-num="03" data-menu-label="Companion" data-screen-label="Companion" data-say="This one's mine. Recolour me however you like — it sticks.">
+<div class="sec__in">
+<div class="eyebrow"><i></i><span class="mono sec__num">03 — Companion</span></div>
+<h2>Dress the slime</h2>
+<p class="lab__lede">Most pieces are locked. Explore the portfolio to earn them — every locked swatch tells you what it wants.</p>
+<div class="lab">
+<div class="lab__stage"><div class="demo slime" id="demo"><div class="slime__body"><span class="slime__gloss"></span><span class="slime__face"><i class="slime__ear slime__ear--l"></i><i class="slime__ear slime__ear--r"></i><i class="slime__eye slime__eye--c"></i><i class="slime__eye slime__eye--y"></i></span></div></div></div>
+<div class="lab__sets">
+<div class="set"><span class="set__t">Body</span><div class="opts" id="setBody"></div></div>
+<div class="set"><span class="set__t">Face</span><div class="opts" id="setFace"></div></div>
+<div class="set"><span class="set__t">Eyes</span><div class="opts" id="setEyes"></div></div>
+<p class="lab__hint" id="labHint">Click a locked piece to see how to unlock it.</p>
+<div class="lab__bar"><button class="lab__reset" id="labAchv" type="button">Achievements <b id="labCount">0/14</b></button><button class="lab__reset" id="labReset" type="button">Reset to default</button></div>
+</div>
+</div>
+</div>
+</section>
+
+<section class="sec sec--contact" id="contact" data-section="contact" data-menu-num="04" data-menu-label="Contact" data-screen-label="Contact" data-say="That's everything. Say hello — he answers.">
+<div class="sec__in contact">
+<div class="eyebrow"><i></i><span class="mono sec__lab">Available for game design roles</span></div>
+<h2>Let's build<br>the game.</h2>
+<div class="ctc">
+<a class="ctc__row ctc__row--lead js-copy-mail" href="mailto:alejandro.melian.r@gmail.com" data-mail="alejandro.melian.r@gmail.com"><span class="mono ctc__k">Email</span><span class="ctc__v">alejandro.melian.r@gmail.com</span><span class="ctc__go">Copy →</span></a>
+<a class="ctc__row" href="https://www.linkedin.com/in/a-melian/" target="_blank" rel="noopener"><span class="mono ctc__k">LinkedIn</span><span class="ctc__v">linkedin.com/in/a-melian</span><span class="ctc__go">Open ↗</span></a>
+<div class="ctc__row ctc__row--static"><span class="mono ctc__k">Based in</span><span class="ctc__v">Lima, Peru · remote-friendly · EN / ES</span></div>
+</div>
+<span class="mono">Alejandro Melian · Game design portfolio · 2026</span>
+</div>
+</section>
+
+</main>
+
+<div class="lb" id="lb"><button class="lb__x" id="lbx" type="button" aria-label="Close">✕</button><div class="lb__f" id="lbf"></div></div>
+
+<script src="i18n-es.js"></script>
+<script src="i18n.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="achievements.js"></script>
+<script src="home.js"></script>
+<script src="slime-lab.js"></script>
+<script src="slime-companion.js"></script>
+<script>
+document.addEventListener('click',function(e){var a=e.target.closest('.js-copy-mail');if(!a)return;e.preventDefault();var m=a.dataset.mail;
+function done(){if(window.slimeSay)window.slimeSay(m+' — copied to your clipboard.',6000)}
+if(navigator.clipboard&&navigator.clipboard.writeText)navigator.clipboard.writeText(m).then(done,done);
+else{var t=document.createElement('textarea');t.value=m;document.body.appendChild(t);t.select();try{document.execCommand('copy')}catch(err){}t.remove();done()}
+});
+try{if(sessionStorage.getItem('mailCopied')==='1'){sessionStorage.removeItem('mailCopied');setTimeout(function(){if(window.slimeSay)window.slimeSay('alejandro.melian.r@gmail.com — copied to your clipboard. Paste it and say hello.',7000)},1400)}}catch(e){}
+</script>
+<script>
+(function(){var ST={shipped:1,prototype:1,jam:1};
+[].forEach.call(document.querySelectorAll('.pcard'),function(c){
+var tags=c.querySelector('.pcard__tags'),media=c.querySelector('.pcard__media');if(!tags||!media)return;
+[].forEach.call(tags.querySelectorAll('.ptag'),function(t){if(ST[t.dataset.tag]){var w=media.querySelector('.pcard__stat');if(!w){w=document.createElement('div');w.className='pcard__stat';media.appendChild(w)}t.classList.add('ptag--stat');w.appendChild(t)}});
+});})();
+</script>
+</body>
+</html>

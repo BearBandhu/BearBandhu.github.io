@@ -1,0 +1,491 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Lylyland case study — Alejandro Melian</title>
+<link rel="icon" href="favicon-am.svg">
+<link rel="apple-touch-icon" href="favicon-am.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>
+.ov{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:28px;border-top:1px solid currentColor;border-color:rgba(127,127,127,.25)}
+.ov>div{padding:14px 14px 0 0}
+.ov dt{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:6px}
+.ov dd{margin:0;font-size:1rem;line-height:1.35}
+.herofig{margin-top:32px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.herofig video,.herofig img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px;background:rgba(127,127,127,.12)}
+.herofig figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.herofig .media{aspect-ratio:16/10;border-radius:18px;overflow:hidden}
+.herofig .media--sq{aspect-ratio:auto;flex:1;min-height:0}
+.herofig .media--sq img{object-fit:contain;background:#9a9a9a}
+figcaption,.cap{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.03em;opacity:.6;line-height:1.4}
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.pts li{position:relative;padding-left:18px;line-height:1.5;text-wrap:pretty}
+.pts li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--hot,#e97a4e)}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:22px}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.2rem;line-height:1.2;margin:0 0 12px}
+.sub{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin:34px 0 0}
+.todo{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.todo .h3{margin:0}
+.todo p{margin:0;opacity:.6;font-size:.94rem;line-height:1.45}
+.rs{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}.rs .h3{margin:0}.rs p{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.per{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.per .cc{gap:12px}.per__tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid currentColor;opacity:.7;margin-left:auto}
+.per__q{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-size:1.08rem;line-height:1.35;text-wrap:pretty}
+.per .pts{gap:6px}.per .pts li{font-size:.92rem}
+.jr{width:100%;min-width:860px;border-collapse:collapse;margin-top:14px;font-size:.9rem;table-layout:fixed}
+.jr th,.jr td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45;text-wrap:pretty}
+.jr thead th{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1rem}
+.jr tbody th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;font-weight:500;width:110px}
+.jr .lo{color:var(--hot,#e97a4e);font-weight:600}.jr .hi{color:#2f9e6b;font-weight:600}.jr .mid{opacity:.7;font-weight:600}
+.jr__h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-top:22px}.jr__h p{margin:0}
+@media(max-width:860px){.per{grid-template-columns:minmax(0,1fr)}}
+.comp{width:100%;border-collapse:collapse;margin-top:14px;font-size:.94rem}
+.comp th,.comp td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top}
+.comp th{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.comp td.tbd{opacity:.45}
+.tblwrap{overflow-x:auto}
+.comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+.cc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.cc__top{display:flex;align-items:baseline;gap:10px}
+.cc__n{font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.5}
+.cc__t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.3rem;line-height:1.15;margin:0}
+.cc__m{font-size:.92rem;opacity:.75;margin:-6px 0 0}
+.cc dl{margin:0;display:flex;flex-direction:column;gap:12px}
+.cc dt{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:3px}
+.cc dd{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.cc dt.pos{color:#2f9e6b;opacity:1}.cc dt.neg{color:var(--hot,#e97a4e);opacity:1}
+.gaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.gap{border-top:2px solid var(--hot,#e97a4e);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.gap p{margin:0;line-height:1.55;text-wrap:pretty}
+@media(max-width:860px){.gaps{grid-template-columns:minmax(0,1fr)}}
+.bb{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.bb__lede{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+.bb__lede p{margin:0;max-width:62ch;line-height:1.55;text-wrap:pretty}
+.sw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.sw>div{display:flex;flex-direction:column;gap:6px}
+.sw i{display:block;aspect-ratio:1.4;border-radius:12px;border:1px solid rgba(127,127,127,.25)}
+.sw b{font-size:.86rem;font-weight:600}
+.sw span{font-family:"JetBrains Mono",monospace;font-size:.7rem;opacity:.6;line-height:1.35}
+.bbg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bbc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.bbc .h3{margin:0}
+.bbx{margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr);border-radius:22px;overflow:hidden;background:#1A1A17;color:#fff}
+.bbx__img{background:#9a9a9a;min-height:260px}.bbx__img img{width:100%;height:100%;object-fit:contain;display:block}
+.bbx__body{padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;align-items:flex-start;gap:12px;justify-content:center}
+.bbx__k{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#05E26B}
+.bbx__t{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.12;letter-spacing:-.02em;text-wrap:balance}
+.bbx__d{margin:0;max-width:48ch;line-height:1.55;color:rgba(255,255,255,.78);text-wrap:pretty}
+.bbx__btn{margin-top:8px;display:inline-flex;align-items:center;gap:14px;background:#05E26B;color:#1A1A17;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:99px;transition:transform .2s,background .2s}
+.bbx__btn span{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;opacity:.75}
+.bbx__btn:hover{background:#3BF08C;transform:translateY(-1px);color:#1A1A17}
+.bbg--3{margin-top:14px}
+.sw--mini{display:flex;gap:6px}.sw--mini i{width:34px;height:34px;aspect-ratio:auto;border-radius:9px;border:1px solid rgba(127,127,127,.3)}
+@media(max-width:760px){.bbx{grid-template-columns:minmax(0,1fr)}.bbg--3{grid-template-columns:minmax(0,1fr)}}
+.bbc__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.9rem;line-height:1}
+.bbc p{margin:0;font-size:.93rem;line-height:1.5;opacity:.8;text-wrap:pretty}
+.voice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.voice div{border-radius:14px;padding:16px;background:rgba(127,127,127,.08);display:flex;flex-direction:column;gap:6px}
+.voice p{margin:0;line-height:1.45}
+@media(max-width:860px){.sw{grid-template-columns:repeat(3,minmax(0,1fr))}.bbg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.bbg,.voice{grid-template-columns:minmax(0,1fr)}}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.shots .slot{aspect-ratio:4/3}
+.shots--tall .slot{aspect-ratio:9/16}
+.shots--wide{grid-template-columns:repeat(2,minmax(0,1fr))}
+.shots--wide .slot{aspect-ratio:16/10}
+.loopv{aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:rgba(127,127,127,.12);display:grid;place-items:center;position:relative}
+.loopv video{width:100%;height:100%;object-fit:cover;display:block}
+.loopv span{position:absolute;font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.55;text-align:center;padding:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+.kpi{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.kpi__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:2.2rem;line-height:1;opacity:.3}
+.kpi__l{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6;line-height:1.35}
+@media(max-width:860px){.ov,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cols3,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}.herofig{grid-template-columns:minmax(0,1fr)}.herofig .media--sq{aspect-ratio:1}}
+@media(max-width:560px){.cols2,.cols3,.shots,.shots--wide{grid-template-columns:minmax(0,1fr)}.shots--tall{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.aff{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.aff__col{border-radius:16px;padding:14px;background:rgba(127,127,127,.07);display:flex;flex-direction:column;gap:12px}
+.aff__h{display:flex;flex-direction:column;gap:4px;min-height:3.4em}
+.aff__h .h3{margin:0;font-size:1.05rem}
+.aff__notes{display:flex;flex-direction:column;gap:8px;flex:1}
+.aff__n{margin:0;padding:12px 12px 14px;border-radius:4px;background:#FFF3B8;color:#2a2618;font-size:.9rem;line-height:1.4;box-shadow:0 1px 0 rgba(0,0,0,.06),0 6px 14px -8px rgba(0,0,0,.3);text-wrap:pretty}
+.aff__col:nth-child(2) .aff__n{background:#E7F6D6}
+.aff__col:nth-child(3) .aff__n{background:#FFE1CC}
+.aff__col:nth-child(4) .aff__n{background:#E4E2F7}
+.aff__n:nth-child(odd){transform:rotate(-.6deg)}.aff__n:nth-child(even){transform:rotate(.5deg)}
+.aff__c{border-top:1px solid rgba(127,127,127,.3);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.aff__c span{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55}
+.aff__c p{margin:0;font-size:.9rem;line-height:1.45;text-wrap:pretty}
+.aff__axis{display:flex;align-items:center;gap:12px;margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.aff__axis i{flex:1;height:1px;background:currentColor;position:relative}
+.aff__axis i::after{content:"";position:absolute;right:-1px;top:-4px;border:4.5px solid transparent;border-left:7px solid currentColor;border-right:0}
+@media(max-width:960px){.aff{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.aff{grid-template-columns:minmax(0,1fr)}.aff__axis{display:none}}
+.sysf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.sysf figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.sysf--wide{grid-column:1/-1}
+.sysf a{display:block;border-radius:14px;overflow:hidden;background:#fff;border:1px solid rgba(127,127,127,.25);transition:transform .2s}
+.sysf a:hover{transform:translateY(-2px)}
+.sysf img{width:100%;display:block;max-height:760px;object-fit:contain}
+@media(max-width:700px){.sysf{grid-template-columns:minmax(0,1fr)}}
+.figproto{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,.1);background:rgba(127,127,127,.08)}
+.figproto iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:560px){.figproto{aspect-ratio:3/4}}
+.stk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;margin-top:16px;align-items:start}
+.stk__img{border-radius:18px;overflow:hidden;background:#9a9a9a}
+.stk__img img{width:100%;display:block}
+.spec{width:100%;border-collapse:collapse;font-size:.93rem}
+.spec th,.spec td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45}
+.spec th{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.spec td:first-child{font-weight:600;white-space:nowrap}
+.rep{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px}
+.rep div{border:1px solid rgba(127,127,127,.25);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.rep b{font-size:.92rem;font-weight:600}
+.rep span{font-size:.82rem;opacity:.7;line-height:1.35}
+.rep code{font-family:"JetBrains Mono",monospace;font-size:.86rem;font-weight:500}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.rules div{border-radius:12px;padding:12px 14px;background:rgba(127,127,127,.08);display:flex;gap:10px;line-height:1.45;font-size:.93rem}
+.rules b{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;flex:none;padding-top:2px}
+.rules .y b{color:#2f9e6b}.rules .n b{color:var(--hot,#e97a4e)}
+@media(max-width:860px){.stk{grid-template-columns:minmax(0,1fr)}.rules{grid-template-columns:minmax(0,1fr)}}
+.chap{display:flex;gap:2px}.chap a{font-family:var(--f-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;padding:7px 10px;border-radius:99px;transition:background .2s,color .2s}.chap a:hover{color:var(--ink);background:rgba(22,20,27,.05)}.chap a.on{color:var(--ink);background:rgba(22,20,27,.09)}
+@media(max-width:900px){.chap{display:none}}
+header[id],section[id]{scroll-margin-top:56px}
+.acc-all{padding:6px 12px;font-size:13px}
+.tabs{margin-top:16px}
+.tabs__list{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:22px;background:var(--card);width:fit-content;max-width:100%}
+.tabs__list button{font:500 14px/1.2 var(--f-s);border:0;background:none;color:var(--ink-2);padding:9px 14px;border-radius:99px;cursor:pointer;transition:background .2s,color .2s}
+.tabs__list button:hover{color:var(--ink);background:rgba(22,20,27,.05)}
+.tabs__list button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.tabs__panel>.per,.tabs__panel>.sysf{margin-top:16px}.tabs__panel>.jr__h{margin-top:18px}
+.tabs__panel[hidden]{display:none}
+.comptab .cc{margin-top:16px}.comptab .cc dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 32px}
+@media(max-width:640px){.comptab .cc dl{grid-template-columns:minmax(0,1fr)}}
+.accs{margin-top:28px;border-top:1px solid var(--line)}
+.acc{border-bottom:1px solid var(--line)}
+.acc summary{list-style:none;display:flex;align-items:center;gap:14px;padding:18px 0;cursor:pointer}
+.acc summary::-webkit-details-marker{display:none}
+.acc__t{font-family:var(--f-d);font-weight:600;font-size:1.25rem;letter-spacing:-.02em;transition:color .2s}
+.acc__m{font-family:var(--f-m);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.acc summary i{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);position:relative;flex:none;background:var(--card)}
+.acc summary i::before,.acc summary i::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.5px;background:var(--ink);transform:translate(-50%,-50%)}
+.acc summary i::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .25s}
+.acc[open] summary i::after{transform:translate(-50%,-50%) rotate(0)}
+.acc summary:hover .acc__t{color:var(--violet)}
+.acc__b{padding:0 0 30px}
+.acc__b>.sub:first-child,.acc__b>.aff,.acc__b>.shots,.acc__b>.stk,.acc__b>.rep,.acc__b>.rules,.acc__b>.voice{margin-top:0}
+.acc__b>p:first-child{margin-top:0!important}
+@media(max-width:560px){.acc__m{display:none}}
+.wfs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.wfs figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.wf{aspect-ratio:9/17;border:1.5px solid var(--ink);border-radius:22px;background:#fff;padding:14px 12px;display:flex;flex-direction:column;gap:8px;overflow:hidden;font-family:var(--f-m);font-size:9px;letter-spacing:.04em;color:var(--ink-2);position:relative}
+.wf *{box-sizing:border-box}
+.wf .r{display:flex;align-items:center;gap:6px}.wf .sp{flex:1}
+.wf .b{border:1px solid rgba(22,20,27,.35);border-radius:8px;padding:7px;display:flex;flex-direction:column;gap:5px}
+.wf .ln{height:6px;border-radius:3px;background:rgba(22,20,27,.18)}.wf .ln.d{background:rgba(22,20,27,.45);height:8px}
+.wf .c{width:16px;height:16px;border-radius:50%;border:1px solid rgba(22,20,27,.45);flex:none}.wf .c.f{background:rgba(22,20,27,.2)}
+.wf .pill{border:1px solid rgba(22,20,27,.4);border-radius:99px;padding:3px 7px;white-space:nowrap}.wf .pill.on{background:rgba(22,20,27,.14)}
+.wf .t{font-family:var(--f-s);font-weight:600;font-size:12px;color:var(--ink);letter-spacing:0}
+.wf .lb{font-size:8px;text-transform:uppercase;opacity:.75}
+.wf .btnx{border-radius:8px;background:var(--ink);color:var(--paper);text-align:center;padding:8px;font-size:9px}
+.wf .btno{border:1px solid rgba(22,20,27,.4);border-radius:8px;text-align:center;padding:7px}
+.wf .seg{display:flex;border:1px solid rgba(22,20,27,.35);border-radius:8px;overflow:hidden}.wf .seg span{flex:1;text-align:center;padding:5px 0;border-left:1px solid rgba(22,20,27,.2)}.wf .seg span:first-child{border:0}.wf .seg .on{background:rgba(22,20,27,.14)}
+.wf .tab{margin-top:auto;display:flex;justify-content:space-around;align-items:center;border-top:1px solid rgba(22,20,27,.25);padding-top:7px}.wf .tab i{width:14px;height:14px;border:1px solid rgba(22,20,27,.4);border-radius:4px}.wf .tab .fab{width:26px;height:26px;border-radius:8px;background:var(--ink);margin-top:-14px}
+.wf .court{flex:1;min-height:0;border:1px dashed rgba(22,20,27,.45);border-radius:8px;display:grid;grid-template:1fr 1fr/1fr 1fr;position:relative}
+.wf .court>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.wf .court::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed rgba(22,20,27,.35)}.wf .court::after{content:"";position:absolute;top:50%;left:0;right:0;border-top:1px dashed rgba(22,20,27,.35)}
+.wf .av{width:26px;height:26px;border-radius:50%;border:1px solid rgba(22,20,27,.5);background:rgba(22,20,27,.12)}.wf .av.e{background:none;border-style:dashed;display:grid;place-items:center;font-size:12px}
+.wf .note{position:absolute;right:8px;font-family:var(--f-m);font-size:8px;background:#FFE58A;color:var(--ink);padding:2px 5px;border-radius:4px;letter-spacing:0}
+@media(max-width:860px){.wfs{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.wfs{grid-template-columns:minmax(0,1fr)}.wf{max-width:300px}}
+.hf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:16px}
+.hf figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.hf img{width:100%;aspect-ratio:721/1320;object-fit:cover;object-position:top;display:block;border-radius:20px;border:1px solid var(--line);background:#EDEDED}
+.hf figcaption{font-size:.9rem;line-height:1.45;color:var(--ink-2);text-wrap:pretty}
+@media(max-width:640px){.hf{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.tl{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:18px}
+.tl__s{border-top:2px solid var(--ink,#16141B);padding-top:14px;display:flex;flex-direction:column;gap:8px;position:relative}
+.tl__s::before{content:"";position:absolute;top:-7px;left:0;width:12px;height:12px;border-radius:50%;background:var(--hot,#e97a4e)}
+.tl__m{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.tl__s p{margin:0;line-height:1.5;text-wrap:pretty}
+.prob{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:28px;margin-top:18px;align-items:start}
+.prob__d{margin:0;font-size:1.08rem;line-height:1.55;text-wrap:pretty}
+.prob__cls{display:flex;flex-direction:column;gap:10px}
+.srcs{margin-top:18px;font-size:.84rem;opacity:.62;line-height:1.5}
+.fam{display:grid;grid-template-columns:repeat(5,minmax(0,1fr));gap:12px;margin-top:16px}
+.fam .rs p{font-size:.9rem}
+.hyb{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.hyb__eq{display:flex;flex-wrap:wrap;align-items:center;gap:8px;font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.15rem}
+.hyb__eq b{font-family:"JetBrains Mono",monospace;font-weight:500;opacity:.5}
+.crs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+.crs .cc__t{font-size:1.1rem}
+@media(max-width:960px){.tl,.crs{grid-template-columns:repeat(2,minmax(0,1fr))}.fam{grid-template-columns:repeat(2,minmax(0,1fr))}.prob,.hyb{grid-template-columns:minmax(0,1fr)}}
+@media(max-width:560px){.tl,.crs,.fam{grid-template-columns:minmax(0,1fr)}}
+.cat td{font-size:.92rem;line-height:1.45;text-wrap:pretty}.cat__n{font-family:"JetBrains Mono",monospace;opacity:.5;width:36px}.cat__c{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1rem!important;width:24%}
+.syl{margin-top:16px;display:flex;flex-direction:column;gap:16px}
+.syl__bar{display:flex;gap:4px;height:38px}.syl__bar span{display:flex;align-items:center;padding:0 12px;border-radius:10px;font-family:"JetBrains Mono",monospace;font-size:.78rem;color:#fff}
+.syl .s0{background:#1d2440}.syl .s1{background:#3a4a7a}.syl .s2{background:#a2627a}.syl .s3{background:#e97a4e}
+.syl__mods{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px 28px}
+.syl__m{display:flex;gap:12px;align-items:flex-start}.syl__m p{margin:4px 0 0;line-height:1.5;font-size:.94rem;text-wrap:pretty}
+.syl__k{width:12px;height:12px;border-radius:4px;flex:none;margin-top:5px}
+.syl__tot{margin:0;font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55}
+.opts{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.opts__d{margin:-4px 0 0;font-size:.94rem;line-height:1.5;opacity:.8}
+.opts__s{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:6px;font-size:.92rem;line-height:1.4}
+@media(max-width:860px){.opts,.syl__mods{grid-template-columns:minmax(0,1fr)}}
+.mkt{display:grid;grid-template-columns:minmax(0,1fr) auto minmax(0,1fr);gap:14px;align-items:center;margin-top:16px}.mkt__x{font-family:"Bricolage Grotesque",sans-serif;font-size:2rem;font-weight:700;opacity:.4}
+@media(max-width:700px){.mkt{grid-template-columns:minmax(0,1fr)}.mkt__x{display:none}}
+.live{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.live__c .cc__top{align-items:center}
+.live__b{margin-left:auto;display:inline-flex;align-items:center;gap:6px;font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;color:#1f7a50;background:rgba(47,158,107,.12);padding:4px 9px;border-radius:99px}
+.live__b::before{content:"";width:6px;height:6px;border-radius:50%;background:#2f9e6b}
+.live__b--sm{margin:0 6px 0 0;padding:2px 7px;font-size:.6rem;vertical-align:2px}
+.live__map{margin:-6px 0 0;font-size:.88rem;opacity:.65}
+.live__mods{margin:0;padding-left:20px;display:flex;flex-direction:column;gap:4px;font-size:.92rem;line-height:1.4}
+.live__go{margin-top:auto;font-weight:600;text-decoration:none}
+.live__b--off{color:var(--ink-2,#555);background:rgba(127,127,127,.14)}.live__b--off::before{background:rgba(127,127,127,.6)}
+.live__c--off{background:rgba(127,127,127,.05)}
+.live__h{font-family:"JetBrains Mono",monospace;font-size:.72rem;opacity:.55;margin-left:4px}
+@media(max-width:760px){.live{grid-template-columns:minmax(0,1fr)}}
+
+.met{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.met__c{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:10px}
+.met__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:clamp(2rem,4vw,2.8rem);line-height:1;letter-spacing:-.03em}
+.met__v small{font-size:.5em;opacity:.45;font-weight:600;margin:0 .15em}
+.met__l{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6;line-height:1.35}
+.met__c p{margin:0;font-size:.93rem;line-height:1.5;text-wrap:pretty}
+.bars{display:flex;flex-direction:column;gap:8px;margin-top:4px}
+.bars div{display:grid;grid-template-columns:92px minmax(0,1fr) 40px;align-items:center;gap:10px;font-size:.82rem}
+.bars i{display:block;height:10px;border-radius:99px;background:rgba(127,127,127,.18);position:relative;overflow:hidden}
+.bars i b{position:absolute;inset:0 auto 0 0;border-radius:99px;background:#8a5cf0}.bars .hi b{background:#e97a4e}
+.bars span{font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.7}
+.road{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:28px;margin-top:16px;align-items:start}
+.road__d p:not(.h3){margin:0 0 12px;line-height:1.6;text-wrap:pretty;max-width:60ch}
+.road__cmp{display:flex;flex-direction:column;gap:12px}
+.road__new{border:1.5px solid #8a5cf0;background:rgba(138,92,240,.06)}.road__new .cc__n{color:#8a5cf0;opacity:1}
+@media(max-width:860px){.road{grid-template-columns:minmax(0,1fr)}}
+.skl{display:grid;grid-template-columns:minmax(0,1.3fr) minmax(0,1fr);gap:14px;margin-top:16px}
+.skl__g{border-top:2px solid var(--ink,#16141B);padding-top:12px;display:flex;flex-direction:column;gap:10px}
+.skl__k{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.6}
+.skl ul{margin:0;padding:0;list-style:none;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:8px 18px}
+.skl li{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.05rem;line-height:1.3}
+@media(max-width:700px){.skl{grid-template-columns:minmax(0,1fr)}}
+.rmeth{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}.rmeth .rs{gap:6px}
+@media(max-width:860px){.rmeth{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.rmeth{grid-template-columns:minmax(0,1fr)}}
+.favs{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:16px}
+.favs figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.favs img{width:100%;aspect-ratio:16/9;object-fit:cover;border-radius:14px;display:block;background:rgba(127,127,127,.12)}
+.favs figcaption{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1rem;opacity:1;letter-spacing:0}
+.fnd{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.loop3{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:4px}
+.loop3 .rs{position:relative}.loop3 .rs .cc__n{display:block}
+.show2{display:grid;grid-template-columns:260px minmax(0,1fr);gap:28px;align-items:start;margin-top:16px}
+.show2 img{width:100%;height:auto;aspect-ratio:787/1827;object-fit:contain;display:block;border-radius:22px}
+@media(max-width:960px){.loop3,.favs{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:860px){.met,.fnd{grid-template-columns:minmax(0,1fr)}.show2{grid-template-columns:minmax(0,1fr)}.show2 img{max-width:260px}}
+</style>
+</head>
+<body data-page="proj-lylyland-case">
+<a class="skip" href="#overview">Skip to content</a>
+<div class="field" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Product design</a>
+<span class="spacer"></span>
+<nav class="chap" aria-label="Chapters"><a href="#problem">Problem</a><a href="#discovery">Discovery</a><a href="#iteration">Iteration</a><a href="#execution">Execution</a></nav>
+<nav class="nav"><a class="btn" href="index.html">← Index</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="overview" data-screen-label="Overview" data-say="Casual games that send people to real stores. And bring them back.">
+<div class="wrap hero__in">
+<div class="mono">Product design · Lyly Interactive · gamified loyalty app</div>
+<h1>Lyly<br>land</h1>
+<p class="hero__lede">A gamified loyalty app that uses casual games and real-world quests to drive foot traffic to partner stores and keep customers coming back to the brands behind them. I led design across the games, the meta-progression and the quest layer, with one programmer and one artist.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#problem">The problem ↓</a><a class="btn" href="project-lylyland.html">See the games →</a><a class="btn" href="https://lylyland.com/" target="_blank" rel="noopener">lylyland.com ↗</a></div>
+<dl class="ov">
+<div><dt>Role</dt><dd>Lead game &amp; product designer</dd></div>
+<div><dt>Studio</dt><dd>Lyly Interactive</dd></div>
+<div><dt>Team</dt><dd>3 on games · 7 on the app</dd></div>
+<div><dt>Reach</dt><dd>10k+ active users, Android</dd></div>
+</dl>
+</div>
+</header>
+
+<section data-section="problem" id="problem" data-screen-label="Problem" data-say="Getting people to move is easy once. Keeping them moving is the job.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Problem</h2><span class="spacer"></span><span class="sec__note">Engagement that pays for itself</span></div>
+<div class="cols2">
+<div>
+<p class="h3">The problem</p>
+<p class="prob__d">Keeping users engaged, and providing incentives profitable enough to change what they do: where they go, what they buy and which brands they return to.</p>
+</div>
+<div class="rs"><p class="h3">Business goal</p><ul class="pts"><li>Drive foot traffic and consumer behaviour towards specific locations, such as partner stores.</li><li>Keep consumers loyal to specific brands through gamified loyalty programmes.</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="discovery" id="discovery" data-screen-label="Discovery" data-say="Short games, real prizes, places people already walk past.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Discovery</h2><span class="spacer"></span><span class="sec__note">Research and findings</span><button class="btn acc-all" type="button">Expand all</button></div>
+<p class="sub">Research</p>
+<div class="rmeth">
+<div class="rs"><span class="cc__n">01</span><p class="h3">Competitor analysis</p><p>Other gamified loyalty and location apps.</p></div>
+<div class="rs"><span class="cc__n">02</span><p class="h3">Playtesting</p><p>Sessions on each game to tune difficulty and session length.</p></div>
+<div class="rs"><span class="cc__n">03</span><p class="h3">User interviews</p><p>What brings players back, and what gets them out the door.</p></div>
+<div class="rs"><span class="cc__n">04</span><p class="h3">Surveys</p><p>Game preferences and interest in prizes.</p></div>
+<div class="rs"><span class="cc__n">05</span><p class="h3">Analytics &amp; retention</p><p>Retention and engagement per game and per quest.</p></div>
+<div class="rs"><span class="cc__n">06</span><p class="h3">A/B testing</p><p>Reward and quest variants, such as raffle prizes.</p></div>
+</div>
+<p class="sub">Market research · gamified loyalty apps, 2024</p>
+<div class="accs" style="margin-top:14px">
+<details class="acc" open><summary><span class="acc__t">Competitor case studies</span><span class="acc__m">Temu · McDonald's · Chipotle · Fetch</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="tabs"><div class="tabs__list" role="tablist"><button type="button" role="tab" id="tmk-0" aria-controls="pmk-0" aria-selected="true" tabindex="0">Temu</button><button type="button" role="tab" id="tmk-1" aria-controls="pmk-1" aria-selected="false" tabindex="-1">McDonald's</button><button type="button" role="tab" id="tmk-2" aria-controls="pmk-2" aria-selected="false" tabindex="-1">Chipotle</button><button type="button" role="tab" id="tmk-3" aria-controls="pmk-3" aria-selected="false" tabindex="-1">Fetch Play</button></div>
+<div class="tabs__panel comptab" role="tabpanel" id="pmk-0" aria-labelledby="tmk-0"><div class="cc"><div class="cc__top"><span class="cc__n">Cross-border e-commerce</span></div><p class="cc__m" style="margin:0">Fishland, Farmland · resource farming, social referrals</p><dl><div><dt>How it works</dt><dd>Users pick a free physical item, then water crops or feed fish to earn it. Water and food come from daily logins, browsing categories for 45–60 seconds, sharing links and referring new users.</dd></div><div><dt class="pos">What worked</dt><dd>Endowed progress: items hit 80–90% completion in days, creating sunk cost. Forced referrals pushed acquisition costs to historic lows.</dd></div><div><dt class="neg">What failed</dt><dd>Rewards throttle exponentially near 99%. Items worth about $30 took 8–10 months of daily logins. Loyalty fatigue, brand damage and mercenary users who never made organic purchases.</dd></div><div><dt>Outcome</dt><dd><b>Massive DAU, high fatigue, dark-pattern backlash</b></dd></div></dl></div></div>
+<div class="tabs__panel comptab" role="tabpanel" id="pmk-1" aria-labelledby="tmk-1" hidden><div class="cc"><div class="cc__top"><span class="cc__n">Quick-service restaurant</span></div><p class="cc__m" style="margin:0">MyMcDonald's Rewards · tiered milestones, rolling expiry</p><dl><div><dt>How it works</dt><dd>100 points per dollar, visible reward tiers from 1,500 to 7,000 points, live progress bars and time-limited challenges like breakfast three days in a row.</dd></div><div><dt class="pos">What worked</dt><dd>Progress bars triggered the goal-gradient effect, pushing impulse add-ons. Points expire after six months, driving routine earn-and-burn. Visits rose from 10.5 to 26 a year.</dd></div><div><dt class="neg">What failed</dt><dd>Engagement spikes overwhelmed drive-thrus and kitchens. Little reason to open the app when not hungry.</dd></div><div><dt>Outcome</dt><dd><b>175M+ active users · ~150% visit frequency</b></dd></div></dl></div></div>
+<div class="tabs__panel comptab" role="tabpanel" id="pmk-2" aria-labelledby="tmk-2" hidden><div class="cc"><div class="cc__top"><span class="cc__n">Fast casual dining</span></div><p class="cc__m" style="margin:0">Chipotle IQ · time-gated trivia, badges, sweepstakes</p><dl><div><dt>How it works</dt><dd>10 points per dollar, plus "Extras" challenges with collectible badges. Chipotle IQ is a recurring brand trivia game with rewards up to free burritos for a year.</dd></div><div><dt class="pos">What worked</dt><dd>Brand education as entertainment. Time windows and capped winners drove simultaneous logins: 1.6M completed quizzes, up 24% year over year.</dd></div><div><dt class="neg">What failed</dt><dd>Episodic: DAU spikes vanished after each campaign. Answer keys spread on Reddit, so rewards went to mercenary users.</dd></div><div><dt>Outcome</dt><dd><b>1.6M engagements per event</b></dd></div></dl></div></div>
+<div class="tabs__panel comptab" role="tabpanel" id="pmk-3" aria-labelledby="tmk-3" hidden><div class="cc"><div class="cc__top"><span class="cc__n">Universal loyalty, receipt scanning</span></div><p class="cc__m" style="margin:0">adjoe Arcade · third-party play-to-earn</p><dl><div><dt>How it works</dt><dd>Users play top third-party mobile games inside Fetch and earn points for playtime, redeemable as gift cards.</dd></div><div><dt class="pos">What worked</dt><dd>Outsourced game development. 10B+ points earned ($25M in rewards), +10% LTV, +5% engagement and 5%+ monthly growth in app opens, without cannibalising receipt scanning.</dd></div><div><dt class="neg">What failed</dt><dd>Margins depend on volatile ad budgets after Apple's App Tracking Transparency. Attracts users grinding playtime, not engaging with brand partners.</dd></div><div><dt>Outcome</dt><dd><b>+10% LTV · $25M reward value</b></dd></div></dl></div></div>
+</div>
+<div class="cols2" style="margin-top:16px">
+<div class="rs"><p class="h3">Shopee</p><p>Shopee Farm and Shopee Candy. 2024 research found a moderate positive effect on brand loyalty and repeat purchases in Indonesia.</p></div>
+<div class="rs"><p class="h3">Starbucks</p><p>Seasonal sweepstakes games: 68% of brand social discussion referenced the launch, across 34.3M rewards members. Custom builds need budgets mid-market brands can't match.</p></div>
+</div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Comparison</span><span class="acc__m">Mechanics · core drives · outcomes</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="tblwrap"><table class="comp"><thead><tr><th>App</th><th>Primary mechanic</th><th>Octalysis core drives</th><th>2024 outcome</th></tr></thead><tbody><tr><td style="font-weight:600">Temu</td><td>Resource farming, virality</td><td>CD8 Loss/Avoidance · CD6 Scarcity</td><td>Massive DAU, high user fatigue, dark-pattern backlash</td></tr><tr><td style="font-weight:600">McDonald's</td><td>Visual progress, rolling expiry</td><td>CD2 Accomplishment · CD8 Loss/Avoidance</td><td>175M+ active users, 150% frequency increase</td></tr><tr><td style="font-weight:600">Chipotle</td><td>Time-gated trivia, badges</td><td>CD2 Accomplishment · CD7 Unpredictability</td><td>1.6M engagements per event, episodic brand education</td></tr><tr><td style="font-weight:600">Fetch Play</td><td>Third-party play-to-earn</td><td>CD4 Ownership · CD2 Development</td><td>10% LTV boost, $25M distributed reward value</td></tr><tr><td style="font-weight:600">Shopee</td><td>Match-3, farming sim</td><td>CD4 Ownership · CD5 Social Influence</td><td>Higher brand loyalty, APAC market dominance</td></tr></tbody></table></div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Industry benchmarks</span><span class="acc__m">Churn · sessions · return rate</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="met" style="margin-top:0">
+<div class="met__c"><span class="met__l">Churn reduction</span><div class="met__v">up to 22%</div><p>Gamified apps versus non-gamified equivalents.</p></div>
+<div class="met__c"><span class="met__l">In-app session time</span><div class="met__v">+50%</div><p>Brands that added casual games to loyalty platforms.</p></div>
+<div class="met__c"><span class="met__l">Returning users next week</span><div class="met__v">86%</div><p>Retail cohorts who actively played in-app mini-games.</p></div>
+</div>
+<p style="margin:16px 0 0;max-width:70ch;line-height:1.55;text-wrap:pretty">Adding a game does not make an app loyal by itself. It amplifies the architecture underneath: extractive designs burn users out faster, and user-centric designs build habits faster.</p>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Strategic insights</span><span class="acc__m">3 takeaways</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="cols3" style="margin-top:0">
+<div class="rs"><span class="cc__n">01</span><p class="h3">Evergreen over episodic</p><p>Campaigns like Chipotle IQ spike DAU. Long-term churn reduction comes from permanent mechanics like rolling points and daily streaks.</p></div>
+<div class="rs"><span class="cc__n">02</span><p class="h3">Experiential rewards protect margins</p><p>Badges, status tiers and early access drive behaviour at zero marginal cost, where discounts and free items erode margin.</p></div>
+<div class="rs"><span class="cc__n">03</span><p class="h3">Games collect zero-party data</p><p>Users who ignore surveys share preferences through trivia and challenges, feeding segmentation and personalisation.</p></div>
+</div>
+</div></details>
+</div>
+<p class="sub">Key findings</p>
+<div class="fnd">
+<div class="rs"><p class="h3">Casual beats long</p><p>Engagement was strongest around casual games. Games that needed longer play sessions had lower retention.</p></div>
+<div class="rs"><p class="h3">Prizes bring players back</p><p>Rewarding players with prizes kept them returning to the app.</p></div>
+<div class="rs"><p class="h3">Competition retains</p><p>Retention increased on competitive games.</p></div>
+<div class="rs"><p class="h3">Quests near the daily route</p><p>Users engaged with daily quests set around places near their usual foot traffic.</p></div>
+</div>
+<p class="sub">Most-played games</p>
+<div class="favs">
+<figure><img loading="lazy" src="assets/lylyland/game-09.png" alt="Crossy Pollo"><figcaption>Crossy Pollo</figcaption></figure>
+<figure><img loading="lazy" src="assets/lylyland/game-02.png" alt="Señor Bee"><figcaption>Señor Bee</figcaption></figure>
+<figure><img loading="lazy" src="assets/lylyland/game-10.png" alt="Cosecha Arcana"><figcaption>Cosecha Arcana</figcaption></figure>
+<figure><img loading="lazy" src="assets/lylyland/game-05.png" alt="La Trivia"><figcaption>La Trivia</figcaption></figure>
+</div>
+</div>
+</section>
+
+<section data-section="iteration" id="iteration" data-screen-label="Iteration" data-say="Play, earn, go there, redeem. Then a raffle to come back for.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Iteration</h2><span class="spacer"></span><span class="sec__note">Three systems, one loop</span><button class="btn acc-all" type="button">Expand all</button></div>
+<div class="accs">
+<details class="acc" open><summary><span class="acc__t">Retention loops &amp; meta-progression</span><span class="acc__m">Chests · discounts · raffles</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<p style="margin:0;max-width:70ch;line-height:1.55;text-wrap:pretty">Every game feeds one shared economy. In-game objectives earn chests, and chests unlock discounts at real partner stores. Seasonal raffles sit on top, giving players a prize to keep coming back for.</p>
+<div class="loop3" style="margin-top:16px">
+<div class="rs"><span class="cc__n">01</span><p class="h3">Play</p><p>Short, casual, skill-based games built for repeat sessions.</p></div>
+<div class="rs"><span class="cc__n">02</span><p class="h3">Earn</p><p>Objectives yield chests, shared across every game.</p></div>
+<div class="rs"><span class="cc__n">03</span><p class="h3">Redeem</p><p>Chests unlock discounts at partner stores.</p></div>
+<div class="rs"><span class="cc__n">04</span><p class="h3">Return</p><p>Seasonal raffles and competitive games give a reason to come back.</p></div>
+</div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Real-world quests</span><span class="acc__m">Two quest types</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<p style="margin:0;max-width:70ch;line-height:1.55;text-wrap:pretty">Narrative quests send users to real places to take a photo or read the space for clues to a riddle. Daily quests were placed near the places users already pass through.</p>
+<div class="cols2" style="margin-top:16px">
+<div class="rs"><p class="h3">Active behaviour</p><p>Quests that ask the user to do something on site, such as saying something to staff.</p></div>
+<div class="rs"><p class="h3">Consumption</p><p>Quests built around consuming a product at the location.</p></div>
+</div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Brand partnerships &amp; monetisation</span><span class="acc__m">Sponsors · ads · discounts</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="show2"><img loading="lazy" src="assets/lylyland/crossy-pollo.gif" alt="Crossy Pollo, a brand-sponsored game, running in the app" width="787" height="1827"><div class="cols2" style="margin-top:0;grid-template-columns:minmax(0,1fr)">
+<div class="rs"><p class="h3">Sponsored games</p><p>Brand-sponsored casual games such as Crossy Pollo, with competitions around them.</p></div>
+<div class="rs"><p class="h3">In-game placements</p><p>Ads mapped into the game worlds, like the boats and planes in Tiempo de Surf.</p></div>
+<div class="rs"><p class="h3">Partner discounts</p><p>Rewards paid out as discounts at the partner's own stores, so each prize brings a customer through the door.</p></div>
+</div></div>
+</div></details>
+</div>
+</div>
+</section>
+
+<section data-section="execution" id="execution" data-screen-label="Execution" data-say="Raffles moved retention from 11 to 16 percent.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Execution</h2><span class="spacer"></span><span class="sec__note">Results</span></div>
+<div class="met">
+<div class="met__c"><span class="met__l">User retention</span><div class="met__v">11%<small>→</small>16%</div><p>Retention rose to 16% when seasonal raffle prizes were offered.</p><div class="bars"><div><span>Base</span><i><b style="width:68.75%"></b></i><span>11%</span></div><div class="hi"><span>Raffles</span><i><b style="width:100%"></b></i><span>16%</span></div></div></div>
+<div class="met__c"><span class="met__l">Physical quest engagement</span><div class="met__v">3%<small>–</small>7%</div><p>Lowest on active-behaviour quests, highest on quests about consuming products at the location.</p><div class="bars"><div><span>Active</span><i><b style="width:42.857142857142854%"></b></i><span>3%</span></div><div class="hi"><span>Consumption</span><i><b style="width:100%"></b></i><span>7%</span></div></div></div>
+<div class="met__c"><span class="met__l">Active user reach</span><div class="met__v">10k+</div><p>Active users on Android.</p></div>
+</div>
+<p class="sub" style="margin-top:44px">What I owned</p>
+<div class="cols3">
+<div class="rs"><p class="h3">Games &amp; balancing</p><p>Designed, balanced and tested over eight casual games, shipping one every two to three weeks with a modular design system.</p></div>
+<div class="rs"><p class="h3">Meta-progression</p><p>Designed the shared chest economy, partner discounts and seasonal raffles that tie every game together.</p></div>
+<div class="rs"><p class="h3">Quests</p><p>Designed the narrative and daily quest layer that sends users to real locations.</p></div>
+</div>
+<p class="sub" style="margin-top:44px">Roadmap · what was missing when I left</p>
+<div class="road">
+<div class="road__d"><p class="h3">A central meta-progression loop</p><p>Players had points and leaderboards inside each game, but the app had no central meta-progression around avatars and personalisation. The next step on the roadmap was digital rewards that users earn by using the app and by consuming products at partner franchises.</p><p>That way, using the app and engaging with the franchises would both have in-game results, and those rewards cost less to offer than discounts.</p></div>
+<div class="road__cmp">
+<div class="rs"><span class="cc__n">Before</span><p class="h3">Siloed progress</p><p>Points and leaderboards inside each game. Discounts as the only shared reward.</p></div>
+<div class="rs road__new"><span class="cc__n">Planned</span><p class="h3">Avatars &amp; app personalisation</p><p>One progression across the app, fed by play and by purchases at partner locations. Digital rewards at near-zero marginal cost.</p></div>
+</div>
+</div>
+<p class="sub" style="margin-top:44px">Postmortem</p>
+<div class="cols3">
+<div class="rs"><p class="h3">Retention vs churn</p><p>The games captured short-term engagement well but needed deeper progression to hold veteran users.</p></div>
+<div class="rs"><p class="h3">LiveOps upkeep</p><p>Content-driven games like La Trivia needed ongoing maintenance, which took a lot of a small team's bandwidth.</p></div>
+<div class="rs"><p class="h3">Interconnectivity</p><p>The games worked too independently. They needed stronger links to each other and to the wider app.</p></div>
+</div>
+<p class="sub" style="margin-top:44px">Skills applied</p>
+<div class="skl">
+<div class="skl__g"><span class="skl__k">Product</span><ul><li>Retention loops</li><li>Meta-progression</li><li>Gamified loyalty</li><li>Real-world quests</li></ul></div>
+<div class="skl__g"><span class="skl__k">Craft</span><ul><li>Game design</li><li>Balancing</li><li>A/B testing</li></ul></div>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact" data-say="Ask him how you make someone walk across town for a riddle.">
+<div class="foot">
+<div><div class="mono">Building a loyalty loop?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){var vs=document.querySelectorAll('video[data-lazy]');if(!('IntersectionObserver'in window)){vs.forEach(function(v){v.preload='auto';v.play().catch(function(){})});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){if(v.preload==='none'){v.preload='auto';v.load()}v.play().catch(function(){})}else v.pause()})},{rootMargin:'200px'});vs.forEach(function(v){io.observe(v)})})();
+</script>
+<script>
+document.querySelectorAll('.tabs').forEach(function(t){var bs=[].slice.call(t.querySelector('.tabs__list').children),ps=[].slice.call(t.children).filter(function(c){return c.classList.contains('tabs__panel')});
+function sel(i,f){bs.forEach(function(b,j){b.setAttribute('aria-selected',j===i);b.tabIndex=j===i?0:-1;ps[j].hidden=j!==i});if(f)bs[i].focus()}
+bs.forEach(function(b,i){b.addEventListener('click',function(){sel(i)});b.addEventListener('keydown',function(e){if(e.key==='ArrowRight')sel((i+1)%bs.length,1);if(e.key==='ArrowLeft')sel((i-1+bs.length)%bs.length,1)})})});
+document.querySelectorAll('.acc-all').forEach(function(b){var s=b.closest('section'),ds=s.querySelectorAll('details.acc');function upd(){b.textContent=[].every.call(ds,function(d){return d.open})?'Collapse all':'Expand all'}
+b.addEventListener('click',function(){var o=b.textContent==='Expand all';ds.forEach(function(d){d.open=o});upd()});ds.forEach(function(d){d.addEventListener('toggle',upd)});upd()});
+(function(){var ls=document.querySelectorAll('.chap a');if(!('IntersectionObserver'in window))return;var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)ls.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)})})},{rootMargin:'-45% 0px -50% 0px'});
+ls.forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s)io.observe(s)})})();
+</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+<script src="contact-modal.js"></script>
+</body>
+</html>

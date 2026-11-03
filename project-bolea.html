@@ -1,0 +1,446 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bolea — Alejandro Melian</title>
+<link rel="icon" href="favicon-am.svg">
+<link rel="apple-touch-icon" href="favicon-am.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>
+.ov{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:28px;border-top:1px solid currentColor;border-color:rgba(127,127,127,.25)}
+.ov>div{padding:14px 14px 0 0}
+.ov dt{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:6px}
+.ov dd{margin:0;font-size:1rem;line-height:1.35}
+.herofig{margin-top:32px;display:grid;grid-template-columns:minmax(0,1.6fr) minmax(0,1fr);gap:14px}
+.herofig video,.herofig img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px;background:rgba(127,127,127,.12)}
+.herofig figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.herofig .media{aspect-ratio:16/10;border-radius:18px;overflow:hidden}
+.herofig .media--sq{aspect-ratio:auto;flex:1;min-height:0}
+.herofig .media--sq img{object-fit:contain;background:#9a9a9a}
+figcaption,.cap{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.03em;opacity:.6;line-height:1.4}
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.pts li{position:relative;padding-left:18px;line-height:1.5;text-wrap:pretty}
+.pts li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--hot,#e97a4e)}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:22px}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.2rem;line-height:1.2;margin:0 0 12px}
+.sub{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin:34px 0 0}
+.todo{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.todo .h3{margin:0}
+.todo p{margin:0;opacity:.6;font-size:.94rem;line-height:1.45}
+.rs{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}.rs .h3{margin:0}.rs p{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.per{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.per .cc{gap:12px}.per__tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid currentColor;opacity:.7;margin-left:auto}
+.per__q{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-size:1.08rem;line-height:1.35;text-wrap:pretty}
+.per .pts{gap:6px}.per .pts li{font-size:.92rem}
+.jr{width:100%;min-width:860px;border-collapse:collapse;margin-top:14px;font-size:.9rem;table-layout:fixed}
+.jr th,.jr td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45;text-wrap:pretty}
+.jr thead th{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1rem}
+.jr tbody th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;font-weight:500;width:110px}
+.jr .lo{color:var(--hot,#e97a4e);font-weight:600}.jr .hi{color:#2f9e6b;font-weight:600}.jr .mid{opacity:.7;font-weight:600}
+.jr__h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-top:22px}.jr__h p{margin:0}
+@media(max-width:860px){.per{grid-template-columns:minmax(0,1fr)}}
+.comp{width:100%;border-collapse:collapse;margin-top:14px;font-size:.94rem}
+.comp th,.comp td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top}
+.comp th{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.comp td.tbd{opacity:.45}
+.tblwrap{overflow-x:auto}
+.comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+.cc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.cc__top{display:flex;align-items:baseline;gap:10px}
+.cc__n{font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.5}
+.cc__t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.3rem;line-height:1.15;margin:0}
+.cc__m{font-size:.92rem;opacity:.75;margin:-6px 0 0}
+.cc dl{margin:0;display:flex;flex-direction:column;gap:12px}
+.cc dt{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:3px}
+.cc dd{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.cc dt.pos{color:#2f9e6b;opacity:1}.cc dt.neg{color:var(--hot,#e97a4e);opacity:1}
+.gaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.gap{border-top:2px solid var(--hot,#e97a4e);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.gap p{margin:0;line-height:1.55;text-wrap:pretty}
+@media(max-width:860px){.gaps{grid-template-columns:minmax(0,1fr)}}
+.bb{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.bb__lede{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+.bb__lede p{margin:0;max-width:62ch;line-height:1.55;text-wrap:pretty}
+.sw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.sw>div{display:flex;flex-direction:column;gap:6px}
+.sw i{display:block;aspect-ratio:1.4;border-radius:12px;border:1px solid rgba(127,127,127,.25)}
+.sw b{font-size:.86rem;font-weight:600}
+.sw span{font-family:"JetBrains Mono",monospace;font-size:.7rem;opacity:.6;line-height:1.35}
+.bbg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bbc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.bbc .h3{margin:0}
+.bbc__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.9rem;line-height:1}
+.bbc p{margin:0;font-size:.93rem;line-height:1.5;opacity:.8;text-wrap:pretty}
+.voice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.voice div{border-radius:14px;padding:16px;background:rgba(127,127,127,.08);display:flex;flex-direction:column;gap:6px}
+.voice p{margin:0;line-height:1.45}
+@media(max-width:860px){.sw{grid-template-columns:repeat(3,minmax(0,1fr))}.bbg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.bbg,.voice{grid-template-columns:minmax(0,1fr)}}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.shots .slot{aspect-ratio:4/3}
+.shots--tall .slot{aspect-ratio:9/16}
+.shots--wide{grid-template-columns:repeat(2,minmax(0,1fr))}
+.shots--wide .slot{aspect-ratio:16/10}
+.loopv{aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:rgba(127,127,127,.12);display:grid;place-items:center;position:relative}
+.loopv video{width:100%;height:100%;object-fit:cover;display:block}
+.loopv span{position:absolute;font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.55;text-align:center;padding:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+.kpi{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.kpi__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:2.2rem;line-height:1;opacity:.3}
+.kpi__l{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6;line-height:1.35}
+@media(max-width:860px){.ov,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cols3,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}.herofig{grid-template-columns:minmax(0,1fr)}.herofig .media--sq{aspect-ratio:1}}
+@media(max-width:560px){.cols2,.cols3,.shots,.shots--wide{grid-template-columns:minmax(0,1fr)}.shots--tall{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.aff{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.aff__col{border-radius:16px;padding:14px;background:rgba(127,127,127,.07);display:flex;flex-direction:column;gap:12px}
+.aff__h{display:flex;flex-direction:column;gap:4px;min-height:3.4em}
+.aff__h .h3{margin:0;font-size:1.05rem}
+.aff__notes{display:flex;flex-direction:column;gap:8px;flex:1}
+.aff__n{margin:0;padding:12px 12px 14px;border-radius:4px;background:#FFF3B8;color:#2a2618;font-size:.9rem;line-height:1.4;box-shadow:0 1px 0 rgba(0,0,0,.06),0 6px 14px -8px rgba(0,0,0,.3);text-wrap:pretty}
+.aff__col:nth-child(2) .aff__n{background:#E7F6D6}
+.aff__col:nth-child(3) .aff__n{background:#FFE1CC}
+.aff__col:nth-child(4) .aff__n{background:#E4E2F7}
+.aff__n:nth-child(odd){transform:rotate(-.6deg)}.aff__n:nth-child(even){transform:rotate(.5deg)}
+.aff__c{border-top:1px solid rgba(127,127,127,.3);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.aff__c span{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55}
+.aff__c p{margin:0;font-size:.9rem;line-height:1.45;text-wrap:pretty}
+.aff__axis{display:flex;align-items:center;gap:12px;margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.aff__axis i{flex:1;height:1px;background:currentColor;position:relative}
+.aff__axis i::after{content:"";position:absolute;right:-1px;top:-4px;border:4.5px solid transparent;border-left:7px solid currentColor;border-right:0}
+@media(max-width:960px){.aff{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.aff{grid-template-columns:minmax(0,1fr)}.aff__axis{display:none}}
+.sysf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.sysf figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.sysf--wide{grid-column:1/-1}
+.sysf a{display:block;border-radius:14px;overflow:hidden;background:#fff;border:1px solid rgba(127,127,127,.25);transition:transform .2s}
+.sysf a:hover{transform:translateY(-2px)}
+.sysf img{width:100%;display:block;max-height:760px;object-fit:contain}
+@media(max-width:700px){.sysf{grid-template-columns:minmax(0,1fr)}}
+.figproto{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,.1);background:rgba(127,127,127,.08)}
+.figproto iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:560px){.figproto{aspect-ratio:3/4}}
+.stk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;margin-top:16px;align-items:start}
+.stk__img{border-radius:18px;overflow:hidden;background:#9a9a9a}
+.stk__img img{width:100%;display:block}
+.spec{width:100%;border-collapse:collapse;font-size:.93rem}
+.spec th,.spec td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45}
+.spec th{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.spec td:first-child{font-weight:600;white-space:nowrap}
+.rep{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px}
+.rep div{border:1px solid rgba(127,127,127,.25);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.rep b{font-size:.92rem;font-weight:600}
+.rep span{font-size:.82rem;opacity:.7;line-height:1.35}
+.rep code{font-family:"JetBrains Mono",monospace;font-size:.86rem;font-weight:500}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.rules div{border-radius:12px;padding:12px 14px;background:rgba(127,127,127,.08);display:flex;gap:10px;line-height:1.45;font-size:.93rem}
+.rules b{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;flex:none;padding-top:2px}
+.rules .y b{color:#2f9e6b}.rules .n b{color:var(--hot,#e97a4e)}
+@media(max-width:860px){.stk{grid-template-columns:minmax(0,1fr)}.rules{grid-template-columns:minmax(0,1fr)}}
+</style>
+</head>
+<body data-page="proj-bolea">
+<a class="skip" href="#overview">Skip to content</a>
+<div class="field" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Product design</a>
+<span class="spacer"></span>
+<nav class="nav"><a class="btn" href="index.html">← Index</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="overview" data-screen-label="Overview">
+<div class="wrap hero__in">
+<div class="mono">Product design · Bolea · Peru · sports matchmaking app</div>
+<h1>Bolea</h1>
+<p class="hero__lede">A social app for finding teams and matches for sports like padel. In Peru there is no Playtomic-style app, so players organise through WhatsApp groups of thousands of people. I led product design: the system, its logic, the screen flow, the UI and the brand book.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#problem">The problem ↓</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+<dl class="ov">
+<div><dt>Role</dt><dd>Lead Product Designer &amp; Consultant</dd></div>
+<div><dt>Timeline</dt><dd>4 months</dd></div>
+<div><dt>Team</dt><dd>3 people</dd></div>
+<div><dt>Platform</dt><dd>Mobile app</dd></div>
+</dl>
+<div class="herofig">
+<figure><div class="media"><video data-lazy src="assets/bolea/bolea-reel.mp4" muted loop playsinline preload="none" aria-label="Bolea reel"></video></div><figcaption>Bolea reel</figcaption></figure>
+<figure style="min-height:0"><div class="media media--sq"><img loading="lazy" src="assets/bolea/strike-mascot.webp" alt="Strike mascot sheet: front, side, back, four expressions, and soccer and basketball morph forms"></div><figcaption>Strike, the brand mascot: expressions and ball morphs</figcaption></figure>
+</div>
+</div>
+</header>
+
+<section data-section="problem" id="problem" data-screen-label="Problem">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Problem</h2><span class="spacer"></span><span class="sec__note">WhatsApp as a matchmaking tool</span></div>
+<div class="cols2">
+<div>
+<p class="h3">Player pain points</p>
+<ul class="pts">
+<li>People want to find teams and matches, but WhatsApp is still the tool of choice over current apps.</li>
+<li>Most players use WhatsApp groups made up of thousands of people, where teams and matches are posted.</li>
+<li>Readability is terrible: posts are buried in a constant stream of messages.</li>
+<li>Finding a group means scrolling through huge lists, then copy-pasting the list to sign up.</li>
+</ul>
+</div>
+<div class="rs"><p class="h3">Business goals</p><p>Bolea earns through memberships for two audiences.</p><ul class="pts"><li><b>Players:</b> a membership automates the search for matches and personalises the matches they're offered.</li><li><b>Organisers:</b> a membership gives them more tools to find players for their events, plus branding inside the app: images, videos and fully branded profiles.</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="discovery" id="discovery" data-screen-label="Discovery">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Discovery</h2><span class="spacer"></span><span class="sec__note">Research, competitors, insights</span></div>
+<p class="sub">Research summary</p>
+<div class="cols3">
+<div class="rs"><p class="h3">Method</p><p>Interviews, surveys, shadowing and A/B testing with players who use booking apps and players who coordinate on WhatsApp. We also interviewed court owners.</p></div>
+<div class="rs"><p class="h3">Participants</p><p>Amateur padel and football players in Lima, from weekly regulars with a fixed group to solo players looking for a match through large WhatsApp groups, plus court and club owners.</p></div>
+<div class="rs"><p class="h3">Key finding</p><p>Players didn't want another app. WhatsApp felt good enough because it was familiar and everyone was already there. Players with a set group of friends didn't use apps at all.</p></div>
+</div>
+<p class="sub">Personas</p>
+<p style="margin:12px 0 0;max-width:68ch;line-height:1.55;text-wrap:pretty">Composite profiles built from the interviews and shadowing sessions: two kinds of player and one organiser.</p>
+<div class="per">
+<article class="cc"><div class="cc__top"><span class="cc__n">P1</span><h3 class="cc__t">Diego, 29</h3><span class="per__tag">Solo player</span></div><p class="cc__m">Padel, Miraflores. Plays twice a week when he can find a fourth.</p><p class="per__q">“I'd play every night if I didn't have to hunt for a match.”</p><dl><div><dt>Today</dt><dd>His old group broke up when he changed jobs. He scrolls four large WhatsApp groups and books courts on ATC.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Balanced matches near work after 7 pm</li><li>See whether his level is improving</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>Posts buried under hundreds of messages</li><li>Skill gaps and last-minute no-shows</li></ul></dd></div><div><dt class="pos">Bolea for Diego</dt><dd>Player membership: matches found automatically and personalised to his level, area and schedule.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">P2</span><h3 class="cc__t">Carla, 34</h3><span class="per__tag">Group host</span></div><p class="cc__m">Five-a-side football, Surco. Runs the WhatsApp group for ten friends.</p><p class="per__q">“WhatsApp works for us. I just need one more player sometimes.”</p><dl><div><dt>Today</dt><dd>Books the same court every Thursday, collects money through Yape and has never used a sports app.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Replace dropouts quickly</li><li>Stop chasing payments</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>Won't ask her friends to download anything</li><li>Last-minute dropouts leave the team short</li></ul></dd></div><div><dt class="pos">Bolea for Carla</dt><dd>A web link shared in her existing group. Friends vote and pay without installing, and she can pull in a replacement from Bolea.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">P3</span><h3 class="cc__t">Renzo, 41</h3><span class="per__tag">Organiser</span></div><p class="cc__m">Runs amateur padel tournaments and clinics across two clubs in La Molina.</p><p class="per__q">“Filling the last brackets takes more work than running the whole event.”</p><dl><div><dt>Today</dt><dd>Posts flyers in WhatsApp groups and Instagram and tracks registrations in a spreadsheet.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Fill every event with players at the right level</li><li>Grow his brand and attract sponsors</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>No reach beyond his own contacts</li><li>Booking platforms leave no room for his brand</li></ul></dd></div><div><dt class="pos">Bolea for Renzo</dt><dd>Organiser membership: tools to find players for events, plus a fully branded profile with images and video.</dd></div></dl></article>
+</div>
+<p class="sub">User journeys</p>
+<div class="jr__h"><p class="h3" style="margin:0">Player · finding a match</p><p class="cap">Diego, current state and where Bolea steps in</p></div>
+<div class="tblwrap"><table class="jr"><thead><tr><th></th><th>Wants to play</th><th>Searches</th><th>Joins</th><th>Pays</th><th>Plays</th><th>After the match</th></tr></thead><tbody>
+<tr><th>Doing</th><td>Free on Wednesday night, his usual partners are busy.</td><td>Scrolls WhatsApp groups and posts “need 1 for padel, 8 pm”.</td><td>Gets a reply an hour later and negotiates time and club.</td><td>Splits the court fee by Yape with three strangers.</td><td>Plays a match where one pair is far stronger.</td><td>Leaves with no record of the result or contacts.</td></tr>
+<tr><th>Thinking</th><td>“Who's around tonight?”</td><td>“Is this post from today?”</td><td>“Are they my level?”</td><td>“Did everyone pay?”</td><td>“Not worth the drive.”</td><td>“Am I improving?”</td></tr>
+<tr><th>Feeling</th><td class="mid">Hopeful</td><td class="lo">Frustrated</td><td class="lo">Unsure</td><td class="lo">Annoyed</td><td class="mid">Mixed</td><td class="lo">Flat</td></tr>
+<tr><th>Opportunity</th><td>Set availability once and get notified.</td><td>Automatic matching by level, area and time.</td><td>One-tap join with level shown upfront.</td><td>Split payment inside the match.</td><td>Balanced pairings from past results.</td><td>Score entry, ranking and a rematch prompt.</td></tr>
+</tbody></table></div>
+<div class="jr__h"><p class="h3" style="margin:0">Organiser · filling an event</p><p class="cap">Renzo, current state and where Bolea steps in</p></div>
+<div class="tblwrap"><table class="jr"><thead><tr><th></th><th>Plans</th><th>Promotes</th><th>Registers</th><th>Fills gaps</th><th>Runs the event</th><th>Follows up</th></tr></thead><tbody>
+<tr><th>Doing</th><td>Books courts for a Saturday tournament with 16 pairs.</td><td>Shares a flyer in WhatsApp groups and on Instagram.</td><td>Collects names and payments by chat and a spreadsheet.</td><td>Messages contacts one by one to fill the last brackets.</td><td>Updates brackets by hand and posts results in the group.</td><td>Posts photos and starts planning the next one.</td></tr>
+<tr><th>Thinking</th><td>“Will I fill it this time?”</td><td>“Is this reaching anyone new?”</td><td>“Who still owes me?”</td><td>“Same people again.”</td><td>“Too much to track.”</td><td>“How do I keep them coming back?”</td></tr>
+<tr><th>Feeling</th><td class="hi">Motivated</td><td class="mid">Uncertain</td><td class="lo">Stretched</td><td class="lo">Stressed</td><td class="mid">Busy</td><td class="hi">Proud</td></tr>
+<tr><th>Opportunity</th><td>Event template with courts and format.</td><td>Branded event page shown to matching players.</td><td>Registration and payment in one flow.</td><td>Invite players by level and area.</td><td>Live brackets and results.</td><td>Branded profile with images and video that builds a following.</td></tr>
+</tbody></table></div>
+<p class="sub">Affinity map · market pain points &amp; motivations</p>
+<p style="margin:12px 0 0;max-width:68ch;line-height:1.55;text-wrap:pretty">This map clusters user behaviors into four core product pillars, transitioning from basic utility (booking) to high retention (social/progression).</p>
+<div class="aff">
+<div class="aff__col"><div class="aff__h"><span class="cc__n">01</span><p class="h3">Inventory &amp; Coordination</p></div><div class="aff__notes"><p class="aff__n">“I spend 30 minutes on WhatsApp checking who is free.”</p><p class="aff__n">“Prime slots at my club are gone by Monday morning.”</p><p class="aff__n">“Splitting the court fee via Yape is a manual process.”</p></div><div class="aff__c"><span>Core product challenge</span><p><b>Friction Reduction:</b> Automating availability checks and group payments.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">02</span><p class="h3">Matchmaking (The Cold Start)</p></div><div class="aff__notes"><p class="aff__n">“I want to play, but my usual group is busy.”</p><p class="aff__n">“We need a 4th player for tonight.”</p><p class="aff__n">“I stopped joining open matches because the skill gaps ruin the game.”</p></div><div class="aff__c"><span>Core product challenge</span><p><b>Liquidity &amp; Balancing:</b> Building a dense enough localized player base to ensure fair, immediate matchmaking.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">03</span><p class="h3">Progression (The Meta-Game)</p></div><div class="aff__notes"><p class="aff__n">“I play three times a week but have no record of my improvement.”</p><p class="aff__n">“I want to know if I'm actually getting better.”</p><p class="aff__n">“Tournaments are too formal, but casual games feel pointless.”</p></div><div class="aff__c"><span>Core product challenge</span><p><b>Retention Mechanics:</b> Implementing ranking systems, XP, or leaderboards that give matches stakes.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">04</span><p class="h3">Club Operations</p></div><div class="aff__notes"><p class="aff__n">“I have to download a different app for different clubs.”</p><p class="aff__n">“The club cancelled our booking because of a double-entry.”</p></div><div class="aff__c"><span>Core product challenge</span><p><b>System Integration:</b> Bypassing fragmented white-label B2B software (like Pádel Lima) to unify inventory.</p></div></div>
+</div>
+<div class="aff__axis"><span>Utility · booking</span><i></i><span>Retention · social / progression</span></div>
+<p class="sub">Competitor analysis</p>
+<div class="comps">
+<article class="cc"><div class="cc__top"><span class="cc__n">01</span><h3 class="cc__t">Playmix</h3></div><p class="cc__m">Social matchmaking and progression platform.</p><dl><div><dt>Core mechanics</dt><dd>Utilizes game design principles. The primary loop consists of playing a match, inputting the score, and adjusting an internal skill ranking. It includes meta-game elements like achievements, peer rating systems, and performance tracking.</dd></div><div><dt>UX focus</dt><dd>Player profiles, community leaderboards, and skill-based matching interfaces.</dd></div><div><dt class="pos">Strengths</dt><dd>High user retention driven by progression systems and social graphs.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Susceptible to the cold start problem. Matchmaking algorithms require a dense, localized concurrent player base to function effectively.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">02</span><h3 class="cc__t">ATC (Alquila Tu Cancha)</h3></div><p class="cc__m">E-commerce marketplace.</p><dl><div><dt>Core mechanics</dt><dd>Search, filter by availability or location, and complete checkout.</dd></div><div><dt>UX focus</dt><dd>Transaction optimization. The user flow prioritizes search-to-booking conversion, similar to digital travel booking platforms.</dd></div><div><dt class="pos">Strengths</dt><dd>High liquidity of venues. It maintains established B2B integrations with sports complexes across Latin America.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Strictly transactional. It lacks retention mechanics or progression systems, providing users no incentive to engage with the product outside of the booking action.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">03</span><h3 class="cc__t">Quipo</h3></div><p class="cc__m">Localized amateur sports network.</p><dl><div><dt>Core mechanics</dt><dd>Real-time slot visibility and group coordination specific to the Lima market.</dd></div><div><dt>UX focus</dt><dd>Reducing user input required to find available playing partners and coordinate group matches.</dd></div><div><dt class="pos">Strengths</dt><dd>Solves the specific coordination friction of filling a roster (e.g., finding a fourth player) within a defined geographic area.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Feature set is highly replicable by larger platforms possessing more engineering resources.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">04</span><h3 class="cc__t">Pádel Lima</h3></div><p class="cc__m">B2B2C White-label SaaS.</p><dl><div><dt>Core mechanics</dt><dd>Club administrators control back-office inventory; players interact with a centralized booking interface governed by those backend settings.</dd></div><div><dt>UX focus</dt><dd>Functional calendar views prioritizing club branding and operational management.</dd></div><div><dt class="pos">Strengths</dt><dd>Inventory lock-in. Venues relying on the software for operations dictate player adoption.</dd></div><div><dt class="neg">Weaknesses</dt><dd>The UX serves the facility operator before the end user, often resulting in fragmented player experiences across different clubs.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">05</span><h3 class="cc__t">ReservaSimple</h3></div><p class="cc__m">General appointment and scheduling SaaS.</p><dl><div><dt>Core mechanics</dt><dd>Web-link access, automated WhatsApp reminders, and integrated local payment gateways.</dd></div><div><dt>UX focus</dt><dd>Web-based transaction flows. It bypasses native app downloads entirely.</dd></div><div><dt class="pos">Strengths</dt><dd>Eliminates app store acquisition friction. The business model charges venues a fixed subscription rather than per-transaction commissions, incentivizing venues to direct their user traffic to the platform.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Operates as a utility link rather than a destination. It lacks player discovery, social graphs, and progression loops.</dd></div></dl></article>
+</div>
+<p class="sub">Strategic product gaps (opportunities)</p>
+<div class="gaps">
+<div class="gap"><p class="h3">Utility vs. Retention</p><p>Current platforms segment into pure utilities (ATC, ReservaSimple) or early-stage social networks (Playmix). A product bridging this gap by applying live-ops retention mechanics—giving users reasons to open the application daily for meta-game progression, localized leaderboards, or rewards—can lower churn rates compared to transaction-only platforms.</p></div>
+<div class="gap"><p class="h3">Onboarding Architecture</p><p>Forcing a native app download for a first-time booking creates a high drop-off rate. Utilizing a Progressive Web App (PWA) or web-first flow for initial conversion, followed by an app download prompt gated behind progression incentives, optimizes Customer Acquisition Cost (CAC).</p></div>
+<div class="gap"><p class="h3">The Lifecycle Loop</p><p>Competing on venue acquisition is a standard sales cycle. Competing on player lifecycle—building features that guide beginners through skill levels and match them accurately—generates a localized network effect. If the product controls the player base through these mechanics, venue adoption becomes mandatory.</p></div>
+</div>
+<div class="shots shots--wide">
+<figure><image-slot class="slot" id="bolea-disc-1" placeholder="Research artefact: interviews, personas, journey"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-disc-2" placeholder="WhatsApp group screenshot (anonymised)"></image-slot><figcaption>Caption</figcaption></figure>
+</div>
+</div>
+</section>
+
+<section data-section="iteration" id="iteration" data-screen-label="Iteration">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Iteration</h2><span class="spacer"></span><span class="sec__note">System, flows, wireframes</span></div>
+<p class="sub">System design &amp; logic</p>
+<div class="sysf">
+<figure class="sysf--wide"><a href="assets/bolea/systemflow-1.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-1.png" alt="Matchmaking system flow across WhatsApp and the web app"></a><figcaption>01 · Matchmaking loop. Sign-up and search run inside WhatsApp; the group votes on a court and pays in the web app. Branches cover a dissolved match, a waitlist, and a player who drops out.</figcaption></figure>
+<figure class="sysf--wide"><a href="assets/bolea/systemflow-2-diagram.svg" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-2-diagram.svg" alt="Invite and match creation system flow in three swimlanes: host on WhatsApp, web app, invitee on WhatsApp"></a><figcaption>02 · Invite &amp; match creation. Three entry paths (no contacts shared, contacts without play intent, contacts with play intent) merge into one match-building loop that ends when all four slots are filled.</figcaption></figure>
+<figure class="sysf--wide"><a href="assets/bolea/systemflow-3.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-3.png" alt="WhatsApp bot conversation tree"></a><figcaption>03 · Conversation logic. How the WhatsApp bot parses open requests, asks for missing details, and hands players into a search pool.</figcaption></figure>
+<figure class="sysf--wide"><a href="assets/bolea/systemflow-4.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-4.png" alt="Screen flow of the app prototype"></a><figcaption>04 · Screen flow. From the WhatsApp entry to the court view, invites, and match states.</figcaption></figure>
+</div>
+<p class="sub">Wireframes</p>
+<div class="shots shots--tall">
+<figure><image-slot class="slot" id="bolea-wf-1" placeholder="Wireframe"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-wf-2" placeholder="Wireframe"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-wf-3" placeholder="Wireframe"></image-slot><figcaption>Caption</figcaption></figure>
+</div>
+<p class="sub">Discarded concepts</p>
+<div class="shots">
+<figure><image-slot class="slot" id="bolea-x-1" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-x-2" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-x-3" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+</div>
+</div>
+</section>
+
+<section data-section="execution" id="execution" data-screen-label="Execution">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Execution</h2><span class="spacer"></span><span class="sec__note">UI, components, brand</span></div>
+<p class="sub">Interactive prototype · first screens</p>
+<figure style="margin:16px 0 0;display:flex;flex-direction:column;gap:8px"><div class="figproto"><iframe src="https://embed.figma.com/proto/VD9CxCUVpBISmEnM8EDKQD/Web?node-id=1-237&amp;starting-point-node-id=1%3A3&amp;embed-host=share" title="Bolea first-screen prototype (Figma)" loading="lazy" allowfullscreen></iframe></div><figcaption>Figma prototype. Click through the first screens, or open fullscreen.</figcaption></figure>
+<p class="sub">High-fidelity screens</p>
+<div class="shots shots--tall">
+<figure><image-slot class="slot" id="bolea-hf-1" placeholder="Hi-fi screen"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-hf-2" placeholder="Hi-fi screen"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-hf-3" placeholder="Hi-fi screen"></image-slot><figcaption>Caption</figcaption></figure>
+</div>
+<p class="sub">UI components</p>
+<div class="shots shots--wide">
+<figure><image-slot class="slot" id="bolea-ui" placeholder="Component sheet"></image-slot><figcaption>Caption</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-brand" placeholder="Tarjeta / cancha component"></image-slot><figcaption>Caption</figcaption></figure>
+</div>
+<p class="sub">Brand book</p>
+<div class="bb">
+<div class="bb__lede"><p>Identity and interface system for Bolea®: the Strike character, the app's real palette, the type scale, every button level with its states, and the motion language. Every value is checked against what the live app serves.</p><a class="btn" href="assets/bolea/Bolea-Manual-de-Marca.pdf" target="_blank" rel="noopener">Full brand book (PDF, ES) ↗</a></div>
+<div class="sw">
+<div><i style="background:#05E26B"></i><b>Lima</b><span>#05E26B · the only action colour</span></div>
+<div><i style="background:#1A1A17"></i><b>Tinta</b><span>#1A1A17 · text, button labels</span></div>
+<div><i style="background:#FFFFFF"></i><b>Surface</b><span>#FFFFFF</span></div>
+<div><i style="background:#E5E3DA"></i><b>Warm neutral</b><span>#E5E3DA</span></div>
+<div><i style="background:#E7F6D6"></i><b>Success tint</b><span>#E7F6D6 · text #3F6B1F</span></div>
+<div><i style="background:#FBE4E4"></i><b>Alert tint</b><span>#FBE4E4 · text #B5524F</span></div>
+</div>
+<div class="bbg">
+<div class="bbc"><span class="cc__n">Strike</span><div class="bbc__v">9 points</div><p>The spark of a ball hit clean. A parametric character, not a drawn logo: 14 eye-only expressions, 12 shape morphs for transitions, 12 animation states generated by the rig.</p></div>
+<div class="bbc"><span class="cc__n">Logo</span><div class="bbc__v">5 versions</div><p>Strike on the green tile is the main mark and app icon. The lowercase «bolea» wordmark is a drawn vector master, never typed. Minimum 96 px wide.</p></div>
+<div class="bbc"><span class="cc__n">Type</span><div class="bbc__v">1 family</div><p>One family for all interface text. Hierarchy comes from size, weight and tracking only.</p></div>
+<div class="bbc"><span class="cc__n">Spacing</span><div class="bbc__v">4 px base</div><p>Every measure is a multiple of 4. Fixed 64 px header, 44 × 44 px minimum touch target.</p></div>
+<div class="bbc"><span class="cc__n">Buttons</span><div class="bbc__v">7 levels</div><p>All pills, with a fixed budget per screen: one lime primary, one secondary. Anything over budget drops to ghost.</p></div>
+<div class="bbc"><span class="cc__n">Motion</span><div class="bbc__v">7 curves</div><p>What enters decelerates, what leaves accelerates. Seven durations from 100 to 450 ms; the overshoot curve belongs to Strike.</p></div>
+</div>
+<p class="sub" style="margin-top:18px">Tone of voice · like the friend who already booked the court</p>
+<div class="voice">
+<div><span class="cc__n">No</span><p>Lo sentimos, esta actividad ha alcanzado su capacidad máxima.</p></div>
+<div><span class="cc__n" style="color:#2f9e6b;opacity:1">Sí</span><p>Esta bolea ya se llenó. Te avisamos si se libera un cupo.</p></div>
+</div>
+</div>
+<p class="sub" style="margin-top:44px">The character · Strike</p>
+<div class="stk">
+<div class="stk__img"><img loading="lazy" src="assets/bolea/strike-mascot.webp" alt="Strike character sheet"></div>
+<div>
+<p class="h3">The spark of the moment the ball is hit well.</p>
+<p style="margin:0 0 14px;line-height:1.55;text-wrap:pretty">Strike is not a logo with a face. It is a character with construction rules, a repertoire of expressions and its own way of moving. It is Bolea's most recognisable asset, and the one that degrades fastest if every piece redraws it by eye. Strike is a parametric puppet generated by a rig, never drawn by hand.</p>
+<div class="tblwrap"><table class="spec"><thead><tr><th>Attribute</th><th>Value</th><th>Why</th></tr></thead><tbody>
+<tr><td>Points</td><td>9</td><td>Reads as a spark, not a sun or a prize star.</td></tr>
+<tr><td>Inner radius</td><td>0.78 of outer</td><td>Lower turns spiky; higher loses the wave.</td></tr>
+<tr><td>Rounding</td><td>0.2 · 0.2</td><td>Blunt by geometry, not just by stroke.</td></tr>
+<tr><td>Outline</td><td>4.05% of size</td><td>Scales with the character, never a fixed px width.</td></tr>
+<tr><td>Stroke join</td><td>round</td><td>What makes it a character and not an icon.</td></tr>
+<tr><td>Eyes</td><td>Vertical capsules</td><td>Centred at 47% of height.</td></tr>
+<tr><td>Minimum size</td><td>24 px</td><td>Below 24 px it is used without eyes, silhouette only.</td></tr>
+<tr><td>Clear space</td><td>1 point</td><td>The length of one point free on all four sides.</td></tr>
+</tbody></table></div>
+</div>
+</div>
+<p class="sub">Versions · always with its welded shadow</p>
+<div class="rep" style="grid-template-columns:repeat(auto-fit,minmax(220px,1fr))">
+<div><b>Positive</b><span>Pure white body; outline, eyes and shadow in ink #202020. Default on light backgrounds.</span></div>
+<div><b>Negative</b><span>One ink for outline, eyes and shadow (white, black or bolea green), body takes the background. On black, the ink is #05E26B.</span></div>
+<div><b>On bolea green</b><span>Always black outline, shadow and eyes with a white body. No other combination exists.</span></div>
+</div>
+<p class="sub">Expressions · 14 · only the eyes change</p>
+<div class="rep">
+<div><b>Neutral</b><span>Default. The only one in the logo.</span></div>
+<div><b>Surprised</b><span>Something just happened.</span></div>
+<div><b>Flat</b><span>No opinion. Waiting states.</span></div>
+<div><b>Happy</b><span>Small confirmation.</span></div>
+<div><b>Smiling</b><span>Warmer than happy.</span></div>
+<div><b>Asleep</b><span>Inactive session.</span></div>
+<div><b>Angry</b><span>Never at the user.</span></div>
+<div><b>Sad</b><span>Something went wrong, without blame.</span></div>
+<div><b>Dizzy</b><span>Loading something heavy.</span></div>
+<div><b>Crosses</b><span>Hard error. Use very rarely.</span></div>
+<div><b>In love</b><span>The bolea filled up.</span></div>
+<div><b>Snoring</b><span>Really asleep.</span></div>
+<div><b>Stars</b><span>Achievement, streak, prize.</span></div>
+<div><b>Alert</b><span>Asks for attention.</span></div>
+</div>
+<p class="sub">Shape morphs · 12 · in motion only, always returning to Strike</p>
+<div class="rep">
+<div><b>Strike</b><span>The official.</span></div>
+<div><b>Circle</b><span>The ball.</span></div>
+<div><b>Square</b><span>The court.</span></div>
+<div><b>Triangle</b><span>Warning.</span></div>
+<div><b>Diamond</b><span>Prize.</span></div>
+<div><b>Hexagon</b><span>Hive, group.</span></div>
+<div><b>Star</b><span>Favourite.</span></div>
+<div><b>Speech bubble</b><span>Message.</span></div>
+<div><b>Heart</b><span>Like.</span></div>
+<div><b>Cloud</b><span>Offline.</span></div>
+<div><b>Flower</b><span>Celebration.</span></div>
+<div><b>Blob</b><span>Rest, free form.</span></div>
+</div>
+<p class="sub">Animation states · 12</p>
+<div class="rep">
+<div><code>idle</code><span>Rest. Breathes and blinks.</span></div>
+<div><code>hi</code><span>Greeting with waves. On entry.</span></div>
+<div><code>look</code><span>Looks around.</span></div>
+<div><code>thinking</code><span>Eyes open, swaying.</span></div>
+<div><code>hop</code><span>A little jump.</span></div>
+<div><code>excited</code><span>Heart eyes, looping waves.</span></div>
+<div><code>success</code><span>Celebration: spin and waves.</span></div>
+<div><code>error</code><span>Shake with crossed eyes.</span></div>
+<div><code>poke</code><span>Reaction to a tap.</span></div>
+<div><code>loading</code><span>Waiting. Spins patiently.</span></div>
+<div><code>orbit</code><span>Triangle to ball, with rings.</span></div>
+<div><code>sleep</code><span>Asleep, with the Z.</span></div>
+</div>
+<p class="sub">Usage rules</p>
+<div class="rules">
+<div class="y"><b>YES</b><span>On a flat background: white, #05E26B, #E5E3DA or #1A1A17. The outline always contrasts.</span></div>
+<div class="n"><b>NO</b><span>On a photo or gradient without a solid background behind it.</span></div>
+<div class="y"><b>YES</b><span>Rotate up to ±20°, scale it, crop it at the canvas edge.</span></div>
+<div class="n"><b>NO</b><span>Stretch it on one axis, change the number of points, or add arms, legs, mouth or eyebrows.</span></div>
+<div class="y"><b>YES</b><span>One Strike per piece, as the subject. A character, not a background pattern.</span></div>
+<div class="n"><b>NO</b><span>Fill it with an accent (#8E5FE0, #EF913F…). Strike's body is white or ink. Always.</span></div>
+</div>
+<p class="sub">Micro-interactions</p>
+<div class="shots shots--tall">
+<figure><div class="loopv"><span>Looping video: match join</span></div><figcaption>Caption</figcaption></figure>
+<figure><div class="loopv"><span>Looping video: Strike reaction</span></div><figcaption>Caption</figcaption></figure>
+<figure><div class="loopv"><span>Looping video: team confirmed</span></div><figcaption>Caption</figcaption></figure>
+</div>
+<div class="chips" style="margin-top:22px"><span class="chip chip--hot">System design</span><span class="chip chip--hot">System flow &amp; logic</span><span class="chip chip--hot">Screen flow</span><span class="chip chip--hot">UI design</span><span class="chip chip--hot">Brand book</span><span class="chip">Consulting</span></div>
+</div>
+</section>
+
+<section data-section="impact" id="impact" data-screen-label="Impact">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">05</span><h2>Impact</h2><span class="spacer"></span><span class="sec__note">Metrics &amp; KPIs</span></div>
+<div class="kpis">
+<div class="kpi"><div class="kpi__v">—</div><div class="kpi__l">Metric</div></div>
+<div class="kpi"><div class="kpi__v">—</div><div class="kpi__l">Metric</div></div>
+<div class="kpi"><div class="kpi__v">—</div><div class="kpi__l">Metric</div></div>
+<div class="kpi"><div class="kpi__v">—</div><div class="kpi__l">Metric</div></div>
+</div>
+<div class="todo" style="margin-top:14px"><p class="h3">Outcome</p><p>Space for results, what shipped, and what you would do next.</p></div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Building something social?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){var vs=document.querySelectorAll('video[data-lazy]');if(!('IntersectionObserver'in window)){vs.forEach(function(v){v.preload='auto';v.play().catch(function(){})});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){if(v.preload==='none'){v.preload='auto';v.load()}v.play().catch(function(){})}else v.pause()})},{rootMargin:'200px'});vs.forEach(function(v){io.observe(v)})})();
+</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+<script src="contact-modal.js"></script>
+</body>
+</html>

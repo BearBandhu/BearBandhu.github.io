@@ -1,0 +1,270 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Alejandro Melian — Game Design Portfolio</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Anton&family=Archivo:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="gd.css">
+</head>
+<body data-page="home">
+<div class="bar">
+<div class="bar__in">
+<button class="logo" data-shell-logo type="button">AM <span>GAME DESIGN</span></button>
+<nav class="nav"><a href="#work">Professional work</a><a href="#prototypes">Prototypes</a><a href="#about">About me</a><a href="#product">Product design</a></nav>
+<span class="spacer"></span>
+<div class="meter"><span class="js-progress-frac">0/0</span><span class="meter__track"><span class="meter__fill js-meter"></span></span><span class="js-progress-pct">0%</span></div>
+<button class="btn js-mode-toggle" type="button">MODE: <span class="js-mode-label">DEEP</span></button>
+<button class="btn" type="button" onclick="Portfolio.openCmdk()">⌘K</button>
+</div>
+</div>
+<div id="resume-slot"></div>
+
+<header class="hero" data-section="hero" id="hero" data-screen-label="Hero">
+<div class="hero__grid"></div>
+<div class="wrap hero__in">
+<div class="mono">Game designer · combat, enemies &amp; bosses, encounters, balance</div>
+<h1>Alejandro<br>Melian</h1>
+<div class="hero__creed"><span>Learn</span><span>Understand</span><span>Grow</span></div>
+<p class="hero__lede">Game designer at Edenic Era. Multidisciplinary designer, passionate about what I do and how I do it. Adaptable and versatile, I enjoy the challenge of new products and cutting edge ideas.</p>
+<div class="hero__cta">
+<a class="btn btn--solid" href="#work">Play the builds →</a>
+<a class="btn" href="mailto:alejandro.melian.r@gmail.com">alejandro.melian.r@gmail.com</a>
+<a class="btn" href="https://www.linkedin.com/in/a-melian/" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+<div class="stats">
+<div class="stat"><div class="stat__n">5+</div><div class="stat__l">Years shipping video games</div></div>
+<div class="stat"><div class="stat__n">6</div><div class="stat__l">Shipped titles — 2 on Steam</div></div>
+<div class="stat"><div class="stat__n">4</div><div class="stat__l">Systems prototypes</div></div>
+<div class="stat"><div class="stat__n">U-tad</div><div class="stat__l">Professor, game design fundamentals</div></div>
+</div>
+</div>
+</header>
+
+<section id="work" data-section="work" data-screen-label="Professional work">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Professional work</h2><span class="spacer"></span><span class="sec__note">Every entry is playable</span></div>
+
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="eMxsDWH9Zrc" data-title="Bugs 'N Guns"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>Steam</b><span>·</span><span>Designer</span></div>
+<h3>Bugs 'N Guns</h3>
+<div class="project__role">Gameplay · Level design · Narrative design</div>
+<p class="project__p">Co-op shooter. I owned gameplay feel, level flow and the narrative framing that holds a run together.</p>
+<div class="project__flag">Important: needs two people to play</div>
+<div class="expand"><button class="expand__head" data-expand type="button">+ What I did</button><div class="expand__body">Designed the moment-to-moment gameplay loop, laid out and iterated the levels around the co-op pacing, and wrote the narrative beats that frame each encounter. Balanced difficulty against a two-player skill spread.</div></div>
+<div class="project__foot"><a class="btn btn--solid" href="https://store.steampowered.com/app/2648130/Bugs_N_Guns/" target="_blank" rel="noopener">Play on Steam →</a></div>
+</div>
+</article>
+
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="kjDqkztJTuA" data-title="Cusco Paradox"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>itch.io</b><span>·</span><span>Designer</span><span>·</span><span>Indaga Studios</span></div>
+<h3>Cusco Paradox</h3>
+<div class="project__role">Gameplay · Level · Narrative · AI · UX/UI · VFX</div>
+<p class="project__p">The widest brief of the five: I moved across gameplay, levels, AI behaviour, interface and VFX as the build demanded.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ What I did</button><div class="expand__body">Built the core gameplay and level progression, authored enemy AI behaviour, and covered UX/UI and VFX passes. Working across departments here is what taught me to respect each pipeline's constraints rather than design past them.</div></div>
+<div class="project__foot"><a class="btn btn--solid" href="https://indagastudios.itch.io/cuscoparadox" target="_blank" rel="noopener">Play on itch.io →</a></div>
+</div>
+</article>
+
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="NoE4qOLrqMI" data-title="Neon Red"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>itch.io</b><span>·</span><span>Designer</span><span>·</span><span>Playable content</span></div>
+<h3>Neon Red</h3>
+<div class="project__role">Gameplay · Level · Narrative · Combat · Encounters</div>
+<p class="project__p">Combat and encounter design work — the closest match to what I do best: readable enemies, honest telegraphs, encounters that teach.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ What I did</button><div class="expand__body">Designed combat and the encounter set: enemy roles, attack patterns and the order players meet them in. Levels and narrative content built around the fights rather than the reverse.</div></div>
+<div class="project__foot"><a class="btn btn--solid" href="https://alvarocga.itch.io/neonred" target="_blank" rel="noopener">Play on itch.io →</a></div>
+</div>
+</article>
+
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="pPfRK8eXA9U" data-title="Super Transform"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>itch.io</b><span>·</span><span>Designer</span></div>
+<h3>Super Transform</h3>
+<div class="project__role">Gameplay · Level · Narrative · Puzzle · VFX</div>
+<p class="project__p">Transformation as the verb. Puzzle design carries the level: every space is a question about which form to be in.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ What I did</button><div class="expand__body">Designed the transformation mechanic and its puzzle grammar, then built levels that introduce, complicate and combine each form. VFX passes to keep state changes legible at speed.</div></div>
+<div class="project__foot"><a class="btn btn--solid" href="https://alvarocga.itch.io/super-transform" target="_blank" rel="noopener">Play on itch.io →</a></div>
+</div>
+</article>
+
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="7p3ASn6knIg" data-title="TransmuTowers"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>Steam</b><span>·</span><span>Designer</span></div>
+<h3>TransmuTowers</h3>
+<div class="project__role">Gameplay · Level · AI · Combat · System balance</div>
+<p class="project__p">Systems and balance work: AI behaviour and combat tuned against each other until the numbers produced the fight I wanted.</p>
+<div class="expand"><button class="expand__head" data-expand type="button">+ What I did</button><div class="expand__body">Owned AI behaviour and combat design, then balanced the system end to end — enemy budgets, damage and pacing curves across the level set. Balance passes driven by playtest data, not taste alone.</div></div>
+<div class="project__foot"><a class="btn btn--solid" href="https://store.steampowered.com/app/2814360/TransmuTowers/" target="_blank" rel="noopener">Play on Steam →</a></div>
+</div>
+</article>
+<article class="project">
+<div class="project__shot"><div class="vid" data-yt="Po0Wyv0wKGk" data-title="The Calling"></div></div>
+<div class="project__body">
+<div class="project__eyebrow"><b>Trailer</b><span>·</span><span>Designer</span></div>
+<h3>The Calling</h3>
+<div class="project__role">Gameplay · Combat · Encounters</div>
+<p class="project__p">Trailer below. Build link and role breakdown to follow.</p>
+<div class="project__foot"><a class="btn" href="https://www.youtube.com/watch?v=Po0Wyv0wKGk" target="_blank" rel="noopener">Watch on YouTube →</a></div>
+</div>
+</article>
+</div>
+</section>
+
+<section id="prototypes" data-section="prototypes" data-screen-label="Prototypes">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Prototypes</h2><span class="spacer"></span><span class="sec__note">Six playable · four builds</span></div>
+<article class="project">
+<a class="project__shot project__shot--plate project__shot--caravan" href="prototype-caravan-defense.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">Caravan<br>Defense</span><span class="plate__hint mono">Escort · economy · boss waves</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: Caravan Defense</h3>
+<div class="project__role">Economy · wave &amp; boss pacing · one-handed control</div>
+<p class="project__p">The thing you defend keeps moving. Distance from the caravan is the risk dial: gather far to bank more, steer it clear of the mesas, and split upgrades between engineering and magic.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-caravan-defense.html">Try the prototype →</a></div>
+</div>
+</article>
+<article class="project">
+<a class="project__shot project__shot--plate" href="prototype-qte-combat.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">QTE<br>Combat</span><span class="plate__hint mono">Grid · turns · timed inputs</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: QTE Combat</h3>
+<div class="project__role">Grid-based turn combat · quick-time inputs</div>
+<p class="project__p">Reaction inside a turn structure: attacks and defences resolve on an isometric grid, but each exchange opens a timed input window. A test of how much presence a turn-based fight can ask for.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-qte-combat.html">Try the prototype →</a></div>
+</div>
+</article>
+<article class="project">
+<a class="project__shot project__shot--plate project__shot--meadow" href="prototype-cozy-meadow.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">Cozy<br>Meadow</span><span class="plate__hint mono">Growth · unlocks · habitat</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: Cozy Meadow</h3>
+<div class="project__role">Cozy progression · economy · habitat systems</div>
+<p class="project__p">A garden that grows into a habitat. Harvests gate new species, species crossbreed into hybrids, and wildlife arrives in response to what you planted — progression with no pressure anywhere in it.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-cozy-meadow.html">Try the prototype →</a></div>
+</div>
+</article>
+<article class="project">
+<a class="project__shot project__shot--plate project__shot--chess" href="prototype-last-piece.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">The Last<br>Piece</span><span class="plate__hint mono">Chess · dice · roguelike floors</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: The Last Piece</h3>
+<div class="project__role">Tactics · combat math · roguelike structure</div>
+<p class="project__p">Chess movement with an uncertain outcome: every capture is a d6 against defence, hits pay Focus, and Focus buys the reroll. A test of how much randomness tactics can absorb.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-last-piece.html">Try the prototype →</a></div>
+</div>
+</article>
+<article class="project">
+<a class="project__shot project__shot--plate project__shot--garden" href="prototype-gnome-garden.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">Gnome<br>Garden</span><span class="plate__hint mono">Tower defence · economy · waves</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: Gnome Garden Defense</h3>
+<div class="project__role">Economy · wave balancing · tool design</div>
+<p class="project__p">Tower defence where the towers are the economy: watering levels a plant up, harvesting turns it back into seeds. Includes a blueprint editor for authoring new plants and breaking the wave curve on purpose.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-gnome-garden.html">Try the prototype →</a></div>
+</div>
+</article>
+<article class="project">
+<a class="project__shot project__shot--plate project__shot--sonar" href="prototype-sonar-salvage.html"><span class="plate__tag mono">Playable build</span><span class="plate__title">Sonar<br>Salvage</span><span class="plate__hint mono">Light · pressure · diegetic UI</span></a>
+<div class="project__body">
+<div class="project__eyebrow"><b>Prototype</b><span>·</span><span>Playable in browser</span></div>
+<h3>Prototype: Sonar Salvage</h3>
+<div class="project__role">Game feel · resource pressure · diegetic UI</div>
+<p class="project__p">A crane descends 2,400 metres of dark on a two-minute battery — and the battery is also the lamp. One resource carrying both the timer and the visibility.</p>
+<div class="project__foot"><a class="btn btn--solid" href="prototype-sonar-salvage.html">Try the prototype →</a></div>
+</div>
+</article>
+<div class="protos">
+<div class="protos__bar"><span class="protos__dot"></span><span>~/prototypes — 4 builds</span></div>
+<div class="proto"><div class="proto__name">Prototype: Magic</div><ul class="proto__sys"><li>Interactive physical magic system</li></ul></div>
+<div class="proto"><div class="proto__name">Prototype: Action Combat</div><ul class="proto__sys"><li>Action combat, weapon swapping</li><li>Replicating AI, attack patterns and death</li><li>Simple traversal</li></ul></div>
+<div class="proto"><div class="proto__name">Prototype: Endless Runner</div><ul class="proto__sys"><li>Physics based movement</li><li>Procedural generation, two biomes</li><li>Fuel system</li></ul></div>
+<div class="proto"><div class="proto__name">Prototype: Hunting</div><ul class="proto__sys"><li>Complex AI behaviour, hunger system</li><li>Archery system</li><li>Modular magic and bow system</li></ul></div>
+</div>
+</div>
+</section>
+
+<section id="about" data-section="about" data-screen-label="About">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Who am I?</h2></div>
+<div class="about">
+<div>
+<p><strong>Dedicated and passionate about the world of gaming.</strong> 5+ years working in video games.</p>
+<p>Experience as a game designer focused on combat design, enemy and boss design, encounter design and game balancing. I have additional experience across multiple areas of game development — UX/UI, pixel art, animation, prototyping, gameplay, production, product management and research — and I taught game design fundamentals as a professor at UTAD.</p>
+<p>I understand the pipeline of most departments in games, and I use that knowledge to respect the complexity and necessity of teamwork and cooperation in game development.</p>
+<div class="disc">
+<span class="chip chip--hot">Combat design</span><span class="chip chip--hot">Enemy &amp; boss design</span><span class="chip chip--hot">Encounter design</span><span class="chip chip--hot">Game balancing</span>
+<span class="chip">UX/UI</span><span class="chip">Pixel art</span><span class="chip">Animation</span><span class="chip">Prototyping</span><span class="chip">Gameplay</span><span class="chip">Production</span><span class="chip">Product management</span><span class="chip">Research</span><span class="chip">Teaching</span>
+</div>
+</div>
+<dl class="contact-card">
+<dt>Contact</dt><dd><a href="mailto:alejandro.melian.r@gmail.com">alejandro.melian.r@gmail.com</a></dd>
+<dt>LinkedIn</dt><dd><a href="https://www.linkedin.com/in/a-melian/" target="_blank" rel="noopener">linkedin.com/in/a-melian</a></dd>
+<dt>Currently</dt><dd>Game designer at Edenic Era</dd>
+<dt>Open to</dt><dd>Game design (systems) · combat &amp; gameplay design</dd>
+</dl>
+</div>
+</div>
+</section>
+
+<section id="product" data-section="product" data-screen-label="Product design">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Product design, on the side</h2><span class="spacer"></span><span class="sec__note">Retention systems for apps</span></div>
+<p class="muted" style="max-width:64ch;margin:0 0 28px">The same loop thinking applied outside games: onboarding, progression and retention work on shipped consumer products. Full write-ups if you want the long version.</p>
+<div class="pd">
+<a class="pd__row" href="case-edenic.html"><span class="pd__co">Edenic Era</span><span class="pd__d">Core game systems — progression, economy, loops</span><span class="pd__go">READ →</span></a>
+<a class="pd__row" href="case-lyly.html"><span class="pd__co">Lyly Interactive</span><span class="pd__d">B2C app inside a three-product ecosystem</span><span class="pd__go">READ →</span></a>
+<a class="pd__row" href="case-innova.html"><span class="pd__co">Innova Schools</span><span class="pd__d">Mobile EdTech companion — 26% D30 retention</span><span class="pd__go">READ →</span></a>
+<a class="pd__row" href="product-design.html"><span class="pd__co">Archive</span><span class="pd__d">The previous product-design portfolio, kept intact</span><span class="pd__go">OPEN →</span></a>
+</div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div>
+<div class="mono">Available for game design roles</div>
+<h2>Let's build<br>the fight.</h2>
+</div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid" href="mailto:alejandro.melian.r@gmail.com">Email me →</a>
+<a class="btn" href="https://www.linkedin.com/in/a-melian/" target="_blank" rel="noopener">LinkedIn</a>
+</div>
+</div>
+<div class="rule" style="margin:36px 0 16px"></div>
+<div class="mono">Alejandro Melian · Game design portfolio · <span class="js-ach-count">0/8</span> achievements found · press ⌘K</div>
+</footer>
+
+<script src="portfolio-shell.js"></script>
+<script>
+/* YouTube: paste a full watch/share URL or bare id into each .vid data-yt="" */
+document.querySelectorAll(".vid").forEach(function(v){
+  var raw=(v.dataset.yt||"").trim();
+  var m=raw.match(/(?:v=|youtu\.be\/|embed\/|shorts\/)([\w-]{11})/);
+  var id=m?m[1]:(/^[\w-]{11}$/.test(raw)?raw:"");
+  if(!id){v.classList.add("vid--empty");v.innerHTML='<span class="mono">Add a YouTube link<br>data-yt=&quot;…&quot;</span>';return}
+  v.innerHTML='<img class="vid__thumb" src="https://i.ytimg.com/vi/'+id+'/sddefault.jpg" alt="'+(v.dataset.title||"")+' trailer" loading="lazy"><button class="vid__play" type="button" aria-label="Play trailer">▶</button>';
+  var img=v.querySelector(".vid__thumb"),chain=["hqdefault"],step=0;
+  function next(){if(step<chain.length)img.src="https://i.ytimg.com/vi/"+id+"/"+chain[step++]+".jpg"}
+  img.addEventListener("error",next);
+  img.addEventListener("load",function(){if(img.naturalWidth<=120)next()});
+  if(img.complete&&img.naturalWidth&&img.naturalWidth<=120)next();
+  v.addEventListener("click",function(){
+    v.innerHTML='<iframe src="https://www.youtube-nocookie.com/embed/'+id+'?autoplay=1&rel=0" title="'+(v.dataset.title||"")+'" allow="accelerometer;autoplay;clipboard-write;encrypted-media;gyroscope;picture-in-picture" allowfullscreen></iframe>';
+  },{once:true});
+});
+document.querySelectorAll("[data-expand]").forEach(function(b){b.addEventListener("click",function(){var w=b.closest(".expand");w.classList.toggle("open");b.textContent=(w.classList.contains("open")?"− ":"+ ")+b.textContent.slice(2)})});
+(function(){function m(){var f=document.querySelector(".js-meter");if(f)f.style.width=(window.Portfolio?Portfolio.percentExplored():0)+"%"}window.addEventListener("scroll",m,{passive:true});setInterval(m,900);m()})();
+</script>
+</body>
+</html>

@@ -1,0 +1,445 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Bolea — Alejandro Melian</title>
+<link rel="icon" href="favicon-am.svg">
+<link rel="apple-touch-icon" href="favicon-am.svg">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700&family=Schibsted+Grotesk:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="subpage.css">
+<link rel="stylesheet" href="slime.css">
+<style>
+.ov{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:1px;margin-top:28px;border-top:1px solid currentColor;border-color:rgba(127,127,127,.25)}
+.ov>div{padding:14px 14px 0 0}
+.ov dt{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:6px}
+.ov dd{margin:0;font-size:1rem;line-height:1.35}
+.herofig{margin-top:32px;display:grid;grid-template-columns:minmax(0,1fr);gap:14px}
+.herofig video,.herofig img{width:100%;height:100%;object-fit:cover;display:block;border-radius:18px;background:rgba(127,127,127,.12)}
+.herofig figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.herofig .media{aspect-ratio:16/10;border-radius:18px;overflow:hidden}
+.herofig .media--sq{aspect-ratio:auto;flex:1;min-height:0}
+.herofig .media--sq img{object-fit:contain;background:#9a9a9a}
+figcaption,.cap{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.03em;opacity:.6;line-height:1.4}
+.pts{margin:0;padding:0;list-style:none;display:flex;flex-direction:column;gap:10px}
+.pts li{position:relative;padding-left:18px;line-height:1.5;text-wrap:pretty}
+.pts li::before{content:"";position:absolute;left:0;top:.62em;width:7px;height:7px;border-radius:50%;background:var(--hot,#e97a4e)}
+.cols2{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:28px;margin-top:22px}
+.cols3{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:22px}
+.h3{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1.2rem;line-height:1.2;margin:0 0 12px}
+.sub{font-family:"JetBrains Mono",monospace;font-size:.74rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin:34px 0 0}
+.todo{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px;min-height:120px}
+.todo .h3{margin:0}
+.todo p{margin:0;opacity:.6;font-size:.94rem;line-height:1.45}
+.rs{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}.rs .h3{margin:0}.rs p{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.per{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.per .cc{gap:12px}.per__tag{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;padding:4px 8px;border-radius:999px;border:1px solid currentColor;opacity:.7;margin-left:auto}
+.per__q{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-size:1.08rem;line-height:1.35;text-wrap:pretty}
+.per .pts{gap:6px}.per .pts li{font-size:.92rem}
+.jr{width:100%;min-width:860px;border-collapse:collapse;margin-top:14px;font-size:.9rem;table-layout:fixed}
+.jr th,.jr td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45;text-wrap:pretty}
+.jr thead th{font-family:"Bricolage Grotesque",sans-serif;font-weight:600;font-size:1rem}
+.jr tbody th{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;font-weight:500;width:110px}
+.jr .lo{color:var(--hot,#e97a4e);font-weight:600}.jr .hi{color:#2f9e6b;font-weight:600}.jr .mid{opacity:.7;font-weight:600}
+.jr__h{display:flex;flex-wrap:wrap;align-items:baseline;gap:10px;margin-top:22px}.jr__h p{margin:0}
+@media(max-width:860px){.per{grid-template-columns:minmax(0,1fr)}}
+.comp{width:100%;border-collapse:collapse;margin-top:14px;font-size:.94rem}
+.comp th,.comp td{text-align:left;padding:11px 12px 11px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top}
+.comp th{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.comp td.tbd{opacity:.45}
+.tblwrap{overflow-x:auto}
+.comps{display:grid;grid-template-columns:repeat(auto-fit,minmax(300px,1fr));gap:14px;margin-top:16px}
+.cc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:20px;display:flex;flex-direction:column;gap:14px}
+.cc__top{display:flex;align-items:baseline;gap:10px}
+.cc__n{font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.5}
+.cc__t{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.3rem;line-height:1.15;margin:0}
+.cc__m{font-size:.92rem;opacity:.75;margin:-6px 0 0}
+.cc dl{margin:0;display:flex;flex-direction:column;gap:12px}
+.cc dt{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55;margin-bottom:3px}
+.cc dd{margin:0;font-size:.94rem;line-height:1.5;text-wrap:pretty}
+.cc dt.pos{color:#2f9e6b;opacity:1}.cc dt.neg{color:var(--hot,#e97a4e);opacity:1}
+.gaps{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.gap{border-top:2px solid var(--hot,#e97a4e);padding-top:14px;display:flex;flex-direction:column;gap:8px}
+.gap p{margin:0;line-height:1.55;text-wrap:pretty}
+@media(max-width:860px){.gaps{grid-template-columns:minmax(0,1fr)}}
+.bb{margin-top:16px;display:flex;flex-direction:column;gap:14px}
+.bb__lede{display:flex;flex-wrap:wrap;align-items:baseline;justify-content:space-between;gap:12px}
+.bb__lede p{margin:0;max-width:62ch;line-height:1.55;text-wrap:pretty}
+.sw{display:grid;grid-template-columns:repeat(6,minmax(0,1fr));gap:10px}
+.sw>div{display:flex;flex-direction:column;gap:6px}
+.sw i{display:block;aspect-ratio:1.4;border-radius:12px;border:1px solid rgba(127,127,127,.25)}
+.sw b{font-size:.86rem;font-weight:600}
+.sw span{font-family:"JetBrains Mono",monospace;font-size:.7rem;opacity:.6;line-height:1.35}
+.bbg{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px}
+.bbc{border:1px solid rgba(127,127,127,.25);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.bbc .h3{margin:0}
+.bbx{margin-top:16px;display:grid;grid-template-columns:minmax(0,1fr);border-radius:22px;overflow:hidden;background:#1A1A17;color:#fff}
+.bbx__img{background:#9a9a9a;min-height:260px}.bbx__img img{width:100%;height:100%;object-fit:contain;display:block}
+.bbx__body{padding:clamp(24px,4vw,44px);display:flex;flex-direction:column;align-items:flex-start;gap:12px;justify-content:center}
+.bbx__k{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.1em;text-transform:uppercase;color:#05E26B}
+.bbx__t{margin:0;font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:clamp(1.5rem,2.6vw,2.1rem);line-height:1.12;letter-spacing:-.02em;text-wrap:balance}
+.bbx__d{margin:0;max-width:48ch;line-height:1.55;color:rgba(255,255,255,.78);text-wrap:pretty}
+.bbx__btn{margin-top:8px;display:inline-flex;align-items:center;gap:14px;background:#05E26B;color:#1A1A17;text-decoration:none;font-weight:600;padding:14px 22px;border-radius:99px;transition:transform .2s,background .2s}
+.bbx__btn span{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;opacity:.75}
+.bbx__btn:hover{background:#3BF08C;transform:translateY(-1px);color:#1A1A17}
+.bbg--3{margin-top:14px}
+.sw--mini{display:flex;gap:6px}.sw--mini i{width:34px;height:34px;aspect-ratio:auto;border-radius:9px;border:1px solid rgba(127,127,127,.3)}
+@media(max-width:760px){.bbx{grid-template-columns:minmax(0,1fr)}.bbg--3{grid-template-columns:minmax(0,1fr)}}
+.bbc__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:1.9rem;line-height:1}
+.bbc p{margin:0;font-size:.93rem;line-height:1.5;opacity:.8;text-wrap:pretty}
+.voice{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px}
+.voice div{border-radius:14px;padding:16px;background:rgba(127,127,127,.08);display:flex;flex-direction:column;gap:6px}
+.voice p{margin:0;line-height:1.45}
+@media(max-width:860px){.sw{grid-template-columns:repeat(3,minmax(0,1fr))}.bbg{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.bbg,.voice{grid-template-columns:minmax(0,1fr)}}
+.shots{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:14px;margin-top:16px}
+.shots figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.shots .slot{aspect-ratio:4/3}
+.shots--tall .slot{aspect-ratio:9/16}
+.shots--wide{grid-template-columns:repeat(2,minmax(0,1fr))}
+.shots--wide .slot{aspect-ratio:16/10}
+.loopv{aspect-ratio:9/16;border-radius:14px;overflow:hidden;background:rgba(127,127,127,.12);display:grid;place-items:center;position:relative}
+.loopv video{width:100%;height:100%;object-fit:cover;display:block}
+.loopv span{position:absolute;font-family:"JetBrains Mono",monospace;font-size:.74rem;opacity:.55;text-align:center;padding:12px}
+.kpis{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:14px;margin-top:22px}
+.kpi{border:1.5px dashed rgba(127,127,127,.4);border-radius:16px;padding:18px;display:flex;flex-direction:column;gap:8px}
+.kpi__v{font-family:"Bricolage Grotesque",sans-serif;font-weight:700;font-size:2.2rem;line-height:1;opacity:.3}
+.kpi__l{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6;line-height:1.35}
+@media(max-width:860px){.ov,.kpis{grid-template-columns:repeat(2,minmax(0,1fr))}.cols3,.shots{grid-template-columns:repeat(2,minmax(0,1fr))}.herofig{grid-template-columns:minmax(0,1fr)}.herofig .media--sq{aspect-ratio:1}}
+@media(max-width:560px){.cols2,.cols3,.shots,.shots--wide{grid-template-columns:minmax(0,1fr)}.shots--tall{grid-template-columns:repeat(2,minmax(0,1fr))}}
+.aff{display:grid;grid-template-columns:repeat(4,minmax(0,1fr));gap:12px;margin-top:18px}
+.aff__col{border-radius:16px;padding:14px;background:rgba(127,127,127,.07);display:flex;flex-direction:column;gap:12px}
+.aff__h{display:flex;flex-direction:column;gap:4px;min-height:3.4em}
+.aff__h .h3{margin:0;font-size:1.05rem}
+.aff__notes{display:flex;flex-direction:column;gap:8px;flex:1}
+.aff__n{margin:0;padding:12px 12px 14px;border-radius:4px;background:#FFF3B8;color:#2a2618;font-size:.9rem;line-height:1.4;box-shadow:0 1px 0 rgba(0,0,0,.06),0 6px 14px -8px rgba(0,0,0,.3);text-wrap:pretty}
+.aff__col:nth-child(2) .aff__n{background:#E7F6D6}
+.aff__col:nth-child(3) .aff__n{background:#FFE1CC}
+.aff__col:nth-child(4) .aff__n{background:#E4E2F7}
+.aff__n:nth-child(odd){transform:rotate(-.6deg)}.aff__n:nth-child(even){transform:rotate(.5deg)}
+.aff__c{border-top:1px solid rgba(127,127,127,.3);padding-top:10px;display:flex;flex-direction:column;gap:4px}
+.aff__c span{font-family:"JetBrains Mono",monospace;font-size:.68rem;letter-spacing:.08em;text-transform:uppercase;opacity:.55}
+.aff__c p{margin:0;font-size:.9rem;line-height:1.45;text-wrap:pretty}
+.aff__axis{display:flex;align-items:center;gap:12px;margin-top:12px;font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.6}
+.aff__axis i{flex:1;height:1px;background:currentColor;position:relative}
+.aff__axis i::after{content:"";position:absolute;right:-1px;top:-4px;border:4.5px solid transparent;border-left:7px solid currentColor;border-right:0}
+@media(max-width:960px){.aff{grid-template-columns:repeat(2,minmax(0,1fr))}}
+@media(max-width:560px){.aff{grid-template-columns:minmax(0,1fr)}.aff__axis{display:none}}
+.sysf{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:14px;margin-top:16px}
+.sysf figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.sysf--wide{grid-column:1/-1}
+.sysf a{display:block;border-radius:14px;overflow:hidden;background:#fff;border:1px solid rgba(127,127,127,.25);transition:transform .2s}
+.sysf a:hover{transform:translateY(-2px)}
+.sysf img{width:100%;display:block;max-height:760px;object-fit:contain}
+@media(max-width:700px){.sysf{grid-template-columns:minmax(0,1fr)}}
+.figproto{aspect-ratio:16/9;border-radius:18px;overflow:hidden;border:1px solid rgba(0,0,0,.1);background:rgba(127,127,127,.08)}
+.figproto iframe{width:100%;height:100%;border:0;display:block}
+@media(max-width:560px){.figproto{aspect-ratio:3/4}}
+.stk{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.3fr);gap:28px;margin-top:16px;align-items:start}
+.stk__img{border-radius:18px;overflow:hidden;background:#9a9a9a}
+.stk__img img{width:100%;display:block}
+.spec{width:100%;border-collapse:collapse;font-size:.93rem}
+.spec th,.spec td{text-align:left;padding:10px 12px 10px 0;border-bottom:1px solid rgba(127,127,127,.22);vertical-align:top;line-height:1.45}
+.spec th{font-family:"JetBrains Mono",monospace;font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;opacity:.55;font-weight:500}
+.spec td:first-child{font-weight:600;white-space:nowrap}
+.rep{display:grid;grid-template-columns:repeat(auto-fill,minmax(150px,1fr));gap:8px;margin-top:12px}
+.rep div{border:1px solid rgba(127,127,127,.25);border-radius:12px;padding:10px 12px;display:flex;flex-direction:column;gap:3px}
+.rep b{font-size:.92rem;font-weight:600}
+.rep span{font-size:.82rem;opacity:.7;line-height:1.35}
+.rep code{font-family:"JetBrains Mono",monospace;font-size:.86rem;font-weight:500}
+.rules{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px;margin-top:12px}
+.rules div{border-radius:12px;padding:12px 14px;background:rgba(127,127,127,.08);display:flex;gap:10px;line-height:1.45;font-size:.93rem}
+.rules b{font-family:"JetBrains Mono",monospace;font-size:.72rem;letter-spacing:.06em;flex:none;padding-top:2px}
+.rules .y b{color:#2f9e6b}.rules .n b{color:var(--hot,#e97a4e)}
+@media(max-width:860px){.stk{grid-template-columns:minmax(0,1fr)}.rules{grid-template-columns:minmax(0,1fr)}}
+.chap{display:flex;gap:2px}.chap a{font-family:var(--f-m);font-size:11px;letter-spacing:.1em;text-transform:uppercase;color:var(--ink-2);text-decoration:none;padding:7px 10px;border-radius:99px;transition:background .2s,color .2s}.chap a:hover{color:var(--ink);background:rgba(22,20,27,.05)}.chap a.on{color:var(--ink);background:rgba(22,20,27,.09)}
+@media(max-width:900px){.chap{display:none}}
+header[id],section[id]{scroll-margin-top:56px}
+.acc-all{padding:6px 12px;font-size:13px}
+.tabs{margin-top:16px}
+.tabs__list{display:flex;flex-wrap:wrap;gap:4px;padding:4px;border:1px solid var(--line);border-radius:22px;background:var(--card);width:fit-content;max-width:100%}
+.tabs__list button{font:500 14px/1.2 var(--f-s);border:0;background:none;color:var(--ink-2);padding:9px 14px;border-radius:99px;cursor:pointer;transition:background .2s,color .2s}
+.tabs__list button:hover{color:var(--ink);background:rgba(22,20,27,.05)}
+.tabs__list button[aria-selected="true"]{background:var(--ink);color:var(--paper)}
+.tabs__panel>.per,.tabs__panel>.sysf{margin-top:16px}.tabs__panel>.jr__h{margin-top:18px}
+.tabs__panel[hidden]{display:none}
+.comptab .cc{margin-top:16px}.comptab .cc dl{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:18px 32px}
+@media(max-width:640px){.comptab .cc dl{grid-template-columns:minmax(0,1fr)}}
+.accs{margin-top:28px;border-top:1px solid var(--line)}
+.acc{border-bottom:1px solid var(--line)}
+.acc summary{list-style:none;display:flex;align-items:center;gap:14px;padding:18px 0;cursor:pointer}
+.acc summary::-webkit-details-marker{display:none}
+.acc__t{font-family:var(--f-d);font-weight:600;font-size:1.25rem;letter-spacing:-.02em;transition:color .2s}
+.acc__m{font-family:var(--f-m);font-size:.7rem;letter-spacing:.06em;text-transform:uppercase;color:var(--ink-3)}
+.acc summary i{margin-left:auto;width:30px;height:30px;border-radius:50%;border:1px solid var(--line);position:relative;flex:none;background:var(--card)}
+.acc summary i::before,.acc summary i::after{content:"";position:absolute;left:50%;top:50%;width:11px;height:1.5px;background:var(--ink);transform:translate(-50%,-50%)}
+.acc summary i::after{transform:translate(-50%,-50%) rotate(90deg);transition:transform .25s}
+.acc[open] summary i::after{transform:translate(-50%,-50%) rotate(0)}
+.acc summary:hover .acc__t{color:var(--violet)}
+.acc__b{padding:0 0 30px}
+.acc__b>.sub:first-child,.acc__b>.aff,.acc__b>.shots,.acc__b>.stk,.acc__b>.rep,.acc__b>.rules,.acc__b>.voice{margin-top:0}
+.acc__b>p:first-child{margin-top:0!important}
+@media(max-width:560px){.acc__m{display:none}}
+.wfs{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px}
+.wfs figure{margin:0;display:flex;flex-direction:column;gap:8px}
+.wf{aspect-ratio:9/17;border:1.5px solid var(--ink);border-radius:22px;background:#fff;padding:14px 12px;display:flex;flex-direction:column;gap:8px;overflow:hidden;font-family:var(--f-m);font-size:9px;letter-spacing:.04em;color:var(--ink-2);position:relative}
+.wf *{box-sizing:border-box}
+.wf .r{display:flex;align-items:center;gap:6px}.wf .sp{flex:1}
+.wf .b{border:1px solid rgba(22,20,27,.35);border-radius:8px;padding:7px;display:flex;flex-direction:column;gap:5px}
+.wf .ln{height:6px;border-radius:3px;background:rgba(22,20,27,.18)}.wf .ln.d{background:rgba(22,20,27,.45);height:8px}
+.wf .c{width:16px;height:16px;border-radius:50%;border:1px solid rgba(22,20,27,.45);flex:none}.wf .c.f{background:rgba(22,20,27,.2)}
+.wf .pill{border:1px solid rgba(22,20,27,.4);border-radius:99px;padding:3px 7px;white-space:nowrap}.wf .pill.on{background:rgba(22,20,27,.14)}
+.wf .t{font-family:var(--f-s);font-weight:600;font-size:12px;color:var(--ink);letter-spacing:0}
+.wf .lb{font-size:8px;text-transform:uppercase;opacity:.75}
+.wf .btnx{border-radius:8px;background:var(--ink);color:var(--paper);text-align:center;padding:8px;font-size:9px}
+.wf .btno{border:1px solid rgba(22,20,27,.4);border-radius:8px;text-align:center;padding:7px}
+.wf .seg{display:flex;border:1px solid rgba(22,20,27,.35);border-radius:8px;overflow:hidden}.wf .seg span{flex:1;text-align:center;padding:5px 0;border-left:1px solid rgba(22,20,27,.2)}.wf .seg span:first-child{border:0}.wf .seg .on{background:rgba(22,20,27,.14)}
+.wf .tab{margin-top:auto;display:flex;justify-content:space-around;align-items:center;border-top:1px solid rgba(22,20,27,.25);padding-top:7px}.wf .tab i{width:14px;height:14px;border:1px solid rgba(22,20,27,.4);border-radius:4px}.wf .tab .fab{width:26px;height:26px;border-radius:8px;background:var(--ink);margin-top:-14px}
+.wf .court{flex:1;min-height:0;border:1px dashed rgba(22,20,27,.45);border-radius:8px;display:grid;grid-template:1fr 1fr/1fr 1fr;position:relative}
+.wf .court>div{display:flex;flex-direction:column;align-items:center;justify-content:center;gap:3px}.wf .court::before{content:"";position:absolute;left:50%;top:0;bottom:0;border-left:1px dashed rgba(22,20,27,.35)}.wf .court::after{content:"";position:absolute;top:50%;left:0;right:0;border-top:1px dashed rgba(22,20,27,.35)}
+.wf .av{width:26px;height:26px;border-radius:50%;border:1px solid rgba(22,20,27,.5);background:rgba(22,20,27,.12)}.wf .av.e{background:none;border-style:dashed;display:grid;place-items:center;font-size:12px}
+.wf .note{position:absolute;right:8px;font-family:var(--f-m);font-size:8px;background:#FFE58A;color:var(--ink);padding:2px 5px;border-radius:4px;letter-spacing:0}
+@media(max-width:860px){.wfs{grid-template-columns:repeat(2,minmax(0,1fr))}}@media(max-width:560px){.wfs{grid-template-columns:minmax(0,1fr)}.wf{max-width:300px}}
+.hf{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:18px;margin-top:16px}
+.hf figure{margin:0;display:flex;flex-direction:column;gap:10px}
+.hf img{width:100%;aspect-ratio:721/1320;object-fit:cover;object-position:top;display:block;border-radius:20px;border:1px solid var(--line);background:#EDEDED}
+.hf figcaption{font-size:.9rem;line-height:1.45;color:var(--ink-2);text-wrap:pretty}
+@media(max-width:640px){.hf{grid-template-columns:repeat(2,minmax(0,1fr))}}
+</style>
+</head>
+<body data-page="proj-bolea">
+<a class="skip" href="#overview">Skip to content</a>
+<div class="field" aria-hidden="true"><span class="blob b1"></span><span class="blob b2"></span><span class="blob b3"></span></div>
+<div class="bar">
+<div class="bar__in">
+<a class="bar__id" href="index.html"><b>Alejandro Melian</b> · Product design</a>
+<span class="spacer"></span>
+<nav class="chap" aria-label="Chapters"><a href="#problem">Problem</a><a href="#discovery">Discovery</a><a href="#iteration">Iteration</a><a href="#execution">Execution</a></nav>
+<nav class="nav"><a class="btn" href="index.html">← Index</a></nav>
+</div>
+</div>
+
+<header class="hero" data-section="hero" id="overview" data-screen-label="Overview" data-say="Players already live in WhatsApp. Bolea works inside it.">
+<div class="wrap hero__in">
+<div class="mono">Product design · Bolea · Peru · sports matchmaking app</div>
+<h1>Bolea</h1>
+<p class="hero__lede">A social app for finding teams and matches for sports like padel. In Peru there is no Playtomic-style app, so players organise through WhatsApp groups of thousands of people. I led product design: the system, its logic, the screen flow, the UI and the brand book.</p>
+<div class="hero__cta"><a class="btn btn--solid" href="#problem">The problem ↓</a><a class="btn js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a></div>
+<dl class="ov">
+<div><dt>Role</dt><dd>Lead Product Designer &amp; Consultant</dd></div>
+<div><dt>Timeline</dt><dd>4 months</dd></div>
+<div><dt>Team</dt><dd>3 people</dd></div>
+<div><dt>Platform</dt><dd>Mobile app</dd></div>
+</dl>
+<div class="herofig">
+<figure><img class="hero__cover" src="assets/bolea/bolea-cover.png" alt="bolea® más, chatea menos." style="width:100%;aspect-ratio:2018/1138;object-fit:cover;display:block;border-radius:22px"></figure>
+<figure><div class="media"><video data-lazy src="assets/bolea/bolea-reel.mp4" muted loop playsinline preload="none" aria-label="Bolea reel"></video></div><figcaption>Bolea reel</figcaption></figure>
+</div>
+</div>
+</header>
+
+<section data-section="problem" id="problem" data-screen-label="Problem" data-say="Thousands of people per group, and every post gets buried.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">01</span><h2>Problem</h2><span class="spacer"></span><span class="sec__note">WhatsApp as a matchmaking tool</span></div>
+<div class="cols2">
+<div>
+<p class="h3">Player pain points</p>
+<ul class="pts">
+<li>People want to find teams and matches, but WhatsApp is still the tool of choice over current apps.</li>
+<li>Most players use WhatsApp groups made up of thousands of people, where teams and matches are posted.</li>
+<li>Readability is terrible: posts are buried in a constant stream of messages.</li>
+<li>Finding a group means scrolling through huge lists, then copy-pasting the list to sign up.</li>
+</ul>
+</div>
+<div class="rs"><p class="h3">Business goals</p><p>Bolea earns through memberships for two audiences.</p><ul class="pts"><li><b>Players:</b> a membership automates the search for matches and personalises the matches they're offered.</li><li><b>Organisers:</b> a membership gives them more tools to find players for their events, plus branding inside the app: images, videos and fully branded profiles.</li></ul></div>
+</div>
+</div>
+</section>
+
+<section data-section="discovery" id="discovery" data-screen-label="Discovery" data-say="Nobody wanted another app. That shaped everything.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">02</span><h2>Discovery</h2><span class="spacer"></span><span class="sec__note">Research, competitors, insights</span><button class="btn acc-all" type="button">Expand all</button></div>
+<p class="sub">Research summary</p>
+<div class="cols3">
+<div class="rs"><p class="h3">Method</p><p>Interviews, surveys, shadowing and A/B testing with players who use booking apps and players who coordinate on WhatsApp. We also interviewed court owners.</p></div>
+<div class="rs"><p class="h3">Participants</p><p>Amateur padel and football players in Lima, from weekly regulars with a fixed group to solo players looking for a match through large WhatsApp groups, plus court and club owners.</p></div>
+<div class="rs"><p class="h3">Key finding</p><p>Players didn't want another app. WhatsApp felt good enough because it was familiar and everyone was already there. Players with a set group of friends didn't use apps at all.</p></div>
+</div>
+<p class="sub">People</p>
+<div class="tabs "><div class="tabs__list" role="tablist"><button type="button" role="tab" id="t1-0" aria-controls="p1-0" aria-selected="true" tabindex="0">Personas</button><button type="button" role="tab" id="t1-1" aria-controls="p1-1" aria-selected="false" tabindex="-1">Player journey</button><button type="button" role="tab" id="t1-2" aria-controls="p1-2" aria-selected="false" tabindex="-1">Organiser journey</button></div>
+<div class="tabs__panel" role="tabpanel" id="p1-0" aria-labelledby="t1-0">
+<p style="margin:12px 0 0;max-width:68ch;line-height:1.55;text-wrap:pretty">Composite profiles built from the interviews and shadowing sessions: two kinds of player and one organiser.</p>
+<div class="per">
+<article class="cc"><div class="cc__top"><span class="cc__n">P1</span><h3 class="cc__t">Diego, 29</h3><span class="per__tag">Solo player</span></div><p class="cc__m">Padel, Miraflores. Plays twice a week when he can find a fourth.</p><p class="per__q">“I'd play every night if I didn't have to hunt for a match.”</p><dl><div><dt>Today</dt><dd>His old group broke up when he changed jobs. He scrolls four large WhatsApp groups and books courts on ATC.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Balanced matches near work after 7 pm</li><li>See whether his level is improving</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>Posts buried under hundreds of messages</li><li>Skill gaps and last-minute no-shows</li></ul></dd></div><div><dt class="pos">Bolea for Diego</dt><dd>Player membership: matches found automatically and personalised to his level, area and schedule.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">P2</span><h3 class="cc__t">Carla, 34</h3><span class="per__tag">Group host</span></div><p class="cc__m">Five-a-side football, Surco. Runs the WhatsApp group for ten friends.</p><p class="per__q">“WhatsApp works for us. I just need one more player sometimes.”</p><dl><div><dt>Today</dt><dd>Books the same court every Thursday, collects money through Yape and has never used a sports app.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Replace dropouts quickly</li><li>Stop chasing payments</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>Won't ask her friends to download anything</li><li>Last-minute dropouts leave the team short</li></ul></dd></div><div><dt class="pos">Bolea for Carla</dt><dd>A web link shared in her existing group. Friends vote and pay without installing, and she can pull in a replacement from Bolea.</dd></div></dl></article>
+<article class="cc"><div class="cc__top"><span class="cc__n">P3</span><h3 class="cc__t">Renzo, 41</h3><span class="per__tag">Organiser</span></div><p class="cc__m">Runs amateur padel tournaments and clinics across two clubs in La Molina.</p><p class="per__q">“Filling the last brackets takes more work than running the whole event.”</p><dl><div><dt>Today</dt><dd>Posts flyers in WhatsApp groups and Instagram and tracks registrations in a spreadsheet.</dd></div><div><dt>Goals</dt><dd><ul class="pts"><li>Fill every event with players at the right level</li><li>Grow his brand and attract sponsors</li></ul></dd></div><div><dt class="neg">Frustrations</dt><dd><ul class="pts"><li>No reach beyond his own contacts</li><li>Booking platforms leave no room for his brand</li></ul></dd></div><div><dt class="pos">Bolea for Renzo</dt><dd>Organiser membership: tools to find players for events, plus a fully branded profile with images and video.</dd></div></dl></article>
+</div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p1-1" aria-labelledby="t1-1" hidden>
+<div class="jr__h"><p class="h3" style="margin:0">Player · finding a match</p><p class="cap">Diego, current state and where Bolea steps in</p></div>
+<div class="tblwrap"><table class="jr"><thead><tr><th></th><th>Wants to play</th><th>Searches</th><th>Joins</th><th>Pays</th><th>Plays</th><th>After the match</th></tr></thead><tbody>
+<tr><th>Doing</th><td>Free on Wednesday night, his usual partners are busy.</td><td>Scrolls WhatsApp groups and posts “need 1 for padel, 8 pm”.</td><td>Gets a reply an hour later and negotiates time and club.</td><td>Splits the court fee by Yape with three strangers.</td><td>Plays a match where one pair is far stronger.</td><td>Leaves with no record of the result or contacts.</td></tr>
+<tr><th>Thinking</th><td>“Who's around tonight?”</td><td>“Is this post from today?”</td><td>“Are they my level?”</td><td>“Did everyone pay?”</td><td>“Not worth the drive.”</td><td>“Am I improving?”</td></tr>
+<tr><th>Feeling</th><td class="mid">Hopeful</td><td class="lo">Frustrated</td><td class="lo">Unsure</td><td class="lo">Annoyed</td><td class="mid">Mixed</td><td class="lo">Flat</td></tr>
+<tr><th>Opportunity</th><td>Set availability once and get notified.</td><td>Automatic matching by level, area and time.</td><td>One-tap join with level shown upfront.</td><td>Split payment inside the match.</td><td>Balanced pairings from past results.</td><td>Score entry, ranking and a rematch prompt.</td></tr>
+</tbody></table></div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p1-2" aria-labelledby="t1-2" hidden>
+<div class="jr__h"><p class="h3" style="margin:0">Organiser · filling an event</p><p class="cap">Renzo, current state and where Bolea steps in</p></div>
+<div class="tblwrap"><table class="jr"><thead><tr><th></th><th>Plans</th><th>Promotes</th><th>Registers</th><th>Fills gaps</th><th>Runs the event</th><th>Follows up</th></tr></thead><tbody>
+<tr><th>Doing</th><td>Books courts for a Saturday tournament with 16 pairs.</td><td>Shares a flyer in WhatsApp groups and on Instagram.</td><td>Collects names and payments by chat and a spreadsheet.</td><td>Messages contacts one by one to fill the last brackets.</td><td>Updates brackets by hand and posts results in the group.</td><td>Posts photos and starts planning the next one.</td></tr>
+<tr><th>Thinking</th><td>“Will I fill it this time?”</td><td>“Is this reaching anyone new?”</td><td>“Who still owes me?”</td><td>“Same people again.”</td><td>“Too much to track.”</td><td>“How do I keep them coming back?”</td></tr>
+<tr><th>Feeling</th><td class="hi">Motivated</td><td class="mid">Uncertain</td><td class="lo">Stretched</td><td class="lo">Stressed</td><td class="mid">Busy</td><td class="hi">Proud</td></tr>
+<tr><th>Opportunity</th><td>Event template with courts and format.</td><td>Branded event page shown to matching players.</td><td>Registration and payment in one flow.</td><td>Invite players by level and area.</td><td>Live brackets and results.</td><td>Branded profile with images and video that builds a following.</td></tr>
+</tbody></table></div>
+</div>
+</div>
+<div class="accs">
+<details class="acc" open><summary><span class="acc__t">Affinity map</span><span class="acc__m">Pain points &amp; motivations · 4 pillars</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<p style="margin:12px 0 0;max-width:68ch;line-height:1.55;text-wrap:pretty">Research notes clustered into four pillars, ordered the way Bolea answers them: stay inside WhatsApp, find people, organise the game, then open it up to organisers and courts. The same patterns showed up across padel, football and other sports and activities.</p>
+<div class="aff">
+<div class="aff__col"><div class="aff__h"><span class="cc__n">01</span><p class="h3">Staying in WhatsApp</p></div><div class="aff__notes"><p class="aff__n">“Everyone is already in the group. Nobody is going to download another app.”</p><p class="aff__n">“My friends would never make an account just to play on Thursday.”</p><p class="aff__n">“I tried an app once and ended up sharing the link in WhatsApp anyway.”</p></div><div class="aff__c"><span>Core challenge</span><p>WhatsApp is familiar and everyone is there, so new apps feel unnecessary.</p></div><div class="aff__c"><span>Bolea answer</span><p>A link shared in the chat opens Bolea inside WhatsApp and logs in with WhatsApp. No download, no new account.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">02</span><p class="h3">Finding players</p></div><div class="aff__notes"><p class="aff__n">“I want to play, but my usual group isn’t free tonight.”</p><p class="aff__n">“I post in five groups and the message gets buried.”</p><p class="aff__n">“We’re always one person short.”</p></div><div class="aff__c"><span>Core challenge</span><p>Groups depend on who you already know, and requests get lost in busy chats.</p></div><div class="aff__c"><span>Bolea answer</span><p>Players post when they want to play or join open lobbies. Owners can invite people. Next: Bolea looks for players for you.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">03</span><p class="h3">Organising the game</p></div><div class="aff__notes"><p class="aff__n">“Half an hour of messages just to agree on a time and a place.”</p><p class="aff__n">“Someone always drops out at the last minute.”</p><p class="aff__n">“Nobody reads the pinned message.”</p></div><div class="aff__c"><span>Core challenge</span><p>Dates, places and who’s in are scattered across one long chat.</p></div><div class="aff__c"><span>Bolea answer</span><p>Lobbies with a set date and location, their own chat, and every notification delivered to a WhatsApp conversation.</p></div></div>
+<div class="aff__col"><div class="aff__h"><span class="cc__n">04</span><p class="h3">Organisers &amp; courts</p></div><div class="aff__notes"><p class="aff__n">“Filling the last tournament spots takes longer than running it.”</p><p class="aff__n">“We have empty courts every weekday afternoon.”</p><p class="aff__n">“Booking platforms don’t leave room for our brand.”</p></div><div class="aff__c"><span>Core challenge</span><p>Organisers and courts can only reach their own contacts and have no branded presence.</p></div><div class="aff__c"><span>Bolea answer</span><p>Organisations post tournaments and lobbies to fill courts, and customise lobby visuals with their branding. Roadmap: court booking and payment.</p></div></div>
+</div>
+<div class="aff__axis"><span>Today · inside WhatsApp</span><i></i><span>Roadmap · auto-matching, booking &amp; payment</span></div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Competitor analysis</span><span class="acc__m">5 products in the Lima market</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="tabs comptab"><div class="tabs__list" role="tablist"><button type="button" role="tab" id="t2-0" aria-controls="p2-0" aria-selected="true" tabindex="0">Playmix</button><button type="button" role="tab" id="t2-1" aria-controls="p2-1" aria-selected="false" tabindex="-1">ATC</button><button type="button" role="tab" id="t2-2" aria-controls="p2-2" aria-selected="false" tabindex="-1">Quipo</button><button type="button" role="tab" id="t2-3" aria-controls="p2-3" aria-selected="false" tabindex="-1">Pádel Lima</button><button type="button" role="tab" id="t2-4" aria-controls="p2-4" aria-selected="false" tabindex="-1">ReservaSimple</button></div>
+<div class="tabs__panel" role="tabpanel" id="p2-0" aria-labelledby="t2-0">
+<article class="cc"><div class="cc__top"><span class="cc__n">01</span><h3 class="cc__t">Playmix</h3></div><p class="cc__m">Social matchmaking and progression platform.</p><dl><div><dt>Core mechanics</dt><dd>Utilizes game design principles. The primary loop consists of playing a match, inputting the score, and adjusting an internal skill ranking. It includes meta-game elements like achievements, peer rating systems, and performance tracking.</dd></div><div><dt>UX focus</dt><dd>Player profiles, community leaderboards, and skill-based matching interfaces.</dd></div><div><dt class="pos">Strengths</dt><dd>High user retention driven by progression systems and social graphs.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Susceptible to the cold start problem. Matchmaking algorithms require a dense, localized concurrent player base to function effectively.</dd></div></dl></article>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p2-1" aria-labelledby="t2-1" hidden>
+<article class="cc"><div class="cc__top"><span class="cc__n">02</span><h3 class="cc__t">ATC (Alquila Tu Cancha)</h3></div><p class="cc__m">E-commerce marketplace.</p><dl><div><dt>Core mechanics</dt><dd>Search, filter by availability or location, and complete checkout.</dd></div><div><dt>UX focus</dt><dd>Transaction optimization. The user flow prioritizes search-to-booking conversion, similar to digital travel booking platforms.</dd></div><div><dt class="pos">Strengths</dt><dd>High liquidity of venues. It maintains established B2B integrations with sports complexes across Latin America.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Strictly transactional. It lacks retention mechanics or progression systems, providing users no incentive to engage with the product outside of the booking action.</dd></div></dl></article>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p2-2" aria-labelledby="t2-2" hidden>
+<article class="cc"><div class="cc__top"><span class="cc__n">03</span><h3 class="cc__t">Quipo</h3></div><p class="cc__m">Localized amateur sports network.</p><dl><div><dt>Core mechanics</dt><dd>Real-time slot visibility and group coordination specific to the Lima market.</dd></div><div><dt>UX focus</dt><dd>Reducing user input required to find available playing partners and coordinate group matches.</dd></div><div><dt class="pos">Strengths</dt><dd>Solves the specific coordination friction of filling a roster (e.g., finding a fourth player) within a defined geographic area.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Feature set is highly replicable by larger platforms possessing more engineering resources.</dd></div></dl></article>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p2-3" aria-labelledby="t2-3" hidden>
+<article class="cc"><div class="cc__top"><span class="cc__n">04</span><h3 class="cc__t">Pádel Lima</h3></div><p class="cc__m">B2B2C White-label SaaS.</p><dl><div><dt>Core mechanics</dt><dd>Club administrators control back-office inventory; players interact with a centralized booking interface governed by those backend settings.</dd></div><div><dt>UX focus</dt><dd>Functional calendar views prioritizing club branding and operational management.</dd></div><div><dt class="pos">Strengths</dt><dd>Inventory lock-in. Venues relying on the software for operations dictate player adoption.</dd></div><div><dt class="neg">Weaknesses</dt><dd>The UX serves the facility operator before the end user, often resulting in fragmented player experiences across different clubs.</dd></div></dl></article>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p2-4" aria-labelledby="t2-4" hidden>
+<article class="cc"><div class="cc__top"><span class="cc__n">05</span><h3 class="cc__t">ReservaSimple</h3></div><p class="cc__m">General appointment and scheduling SaaS.</p><dl><div><dt>Core mechanics</dt><dd>Web-link access, automated WhatsApp reminders, and integrated local payment gateways.</dd></div><div><dt>UX focus</dt><dd>Web-based transaction flows. It bypasses native app downloads entirely.</dd></div><div><dt class="pos">Strengths</dt><dd>Eliminates app store acquisition friction. The business model charges venues a fixed subscription rather than per-transaction commissions, incentivizing venues to direct their user traffic to the platform.</dd></div><div><dt class="neg">Weaknesses</dt><dd>Operates as a utility link rather than a destination. It lacks player discovery, social graphs, and progression loops.</dd></div></dl></article>
+</div>
+</div>
+</div></details>
+</div>
+<p class="sub" style="margin-top:44px">Strategic product gaps (opportunities)</p>
+<div class="gaps">
+<div class="gap"><p class="h3">Utility vs. Retention</p><p>Current platforms segment into pure utilities (ATC, ReservaSimple) or early-stage social networks (Playmix). A product bridging this gap by applying live-ops retention mechanics—giving users reasons to open the application daily for meta-game progression, localized leaderboards, or rewards—can lower churn rates compared to transaction-only platforms.</p></div>
+<div class="gap"><p class="h3">Onboarding Architecture</p><p>Forcing a native app download for a first-time booking creates a high drop-off rate. Utilizing a Progressive Web App (PWA) or web-first flow for initial conversion, followed by an app download prompt gated behind progression incentives, optimizes Customer Acquisition Cost (CAC).</p></div>
+<div class="gap"><p class="h3">The Lifecycle Loop</p><p>Competing on venue acquisition is a standard sales cycle. Competing on player lifecycle—building features that guide beginners through skill levels and match them accurately—generates a localized network effect. If the product controls the player base through these mechanics, venue adoption becomes mandatory.</p></div>
+</div>
+</div>
+</section>
+
+<section data-section="iteration" id="iteration" data-screen-label="Iteration" data-say="Lobbies, invites and chat, all from a WhatsApp link.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">03</span><h2>Iteration</h2><span class="spacer"></span><span class="sec__note">System, flows, wireframes</span><button class="btn acc-all" type="button">Expand all</button></div>
+<p class="sub">System design &amp; logic</p>
+<div class="tabs "><div class="tabs__list" role="tablist"><button type="button" role="tab" id="t3-0" aria-controls="p3-0" aria-selected="true" tabindex="0">01 · Matchmaking loop</button><button type="button" role="tab" id="t3-1" aria-controls="p3-1" aria-selected="false" tabindex="-1">02 · Invite &amp; match</button><button type="button" role="tab" id="t3-2" aria-controls="p3-2" aria-selected="false" tabindex="-1">03 · Conversation logic</button><button type="button" role="tab" id="t3-3" aria-controls="p3-3" aria-selected="false" tabindex="-1">04 · Screen flow</button></div>
+<div class="tabs__panel" role="tabpanel" id="p3-0" aria-labelledby="t3-0">
+<div class="sysf"><figure class="sysf--wide"><a href="assets/bolea/systemflow-1.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-1.png" alt="Matchmaking system flow across WhatsApp and the web app"></a><figcaption>01 · Matchmaking loop. Sign-up and search run inside WhatsApp; the group votes on a court and pays in the web app. Branches cover a dissolved match, a waitlist, and a player who drops out.</figcaption></figure></div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p3-1" aria-labelledby="t3-1" hidden>
+<div class="sysf"><figure class="sysf--wide"><a href="assets/bolea/systemflow-2-diagram.svg" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-2-diagram.svg" alt="Invite and match creation system flow in three swimlanes: host on WhatsApp, web app, invitee on WhatsApp"></a><figcaption>02 · Invite &amp; match creation. Three entry paths (no contacts shared, contacts without play intent, contacts with play intent) merge into one match-building loop that ends when all four slots are filled.</figcaption></figure></div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p3-2" aria-labelledby="t3-2" hidden>
+<div class="sysf"><figure class="sysf--wide"><a href="assets/bolea/systemflow-3.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-3.png" alt="WhatsApp bot conversation tree"></a><figcaption>03 · Conversation logic. How the WhatsApp bot parses open requests, asks for missing details, and hands players into a search pool.</figcaption></figure></div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="p3-3" aria-labelledby="t3-3" hidden>
+<div class="sysf"><figure class="sysf--wide"><a href="assets/bolea/systemflow-4.png" target="_blank" rel="noopener"><img loading="lazy" src="assets/bolea/systemflow-4.png" alt="Screen flow of the app prototype"></a><figcaption>04 · Screen flow. From the WhatsApp entry to the court view, invites, and match states.</figcaption></figure></div>
+</div>
+</div>
+<div class="accs">
+<details class="acc" open><summary><span class="acc__t">Wireframes</span><span class="acc__m">Low-fidelity screens</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="wfs">
+<figure><div class="wf"><div class="r"><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span class="t">Partidos cerca</span><div class="ln" style="width:60%"></div></div><span class="c f" style="width:22px;height:22px"></span></div><div class="r"><span class="pill on">Todos</span><span class="pill">Hoy</span><span class="pill">Nivel</span><span class="pill">Dobles</span></div><div class="b"><div class="r"><span class="c f"></span><span class="c f" style="margin-left:-10px"></span><span class="c" style="margin-left:-10px"></span><span class="sp"></span><span class="pill">Falta 1</span></div><div class="ln d" style="width:70%"></div><div class="ln" style="width:85%"></div><div class="r"><div class="ln" style="width:30%"></div><div class="ln" style="width:25%"></div><span class="sp"></span>›</div></div><div class="b"><div class="r"><span class="c f"></span><span class="c f" style="margin-left:-10px"></span><span class="sp"></span><span class="pill">Falta 1</span></div><div class="ln d" style="width:70%"></div><div class="ln" style="width:85%"></div><div class="r"><div class="ln" style="width:30%"></div><div class="ln" style="width:25%"></div><span class="sp"></span>›</div></div><div class="b"><div class="r"><span class="c f"></span><span class="c f" style="margin-left:-10px"></span><span class="c" style="margin-left:-10px"></span><span class="sp"></span><span class="pill">Falta 2</span></div><div class="ln d" style="width:70%"></div><div class="ln" style="width:85%"></div><div class="r"><div class="ln" style="width:30%"></div><div class="ln" style="width:25%"></div><span class="sp"></span>›</div></div><div class="b"><div class="r"><span class="c f"></span><span class="c f" style="margin-left:-10px"></span><span class="sp"></span><span class="pill">Falta 3</span></div><div class="ln d" style="width:70%"></div><div class="ln" style="width:85%"></div><div class="r"><div class="ln" style="width:30%"></div><div class="ln" style="width:25%"></div><span class="sp"></span>›</div></div><div class="tab"><i></i><i></i><span class="fab"></span><i></i><i></i></div></div><figcaption>Exploration: nearby matches filtered by day, level and format, each card showing how many players are missing.</figcaption></figure>
+<figure><div class="wf"><div class="r"><span>‹</span><span class="c f"></span><span class="sp"></span><span class="t">Bolea</span><span class="sp"></span><span class="c"></span></div><div class="b" style="flex:1;min-height:0"><div class="r"><span class="t" style="font-size:10px">En la cancha</span><span class="sp"></span><span class="pill on">2/4</span></div><div class="court"><div><span class="av"></span>Yo</div><div><span class="av e">+</span>Invitar</div><div><span class="av"></span>Jugador</div><div><span class="av e">+</span>Invitar</div></div></div><div class="b"><span class="t" style="font-size:10px">Detalles</span><div class="r"><span class="c"></span><div class="ln" style="width:55%"></div></div><div class="r"><span class="c"></span><div class="ln" style="width:65%"></div></div><div class="r"><span class="c"></span><div class="ln" style="width:20%"></div></div></div><div class="btnx">Chat</div><div class="seg"><span>No reservado</span><span class="on">Reservado</span></div><div class="btno">Salir del partido</div></div><figcaption>Grouped match: the court shows who has joined and the open spots to invite into, above the match details, chat and booking status.</figcaption></figure>
+<figure><div class="wf"><div class="r"><span class="c f" style="width:22px;height:22px"></span><div style="flex:1;display:flex;flex-direction:column;gap:4px"><span class="t">Definir bolea</span><div class="ln" style="width:55%"></div></div><span class="c"></span></div><div class="btno" style="text-align:left;border-radius:99px">Título (opcional)</div><div class="r"><span class="lb">Día</span><span class="sp"></span><span style="opacity:.6">elige uno</span></div><div class="b" style="width:55%"><div class="ln" style="width:70%"></div></div><div class="r"><span class="lb">Horario</span><span class="sp"></span><span style="opacity:.6">elige uno</span></div><div class="b" style="width:55%"><div class="ln" style="width:50%"></div></div><div class="r"><span class="lb">Nivel</span><span class="sp"></span><span style="opacity:.6">elige uno</span></div><div class="seg"><span class="on">3</span><span>1-2</span><span>4-5</span><span>Todos</span></div><div class="r"><span class="lb">Club y cancha</span><span class="sp"></span><span style="opacity:.6">elige uno</span></div><div class="seg"><span>No reservo</span><span class="on">Yo reservo</span></div><div class="r"><span class="lb">Personas</span><span class="sp"></span><span style="opacity:.6">elige uno</span></div><div class="seg"><span class="on">4</span><span>8</span><span>12</span><span>16</span></div><div class="b"><div class="r"><span class="c"></span><div style="flex:1;display:flex;flex-direction:column;gap:4px"><div class="ln d" style="width:60%"></div><div class="ln" style="width:80%"></div></div>›</div></div><div class="btnx" style="margin-top:auto">Crear bolea</div></div><figcaption>Match creation: a single sheet for day, time, level, booking and group size, with a suggested club and court.</figcaption></figure>
+</div>
+</div></details>
+<details class="acc"><summary><span class="acc__t">Discarded concepts</span><span class="acc__m">What was dropped and why</span><i aria-hidden="true"></i></summary><div class="acc__b">
+<div class="shots">
+<figure><image-slot class="slot" id="bolea-x-1" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-x-2" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+<figure><image-slot class="slot" id="bolea-x-3" placeholder="Discarded concept"></image-slot><figcaption>Why it was dropped</figcaption></figure>
+</div>
+</div></details>
+</div>
+</div>
+</section>
+
+<section data-section="execution" id="execution" data-screen-label="Execution" data-say="The real screens, plus the brand book to download.">
+<div class="wrap">
+<div class="sec__head"><span class="sec__num">04</span><h2>Execution</h2><span class="spacer"></span><span class="sec__note">UI, components, brand</span></div>
+<p class="sub">High-fidelity screens · 8 screens</p>
+<div class="tabs hftabs"><div class="tabs__list" role="tablist"><button type="button" role="tab" id="thf-0" aria-controls="phf-0" aria-selected="true" tabindex="0">Create a Bolea</button><button type="button" role="tab" id="thf-1" aria-controls="phf-1" aria-selected="false" tabindex="-1">Inside the lobby</button><button type="button" role="tab" id="thf-2" aria-controls="phf-2" aria-selected="false" tabindex="-1">Staying updated</button></div>
+<div class="tabs__panel" role="tabpanel" id="phf-0" aria-labelledby="thf-0">
+<div class="hf">
+<figure><img loading="lazy" src="assets/bolea/ui-01-create.png" alt="Crear: form"><figcaption>Sport, group size, optional title, court, date and time, level slider, booking, visibility and play or organise, on one card.</figcaption></figure>
+<figure><img loading="lazy" src="assets/bolea/ui-02-customise.png" alt="Crear: customise card"><figcaption>The lobby card is previewed live. Players pick a background or upload their own photo or video.</figcaption></figure>
+<figure><img loading="lazy" src="assets/bolea/ui-03-customise-b.png" alt="Crear: customised card"><figcaption>The same card with a different visual. Organisations use this step to add their branding.</figcaption></figure>
+</div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="phf-1" aria-labelledby="thf-1" hidden>
+<div class="hf">
+<figure><img loading="lazy" src="assets/bolea/ui-04-lobby.png" alt="Lobby court view"><figcaption>The court shows who is in each position. Empty spots invite directly, with booking, chat and directions below.</figcaption></figure>
+<figure><img loading="lazy" src="assets/bolea/ui-05-invite.png" alt="Invite sheet"><figcaption>Inviting to a position: friends on Bolea, or anyone through WhatsApp.</figcaption></figure>
+<figure><img loading="lazy" src="assets/bolea/ui-06-chat.png" alt="Lobby chat"><figcaption>Each lobby has its own chat, with the match details pinned at the top.</figcaption></figure>
+</div>
+</div>
+<div class="tabs__panel" role="tabpanel" id="phf-2" aria-labelledby="thf-2" hidden>
+<div class="hf">
+<figure><img loading="lazy" src="assets/bolea/ui-07-mis-boleas.png" alt="Mis Boleas"><figcaption>Mis Boleas groups upcoming lobbies by day, each showing its sport, missing players and visibility.</figcaption></figure>
+<figure><img loading="lazy" src="assets/bolea/ui-08-notifications.png" alt="Notificaciones"><figcaption>Invites can be accepted or declined from the feed. The same updates are sent to the player’s WhatsApp conversation.</figcaption></figure>
+</div>
+</div>
+</div><p class="sub">Brand book</p>
+<div class="bbx">
+<div class="bbx__body"><span class="bbx__k">Bolea® · Manual de marca</span><p class="bbx__t">The full identity and interface system in one document.</p><p class="bbx__d">Strike's construction and rig, logo versions, palette, type scale, button levels, motion curves, tone of voice and usage rules.</p><a class="bbx__btn" href="assets/bolea/Bolea-Manual-de-Marca.html" download="Bolea-Manual-de-Marca.html">Download the brand book <span>HTML · ES ↓</span></a></div>
+</div>
+<div class="bbg bbg--3">
+<div class="bbc"><span class="cc__n">Strike</span><div class="bbc__v">9 points</div><p>A parametric character, not a drawn logo. Its eyes carry 14 expressions and the rig drives every animation.</p></div>
+<div class="bbc"><span class="cc__n">Colour</span><div class="sw sw--mini"><i style="background:#05E26B"></i><i style="background:#1A1A17"></i><i style="background:#FFFFFF"></i><i style="background:#E5E3DA"></i></div><p>Lima #05E26B is the only action colour, on ink, white and a warm neutral.</p></div>
+<div class="bbc"><span class="cc__n">Voice</span><div class="bbc__v" style="font-size:1.35rem;line-height:1.2">“Like the friend who already booked the court.”</div><p>Short, warm and in Peruvian Spanish. Never system-speak.</p></div>
+</div>
+<div class="chips" style="margin-top:44px">
+<span class="chip chip--hot">System design</span><span class="chip chip--hot">System flow &amp; logic</span><span class="chip chip--hot">Screen flow</span><span class="chip chip--hot">UI design</span><span class="chip chip--hot">Brand book</span><span class="chip">Consulting</span></div>
+</div>
+</section>
+
+<footer class="wrap" data-section="contact" id="contact" data-screen-label="Contact">
+<div class="foot">
+<div><div class="mono">Building something social?</div><h2>Ask me<br>about it.</h2></div>
+<span class="spacer"></span>
+<div class="flex" style="gap:10px;flex-wrap:wrap">
+<a class="btn btn--solid js-hero-contact" href="mailto:alejandro.melian.r@gmail.com">Contact me →</a>
+<a class="btn" href="index.html">← All projects</a>
+</div>
+</div>
+</footer>
+
+<script>
+(function(){var vs=document.querySelectorAll('video[data-lazy]');if(!('IntersectionObserver'in window)){vs.forEach(function(v){v.preload='auto';v.play().catch(function(){})});return}
+var io=new IntersectionObserver(function(es){es.forEach(function(e){var v=e.target;if(e.isIntersecting){if(v.preload==='none'){v.preload='auto';v.load()}v.play().catch(function(){})}else v.pause()})},{rootMargin:'200px'});vs.forEach(function(v){io.observe(v)})})();
+</script>
+<script>
+document.querySelectorAll('.tabs').forEach(function(t){var bs=[].slice.call(t.querySelector('.tabs__list').children),ps=[].slice.call(t.children).filter(function(c){return c.classList.contains('tabs__panel')});
+function sel(i,f){bs.forEach(function(b,j){b.setAttribute('aria-selected',j===i);b.tabIndex=j===i?0:-1;ps[j].hidden=j!==i});if(f)bs[i].focus()}
+bs.forEach(function(b,i){b.addEventListener('click',function(){sel(i)});b.addEventListener('keydown',function(e){if(e.key==='ArrowRight')sel((i+1)%bs.length,1);if(e.key==='ArrowLeft')sel((i-1+bs.length)%bs.length,1)})})});
+document.querySelectorAll('.acc-all').forEach(function(b){var s=b.closest('section'),ds=s.querySelectorAll('details.acc');function upd(){b.textContent=[].every.call(ds,function(d){return d.open})?'Collapse all':'Expand all'}
+b.addEventListener('click',function(){var o=b.textContent==='Expand all';ds.forEach(function(d){d.open=o});upd()});ds.forEach(function(d){d.addEventListener('toggle',upd)});upd()});
+(function(){var ls=document.querySelectorAll('.chap a');if(!('IntersectionObserver'in window))return;var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting)ls.forEach(function(a){a.classList.toggle('on',a.getAttribute('href')==='#'+e.target.id)})})},{rootMargin:'-45% 0px -50% 0px'});
+ls.forEach(function(a){var s=document.querySelector(a.getAttribute('href'));if(s)io.observe(s)})})();
+</script>
+<script src="image-slot.js"></script>
+<script src="slime-palettes.js"></script>
+<script src="slime-companion.js"></script>
+<script src="contact-cta.js"></script>
+<script src="contact-modal.js"></script>
+</body>
+</html>
