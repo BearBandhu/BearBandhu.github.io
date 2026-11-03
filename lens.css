@@ -7,8 +7,8 @@ html.lens-open .gate__bub{transform:none}
 .gate__bub::after{content:"";position:absolute;left:44px;bottom:-11px;width:22px;height:22px;background:#fff;border-right:1px solid rgba(22,20,27,.1);border-bottom:1px solid rgba(22,20,27,.1);transform:rotate(45deg);border-bottom-right-radius:5px}
 .gate__k{font-family:var(--f-m,"JetBrains Mono",monospace);font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--ink-3,#6b6773)}
 .gate__h{margin:10px 0 12px;font-family:var(--f-d,"Bricolage Grotesque",sans-serif);font-weight:700;font-size:clamp(30px,4vw,42px);line-height:1.05;letter-spacing:-.03em;color:var(--ink,#16141b)}
-.gate__p{margin:0 0 24px;font-size:16px;line-height:1.55;color:var(--ink-2,#3b3842);text-wrap:pretty}
-.gate__opts{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
+.gate__p{margin:0 0 14px;font-size:16px;line-height:1.55;color:var(--ink-2,#3b3842);text-wrap:pretty}
+.gate__opts{margin-top:10px;display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:10px}
 .gate__btn{display:flex;flex-direction:column;align-items:flex-start;gap:4px;padding:16px 18px;border-radius:16px;border:1px solid rgba(22,20,27,.14);background:#fff;font:inherit;text-align:left;cursor:pointer;color:var(--ink,#16141b);transition:transform .2s,border-color .2s,box-shadow .2s}
 .gate__btn b{font-family:var(--f-d,"Bricolage Grotesque",sans-serif);font-size:20px;letter-spacing:-.02em}
 .gate__btn span{font-size:13px;line-height:1.4;color:var(--ink-3,#6b6773)}
