@@ -58,11 +58,11 @@ var bubbleDY=0,fitT=0,smooth=0,antUntil=0,antDur=340,antX=0,antY=0,lastSpot=-1,f
 var sx=innerWidth*.9,sy=innerHeight*.3,tx=sx,ty=sy,vx=0,vy=0,t0=0,bubbleT=0,menuOpen=false;
 var tyBase=innerHeight*.3;
 function slimeMob(){return innerWidth<=700}
-function targets(){if(slimeMob()){tx=innerWidth*.5;tyBase=innerHeight-88;ty=tyBase+follow();return}var s=SPOTS[secs[live]?secs[live].dataset.section:'hero']||SPOTS.hero;tx=innerWidth*s[0];tyBase=innerHeight*s[1];ty=tyBase+follow()}
+function targets(){if(slimeMob()){tx=innerWidth*.5;tyBase=innerHeight-88;ty=tyBase+follow();return}var s=SPOTS.hero||[.9,.3];tx=innerWidth*s[0];tyBase=innerHeight*s[1];ty=tyBase+follow()}
 var forceT=null;
 window.slimeForce=function(x,y){forceT=(x==null)?null:[x,y]};
 window.slimePlace=function(x,y){sx=x;sy=y;vx=vy=0;lastSpot=-1};
-function follow(){if(slimeMob())return 0;if(!bubble.classList.contains('is-on'))return 0;return Math.max(70-tyBase,Math.min(innerHeight-70-tyBase,bubbleDY))}
+function follow(){return 0}
 function tick(ts){
 var dt=Math.min(34,ts-t0)/16.7;t0=ts;
 targets();
@@ -84,7 +84,7 @@ sx+=vx*dt;sy+=vy*dt;
 var sp=Math.min(1,Math.hypot(vx,vy)/34);
 smooth+=(sp-smooth)*0.09;
 var crouch=Math.sin(Math.min(1,1-ant)*Math.PI)*(antUntil>ts?1:0),
-bob=Math.sin(ts/620)*4.2*(1-smooth*.5),
+bob=Math.sin(ts/900)*1.6*(1-smooth*.5),
 sqx=1+smooth*0.13-Math.sin(ts/620)*0.03+crouch*0.16+wob*0.2,
 sqy=1-smooth*0.1+Math.sin(ts/620)*0.03-crouch*0.15-wob*0.19,
 rot=Math.max(-11,Math.min(11,vx*0.45))-antX*crouch*7+wob*5;
@@ -99,15 +99,15 @@ bubble.style.borderRadius='18px';
 menu.style.left=Math.max(14,Math.min(innerWidth-238,sx-112))+'px';
 menu.style.top=(sy-54-menu.offsetHeight)+'px';
 if(drawOpen){var dw=draw.offsetWidth;draw.style.left=Math.max(14,Math.min(innerWidth-14-dw,sx-dw/2))+'px';draw.style.top=Math.max(12,sy-54-draw.offsetHeight)+'px'}
-if(bubbleT&&ts>bubbleT&&!menuOpen){if(slimeClicked){bubble.classList.remove('is-on')}else{sayHint()}}
+if(bubbleT&&ts>bubbleT&&!menuOpen){bubble.classList.remove('is-on');bubbleT=0}
 return requestAnimationFrame(tick)}
 bubble.style.left=(right?sx+52:sx-52-bubble.offsetWidth)+'px';
-bubble.style.top=(sy-24-bubble.offsetHeight/2+bob)+'px';
+bubble.style.top=Math.max(10,Math.min(innerHeight-10-bubble.offsetHeight,sy-24-bubble.offsetHeight/2+bob+bubbleDY))+'px';
 bubble.style.borderRadius=right?'18px 18px 18px 6px':'18px 18px 6px 18px';
 menu.style.left=Math.max(14,Math.min(innerWidth-238,sx-(right?0:214)))+'px';
 menu.style.top=(sy>innerHeight*0.5?sy-54-menu.offsetHeight:sy+54)+'px';
 if(drawOpen){var dw2=draw.offsetWidth,dh=draw.offsetHeight;draw.style.left=Math.max(14,Math.min(innerWidth-14-dw2,sx-(right?0:dw2-28)))+'px';draw.style.top=Math.max(12,Math.min(innerHeight-12-dh,sy>innerHeight*0.5?sy-54-dh:sy+54))+'px'}
-if(bubbleT&&ts>bubbleT&&!menuOpen){if(slimeClicked){bubble.classList.remove('is-on')}else{sayHint()}}
+if(bubbleT&&ts>bubbleT&&!menuOpen){bubble.classList.remove('is-on');bubbleT=0}
 requestAnimationFrame(tick)}
 requestAnimationFrame(function(ts){t0=ts;tick(ts)});
 
@@ -156,9 +156,9 @@ if(here<0||here===live)return;
 live=here;
 mbs.forEach(function(b,k){b.classList.toggle('is-here',k===live)});
 var s=secs[live],k=s.dataset.section;
-if(k!==said){said=k;if(!quiet)say((k==='work'||k==='cases')?MSG:(s.dataset.say||SAY[k]),(k==='work'||k==='cases')?7000:0)}
+if(k!==said){said=k}
 }
 addEventListener('scroll',onScroll,{passive:true});
 var atEnd=false;addEventListener('scroll',function(){var end=innerHeight+pageYOffset>=document.documentElement.scrollHeight-40;if(end&&!atEnd&&!quiet)say(MSG,8000);atEnd=end},{passive:true});
-setTimeout(function(){mbs[0].classList.add('is-here');if(!quiet)say(secs[0]&&secs[0].dataset.say||SAY.hero);onScroll()},800);
+setTimeout(function(){mbs[0].classList.add('is-here');if(!quiet)say(ES?'Haz clic aquí':'Click me',3000);onScroll()},800);
 })();
